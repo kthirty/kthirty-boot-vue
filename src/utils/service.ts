@@ -1,5 +1,6 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios"
 import { useUserStoreHook } from "@/store/modules/user"
+import { useClientStore } from "@/store/modules/client"
 import { ElMessage } from "element-plus"
 import { get, merge } from "lodash-es"
 import { getToken } from "./cache/cookies"
@@ -36,10 +37,10 @@ function createService() {
         return Promise.reject(new Error("非本系统的接口"))
       }
       switch (code) {
-        case 0:
-          // 本系统采用 code === 0 来表示没有业务错误
+        case "AA0000":
+          // 本系统采用 code === "AA0000" 来表示没有业务错误
           return apiData
-        case 401:
+        case "AA0010":
           // Token 过期时
           return logout()
         default:
@@ -104,7 +105,8 @@ function createRequest(service: AxiosInstance) {
       headers: {
         // 携带 Token
         Authorization: token ? `Bearer ${token}` : undefined,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Client-Id": useClientStore().getId()
       },
       timeout: 5000,
       baseURL: import.meta.env.VITE_BASE_API,

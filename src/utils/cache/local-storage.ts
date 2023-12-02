@@ -5,6 +5,7 @@ import { type SidebarOpened, type SidebarClosed } from "@/constants/app-key"
 import { type ThemeName } from "@/hooks/useTheme"
 import { type TagView } from "@/store/modules/tags-view"
 import { type LayoutSettings } from "@/config/layouts"
+import { ClientInfo } from "@/store/modules/client"
 
 //#region 系统布局配置
 export const getConfigLayout = () => {
@@ -58,3 +59,13 @@ export const setCachedViews = (views: string[]) => {
   localStorage.setItem(CacheKey.CACHED_VIEWS, JSON.stringify(views))
 }
 //#endregion
+
+//# client start
+export const setClient = (client: ClientInfo) => {
+  localStorage.setItem(CacheKey.CLIENT, JSON.stringify(client))
+}
+export const getClient = () => {
+  const json = localStorage.getItem(CacheKey.CLIENT)
+  return json ? JSON.parse(json ?? "{}") : null
+}
+// client end
