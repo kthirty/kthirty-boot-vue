@@ -6,6 +6,7 @@ import { type ThemeName } from "@/hooks/useTheme"
 import { type TagView } from "@/store/modules/tags-view"
 import { type LayoutSettings } from "@/config/layouts"
 import { ClientInfo } from "@/store/modules/client"
+import { TokenInfo } from "@/api/login/types/login"
 
 //#region 系统布局配置
 export const getConfigLayout = () => {
@@ -69,3 +70,13 @@ export const getClient = () => {
   return json ? JSON.parse(json ?? "{}") : null
 }
 // client end
+export const setToken = (token: TokenInfo) => {
+  localStorage.setItem(CacheKey.TOKEN, JSON.stringify(token))
+}
+export const getToken = () => {
+  const json = localStorage.getItem(CacheKey.TOKEN)
+  return json ? JSON.parse(json ?? "{}") : null
+}
+export const removeToken = () => {
+  localStorage.removeItem(CacheKey.TOKEN)
+}

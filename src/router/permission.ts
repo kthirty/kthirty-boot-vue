@@ -4,7 +4,6 @@ import { usePermissionStoreHook } from "@/store/modules/permission"
 import { ElMessage } from "element-plus"
 import { setRouteChange } from "@/hooks/useRouteListener"
 import { useTitle } from "@/hooks/useTitle"
-import { getToken } from "@/utils/cache/cookies"
 import { fixBlankPage } from "@/utils/fix-blank-page"
 import routeSettings from "@/config/route"
 import isWhiteList from "@/config/white-list"
@@ -19,8 +18,7 @@ router.beforeEach(async (to, _from, next) => {
   NProgress.start()
   const userStore = useUserStoreHook()
   const permissionStore = usePermissionStoreHook()
-  const token = getToken()
-
+  const token = userStore.token.accessToken
   // 判断该用户是否已经登录
   if (!token) {
     // 如果在免登录的白名单中，则直接进入
@@ -41,19 +39,20 @@ router.beforeEach(async (to, _from, next) => {
   }
 
   // 如果用户已经获得其权限角色
-  if (userStore.roles.length !== 0) return next()
+  const currentRoles = userStore.user.roles
+  if (currentRoles.length > 0) return next()
 
   // 否则要重新获取权限角色
   try {
     if (routeSettings.async) {
       // 注意：角色必须是一个数组！ 例如: ['admin'] 或 ['developer', 'editor']
       await userStore.getInfo()
-      const roles = userStore.roles
+      const roles = userStore.user.roles
       // 根据角色生成可访问的 Routes（可访问路由 = 常驻路由 + 有访问权限的动态路由）
       permissionStore.setRoutes(roles)
     } else {
       // 没有开启动态路由功能，则启用默认角色
-      userStore.setRoles(routeSettings.defaultRoles)
+      // userStore.setRoles(routeSettings.defaultRoles)
       permissionStore.setRoutes(routeSettings.defaultRoles)
     }
     // 将'有访问权限的动态路由' 添加到 Router 中
