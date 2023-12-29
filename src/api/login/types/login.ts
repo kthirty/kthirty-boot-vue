@@ -23,8 +23,24 @@ export interface UserInfo {
   extra?: {}
 }
 
+export interface MenuInfo {
+  id: string
+  name?: string
+  type?: string
+  code?: string
+  permission?: string
+  parentId?: string
+  sort?: number
+  path: string
+  component?: string
+  icon?: string
+  description?: string
+}
+
 export type LoginCodeResponseData = ApiResponseData<string>
 
 export type LoginResponseData = ApiResponseData<TokenInfo>
 
 export type UserInfoResponseData = ApiResponseData<{ username: string; roles: string[] }>
+
+export type MenusResponseData = ApiResponseData<MenuInfo[]>
