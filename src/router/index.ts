@@ -43,7 +43,13 @@ export const constantRoutes: RouteRecordRaw[] = [
     meta: {
       hidden: true
     }
-  },
+  }
+]
+
+/**
+ * DEMO路由
+ */
+export const demoRoutes: RouteRecordRaw[] = [
   {
     path: "/",
     component: Layouts,
@@ -247,15 +253,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         }
       }
     ]
-  }
-]
-
-/**
- * 动态路由
- * 用来放置有权限 (Roles 属性) 的路由
- * 必须带有 Name 属性
- */
-export const asyncRoutes: RouteRecordRaw[] = [
+  },
   {
     path: "/permission",
     component: Layouts,

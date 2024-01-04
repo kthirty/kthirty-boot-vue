@@ -2,7 +2,7 @@ import { ref } from "vue"
 import store from "@/store"
 import { defineStore } from "pinia"
 import { type RouteRecordRaw } from "vue-router"
-import router, { constantRoutes, resetRouter, errorPageRouter } from "@/router"
+import router, { constantRoutes, resetRouter, errorPageRouter, demoRoutes } from "@/router"
 import { flatMultiLevelRoutes } from "@/router/helper"
 import routeSettings from "@/config/route"
 import { MenuInfo } from "@/api/login/types/login"
@@ -73,7 +73,7 @@ export const usePermissionStore = defineStore("permission", () => {
     const accessedRoutes = menuToRoute(data, "0")
     dynamicRoutes.value = routeSettings.thirdLevelRouteCache ? flatMultiLevelRoutes(accessedRoutes) : accessedRoutes
     console.error("加载路由，最终动态路由", dynamicRoutes.value)
-    routes.value = constantRoutes.concat(accessedRoutes).concat(errorPageRouter)
+    routes.value = constantRoutes.concat(demoRoutes).concat(accessedRoutes).concat(errorPageRouter)
     resetRouter()
     routes.value.forEach((it) => router.addRoute(it))
     console.error("加载路由，所有路由", routes.value)
