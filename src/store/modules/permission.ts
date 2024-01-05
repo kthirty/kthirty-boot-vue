@@ -45,6 +45,7 @@ export const usePermissionStore = defineStore("permission", () => {
     return menus
       .filter((it) => it.parentId === parentId)
       .map((it) => {
+        const child = menuToRoute(menus, it.id)
         const route: RouteRecordRaw = {
           path: it.path,
           component: () => (it.component ? modules["../../views/" + it.component] : undefined),
@@ -54,7 +55,7 @@ export const usePermissionStore = defineStore("permission", () => {
             title: it.name,
             svgIcon: it.icon || "menu"
           },
-          children: menuToRoute(menus, it.id)
+          children: child.length > 0 ? child : undefined
         }
         return route
       })
