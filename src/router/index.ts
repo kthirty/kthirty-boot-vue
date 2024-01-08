@@ -50,7 +50,7 @@ export const constantRoutes: RouteRecordRaw[] = [
  * DEMO路由
  */
 export const demoRoutes: RouteRecordRaw[] = [
-  {
+  /*{
     path: "/",
     component: Layouts,
     redirect: "/dashboard",
@@ -66,7 +66,7 @@ export const demoRoutes: RouteRecordRaw[] = [
         }
       }
     ]
-  },
+  },*/
   {
     path: "/unocss",
     component: Layouts,

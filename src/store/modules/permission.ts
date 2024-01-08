@@ -2,7 +2,7 @@ import { ref } from "vue"
 import store from "@/store"
 import { defineStore } from "pinia"
 import { type RouteRecordRaw } from "vue-router"
-import router, { constantRoutes, resetRouter, errorPageRouter, demoRoutes } from "@/router"
+import router, { constantRoutes, demoRoutes, errorPageRouter, resetRouter } from "@/router"
 import { flatMultiLevelRoutes } from "@/router/helper"
 import routeSettings from "@/config/route"
 import { MenuInfo } from "@/api/login/types/login"
@@ -33,8 +33,11 @@ export const usePermissionStore = defineStore("permission", () => {
   const menus = ref<MenuInfo[]>([])
 
   const modules = import.meta.glob("../../views/*/*.vue")
-
-  console.debug("modules", modules)
+  Object.keys(modules).forEach((key) => {
+    modules[key.replace("../../views", "")] = modules[key]
+  })
+  modules["layout"] = () => import("@/layouts/index.vue")
+  console.log("modules", modules)
   /**
    * 菜单转route
    * @param menus 所有菜单
@@ -48,7 +51,7 @@ export const usePermissionStore = defineStore("permission", () => {
         const child = menuToRoute(menus, it.id)
         const route: RouteRecordRaw = {
           path: it.path,
-          component: () => (it.component ? modules["../../views/" + it.component] : undefined),
+          component: () => modules[it.component || "layout"](),
           name: it.code,
           meta: {
             type: "async",
@@ -60,7 +63,24 @@ export const usePermissionStore = defineStore("permission", () => {
         return route
       })
   }
-
+  const getRootRouter = (accessedRoutes: RouteRecordRaw[]): RouteRecordRaw[] => {
+    const arr: RouteRecordRaw[] = []
+    if (accessedRoutes) {
+      let path: string
+      if (accessedRoutes[0].children) {
+        path = accessedRoutes[0].children[0].path
+      } else {
+        path = accessedRoutes[0].path
+      }
+      if (path) {
+        arr.push({
+          path: "/",
+          redirect: path
+        })
+      }
+    }
+    return arr
+  }
   const loadRoute = async () => {
     if (menus.value.length > 0) {
       return
@@ -69,15 +89,18 @@ export const usePermissionStore = defineStore("permission", () => {
     if (data.length == 0) {
       throw new Error("当前用户没有任何可用菜单")
     }
-    console.error("加载路由，查到的菜单", data)
     menus.value = data
     const accessedRoutes = menuToRoute(data, "0")
+    const rootRouter: RouteRecordRaw[] = []
+    if (!data.some((it) => it.path === "/")) {
+      rootRouter.push(...getRootRouter(accessedRoutes))
+    }
+    console.log("rootRouter", rootRouter)
     dynamicRoutes.value = routeSettings.thirdLevelRouteCache ? flatMultiLevelRoutes(accessedRoutes) : accessedRoutes
-    console.error("加载路由，最终动态路由", dynamicRoutes.value)
-    routes.value = constantRoutes.concat(demoRoutes).concat(accessedRoutes).concat(errorPageRouter)
+    routes.value = constantRoutes.concat(demoRoutes).concat(accessedRoutes).concat(rootRouter).concat(errorPageRouter)
     resetRouter()
     routes.value.forEach((it) => router.addRoute(it))
-    console.error("加载路由，所有路由", routes.value)
+    console.log("加载路由，所有路由", routes.value)
   }
   const routeLoaded = () => menus.value.length > 0
 
