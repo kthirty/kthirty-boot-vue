@@ -31,6 +31,7 @@ export const usePermissionStore = defineStore("permission", () => {
   const routes = ref<RouteRecordRaw[]>([])
   const dynamicRoutes = ref<RouteRecordRaw[]>([])
   const menus = ref<MenuInfo[]>([])
+  const permissions = ref<Set<string>>(new Set())
 
   const modules = import.meta.glob("../../views/*/*.vue")
   Object.keys(modules).forEach((key) => {
@@ -46,7 +47,7 @@ export const usePermissionStore = defineStore("permission", () => {
    */
   const menuToRoute = (menus: MenuInfo[], parentId: string): RouteRecordRaw[] => {
     return menus
-      .filter((it) => it.parentId === parentId)
+      .filter((it) => it.parentId === parentId && it.path)
       .map((it) => {
         const child = menuToRoute(menus, it.id)
         const route: RouteRecordRaw = {
@@ -90,6 +91,9 @@ export const usePermissionStore = defineStore("permission", () => {
       throw new Error("当前用户没有任何可用菜单")
     }
     menus.value = data
+    permissions.value.clear()
+    data.filter((it) => it.permission).forEach((it) => permissions.value.add(it.permission || ""))
+    console.log("拥有的权限", permissions.value)
     const accessedRoutes = menuToRoute(data, "0")
     const rootRouter: RouteRecordRaw[] = []
     if (!data.some((it) => it.path === "/")) {
@@ -104,7 +108,7 @@ export const usePermissionStore = defineStore("permission", () => {
   }
   const routeLoaded = () => menus.value.length > 0
 
-  return { routes, dynamicRoutes, loadRoute, routeLoaded }
+  return { routes, dynamicRoutes, loadRoute, routeLoaded, permissions }
 })
 
 /** 在 setup 外使用 */

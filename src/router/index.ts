@@ -74,7 +74,7 @@ export const demoRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: "index",
-        component: () => import("@/views/unocss/index.vue"),
+        component: () => import("@/views/demo/unocss/index.vue"),
         name: "UnoCSS",
         meta: {
           title: "UnoCSS",
@@ -120,7 +120,7 @@ export const demoRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: "element-plus",
-        component: () => import("@/views/table/element-plus/index.vue"),
+        component: () => import("@/views/demo/table/element-plus/index.vue"),
         name: "ElementPlus",
         meta: {
           title: "Element Plus",
@@ -129,7 +129,7 @@ export const demoRoutes: RouteRecordRaw[] = [
       },
       {
         path: "vxe-table",
-        component: () => import("@/views/table/vxe-table/index.vue"),
+        component: () => import("@/views/demo/table/vxe-table/index.vue"),
         name: "VxeTable",
         meta: {
           title: "Vxe Table",
@@ -150,7 +150,7 @@ export const demoRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: "menu1",
-        component: () => import("@/views/menu/menu1/index.vue"),
+        component: () => import("@/views/demo/menu/menu1/index.vue"),
         redirect: "/menu/menu1/menu1-1",
         name: "Menu1",
         meta: {
@@ -159,7 +159,7 @@ export const demoRoutes: RouteRecordRaw[] = [
         children: [
           {
             path: "menu1-1",
-            component: () => import("@/views/menu/menu1/menu1-1/index.vue"),
+            component: () => import("@/views/demo/menu/menu1/menu1-1/index.vue"),
             name: "Menu1-1",
             meta: {
               title: "menu1-1",
@@ -168,7 +168,7 @@ export const demoRoutes: RouteRecordRaw[] = [
           },
           {
             path: "menu1-2",
-            component: () => import("@/views/menu/menu1/menu1-2/index.vue"),
+            component: () => import("@/views/demo/menu/menu1/menu1-2/index.vue"),
             redirect: "/menu/menu1/menu1-2/menu1-2-1",
             name: "Menu1-2",
             meta: {
@@ -177,7 +177,7 @@ export const demoRoutes: RouteRecordRaw[] = [
             children: [
               {
                 path: "menu1-2-1",
-                component: () => import("@/views/menu/menu1/menu1-2/menu1-2-1/index.vue"),
+                component: () => import("@/views/demo/menu/menu1/menu1-2/menu1-2-1/index.vue"),
                 name: "Menu1-2-1",
                 meta: {
                   title: "menu1-2-1",
@@ -186,7 +186,7 @@ export const demoRoutes: RouteRecordRaw[] = [
               },
               {
                 path: "menu1-2-2",
-                component: () => import("@/views/menu/menu1/menu1-2/menu1-2-2/index.vue"),
+                component: () => import("@/views/demo/menu/menu1/menu1-2/menu1-2-2/index.vue"),
                 name: "Menu1-2-2",
                 meta: {
                   title: "menu1-2-2",
@@ -197,7 +197,7 @@ export const demoRoutes: RouteRecordRaw[] = [
           },
           {
             path: "menu1-3",
-            component: () => import("@/views/menu/menu1/menu1-3/index.vue"),
+            component: () => import("@/views/demo/menu/menu1/menu1-3/index.vue"),
             name: "Menu1-3",
             meta: {
               title: "menu1-3",
@@ -208,7 +208,7 @@ export const demoRoutes: RouteRecordRaw[] = [
       },
       {
         path: "menu2",
-        component: () => import("@/views/menu/menu2/index.vue"),
+        component: () => import("@/views/demo/menu/menu2/index.vue"),
         name: "Menu2",
         meta: {
           title: "menu2",
@@ -230,7 +230,7 @@ export const demoRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: "use-fetch-select",
-        component: () => import("@/views/hook-demo/use-fetch-select.vue"),
+        component: () => import("@/views/demo/hook-demo/use-fetch-select.vue"),
         name: "UseFetchSelect",
         meta: {
           title: "useFetchSelect"
@@ -238,7 +238,7 @@ export const demoRoutes: RouteRecordRaw[] = [
       },
       {
         path: "use-fullscreen-loading",
-        component: () => import("@/views/hook-demo/use-fullscreen-loading.vue"),
+        component: () => import("@/views/demo/hook-demo/use-fullscreen-loading.vue"),
         name: "UseFullscreenLoading",
         meta: {
           title: "useFullscreenLoading"
@@ -246,7 +246,7 @@ export const demoRoutes: RouteRecordRaw[] = [
       },
       {
         path: "use-watermark",
-        component: () => import("@/views/hook-demo/use-watermark.vue"),
+        component: () => import("@/views/demo/hook-demo/use-watermark.vue"),
         name: "UseWatermark",
         meta: {
           title: "useWatermark"
@@ -268,7 +268,7 @@ export const demoRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: "page",
-        component: () => import("@/views/permission/page.vue"),
+        component: () => import("@/views/demo/permission/page.vue"),
         name: "PagePermission",
         meta: {
           title: "页面权限",
@@ -277,7 +277,7 @@ export const demoRoutes: RouteRecordRaw[] = [
       },
       {
         path: "directive",
-        component: () => import("@/views/permission/directive.vue"),
+        component: () => import("@/views/demo/permission/directive.vue"),
         name: "DirectivePermission",
         meta: {
           title: "指令权限" // 如果未设置角色，则表示：该页面不需要权限，但会继承根路由的角色
