@@ -4,14 +4,14 @@ import { defineStore } from "pinia"
 import { useTagsViewStore } from "./tags-view"
 import { useSettingsStore } from "./settings"
 import { resetRouter } from "@/router"
-import { getUserInfoApi, loginApi, getCurrentUserMenus } from "@/api/login"
+import { getUserInfoApi, getUserMenus, loginApi } from "@/api/login"
 import { type LoginRequestData, MenuInfo, TokenInfo, UserInfo } from "@/api/login/types/login"
+// import routeSettings from "@/config/route"
 import { getToken, removeToken, setToken } from "@/utils/cache/local-storage"
 
 export const useUserStore = defineStore("user", () => {
   const token = ref<TokenInfo>(getToken() || {})
-  const user = ref<UserInfo>()
-  const menus = ref<MenuInfo>()
+  const user = ref<UserInfo>(getToken() || {})
 
   const tagsViewStore = useTagsViewStore()
   const settingsStore = useSettingsStore()
@@ -26,18 +26,6 @@ export const useUserStore = defineStore("user", () => {
   const getInfo = async () => {
     const { data } = await getUserInfoApi()
     user.value = data
-  }
-  /** 获取用户菜单并添加到路由中 */
-  const regMenus = async () => {
-    const { data } = await getCurrentUserMenus()
-    if (!data || data.length <= 0) {
-      throw new Error("当前用户不存在任何菜单")
-    }
-    console.log("regMenus", data)
-  }
-
-  const isInit = async () => {
-    return user.value && menus.value
   }
   /** 登出 */
   const logout = () => {
@@ -59,7 +47,7 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
-  return { token, user, login, getInfo, regMenus, logout, resetToken, isInit }
+  return { token, user, login, getInfo, logout, resetToken }
 })
 
 /** 在 setup 外使用 */

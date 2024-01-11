@@ -1,6 +1,7 @@
 import router from "@/router"
 import { useUserStoreHook } from "@/store/modules/user"
-import { ElNotification } from "element-plus"
+import { usePermissionStoreHook } from "@/store/modules/permission"
+import { ElMessage } from "element-plus"
 import { setRouteChange } from "@/hooks/useRouteListener"
 import { useTitle } from "@/hooks/useTitle"
 import { fixBlankPage } from "@/utils/fix-blank-page"
@@ -12,13 +13,12 @@ const { setTitle } = useTitle()
 NProgress.configure({ showSpinner: false })
 
 router.beforeEach(async (to, _from, next) => {
+  console.debug("beforeEach", to.fullPath, _from.path, next.name)
   fixBlankPage()
-  debugger
   NProgress.start()
   const userStore = useUserStoreHook()
-  // const permissionStore = usePermissionStoreHook()
+  const permissionStore = usePermissionStoreHook()
   const token = userStore.token.accessToken
-  debugger
   // 判断该用户是否已经登录
   if (!token) {
     // 如果在免登录的白名单中，则直接进入
@@ -37,29 +37,19 @@ router.beforeEach(async (to, _from, next) => {
     NProgress.done()
     return next({ path: "/" })
   }
-  debugger
-  const isInit = await userStore.isInit()
-  // 如果用户已经获得其权限角色
-  if (isInit) {
-    return next()
-  }
+
+  // 如果已经加载过路由，则直接跳过
+  if (permissionStore.routeLoaded()) return next()
+
   // 否则要重新获取权限角色
   try {
-    await userStore.getInfo()
-    await userStore.regMenus()
-    // 确保添加路由已完成
+    await permissionStore.loadRoute()
     // 设置 replace: true, 因此导航将不会留下历史记录
     next({ ...to, replace: true })
   } catch (err: any) {
     // 过程中发生任何错误，都直接重置 Token，并重定向到登录页面
     userStore.resetToken()
-
-    ElNotification({
-      title: "系统提示",
-      type: "error",
-      message: err.message || "路由守卫过程发生错误",
-      duration: 0
-    })
+    ElMessage.error(err.message || "路由守卫过程发生错误")
     NProgress.done()
     next("/login")
   }

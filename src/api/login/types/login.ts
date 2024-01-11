@@ -24,13 +24,14 @@ export interface UserInfo {
 }
 
 export interface MenuInfo {
-  id?: string
+  id: string
   name?: string
   type?: string
   code?: string
+  permission?: string
   parentId?: string
   sort?: number
-  path?: string
+  path: string
   component?: string
   icon?: string
   description?: string
