@@ -166,8 +166,8 @@ onMounted(() => {
   <div class="tags-view-container">
     <ScrollPane class="tags-view-wrapper" :tag-refs="tagRefs">
       <router-link
-        ref="tagRefs"
         v-for="tag in tagsViewStore.visitedViews"
+        ref="tagRefs"
         :key="tag.path"
         :class="{ active: isActive(tag) }"
         class="tags-view-item"
