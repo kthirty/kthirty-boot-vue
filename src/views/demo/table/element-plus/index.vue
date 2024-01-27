@@ -190,7 +190,7 @@ watch([() => paginationData.currentPage, () => paginationData.pageSize], getTabl
           :page-sizes="paginationData.pageSizes"
           :total="paginationData.total"
           :page-size="paginationData.pageSize"
-          :currentPage="paginationData.currentPage"
+          :current-page="paginationData.currentPage"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -200,8 +200,8 @@ watch([() => paginationData.currentPage, () => paginationData.pageSize], getTabl
     <el-dialog
       v-model="dialogVisible"
       :title="currentUpdateId === undefined ? '新增用户' : '修改用户'"
-      @close="resetForm"
       width="30%"
+      @close="resetForm"
     >
       <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px" label-position="left">
         <el-form-item prop="username" label="用户名">

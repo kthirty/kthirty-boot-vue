@@ -75,7 +75,7 @@ const handleContentLargeClick = () => {
           <!-- 内容区放大 -->
           <el-dropdown-item @click="handleContentLargeClick">{{ contentLargeTips }}</el-dropdown-item>
           <!-- 内容区全屏 -->
-          <el-dropdown-item @click="handleFullscreenClick" :disabled="isFullscreen">内容区全屏</el-dropdown-item>
+          <el-dropdown-item :disabled="isFullscreen" @click="handleFullscreenClick">内容区全屏</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>

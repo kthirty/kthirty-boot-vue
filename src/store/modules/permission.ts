@@ -8,30 +8,11 @@ import routeSettings from "@/config/route"
 import { MenuInfo } from "@/api/login/types/login"
 import { getUserMenus } from "@/api/login"
 
-const hasPermission = (roles: string[], route: RouteRecordRaw) => {
-  const routeRoles = route.meta?.roles
-  return routeRoles ? roles.some((role) => routeRoles.includes(role)) : true
-}
-
-const filterAsyncRoutes = (routes: RouteRecordRaw[], roles: string[]) => {
-  const res: RouteRecordRaw[] = []
-  routes.forEach((route) => {
-    const tempRoute = { ...route }
-    if (hasPermission(roles, tempRoute)) {
-      if (tempRoute.children) {
-        tempRoute.children = filterAsyncRoutes(tempRoute.children, roles)
-      }
-      res.push(tempRoute)
-    }
-  })
-  return res
-}
-
 export const usePermissionStore = defineStore("permission", () => {
   const routes = ref<RouteRecordRaw[]>([])
   const dynamicRoutes = ref<RouteRecordRaw[]>([])
   const menus = ref<MenuInfo[]>([])
-  const permissions = ref<Set<string>>(new Set())
+  const permissions = ref<string[]>([])
 
   const modules = import.meta.glob("../../views/*/*.vue")
   Object.keys(modules).forEach((key) => {
@@ -91,8 +72,8 @@ export const usePermissionStore = defineStore("permission", () => {
       throw new Error("当前用户没有任何可用菜单")
     }
     menus.value = data
-    permissions.value.clear()
-    data.filter((it) => it.permission).forEach((it) => permissions.value.add(it.permission || ""))
+    permissions.value = []
+    data.filter((it) => it.permission).forEach((it) => permissions.value.push(it.permission || ""))
     console.log("拥有的权限", permissions.value)
     const accessedRoutes = menuToRoute(data, "0")
     const rootRouter: RouteRecordRaw[] = []

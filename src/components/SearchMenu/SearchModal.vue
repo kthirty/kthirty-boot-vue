@@ -167,19 +167,19 @@ const handleReleaseUpOrDown = () => {
 <template>
   <el-dialog
     v-model="modalVisible"
+    :before-close="handleClose"
+    :width="modalWidth"
+    top="5vh"
+    class="search-modal__private"
+    append-to-body
     @opened="inputRef?.focus()"
     @closed="inputRef?.blur()"
     @keydown.up="handleUp"
     @keydown.down="handleDown"
     @keydown.enter="handleEnter"
     @keyup.up.down="handleReleaseUpOrDown"
-    :before-close="handleClose"
-    :width="modalWidth"
-    top="5vh"
-    class="search-modal__private"
-    append-to-body
   >
-    <el-input ref="inputRef" v-model="keyword" @input="handleSearch" placeholder="搜索菜单" size="large" clearable>
+    <el-input ref="inputRef" v-model="keyword" placeholder="搜索菜单" size="large" clearable @input="handleSearch">
       <template #prefix>
         <SvgIcon name="search" />
       </template>
@@ -192,7 +192,7 @@ const handleReleaseUpOrDown = () => {
           ref="searchResultRef"
           v-model="activeRouteName"
           :list="resultList"
-          :isPressUpOrDown="isPressUpOrDown"
+          :is-press-up-or-down="isPressUpOrDown"
           @click="handleEnter"
         />
       </el-scrollbar>
