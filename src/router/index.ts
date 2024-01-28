@@ -309,7 +309,7 @@ export function resetRouter() {
   try {
     router.getRoutes().forEach((route) => {
       const { name, meta } = route
-      if (name && meta.roles?.length) {
+      if (name) {
         router.hasRoute(name) && router.removeRoute(name)
       }
     })

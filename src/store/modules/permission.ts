@@ -7,6 +7,7 @@ import { flatMultiLevelRoutes } from "@/router/helper"
 import routeSettings from "@/config/route"
 import { MenuInfo } from "@/api/login/types/login"
 import { getUserMenus } from "@/api/login"
+import Layout from "@/layouts/index.vue"
 
 export const usePermissionStore = defineStore("permission", () => {
   const routes = ref<RouteRecordRaw[]>([])
@@ -14,12 +15,16 @@ export const usePermissionStore = defineStore("permission", () => {
   const menus = ref<MenuInfo[]>([])
   const permissions = ref<string[]>([])
 
-  const modules = import.meta.glob("../../views/*/*.vue")
-  Object.keys(modules).forEach((key) => {
-    modules[key.replace("../../views", "")] = modules[key]
+  const module: Record<string, Function> = {}
+  const views = import.meta.glob("../../views/**/*.vue")
+  Object.keys(views).forEach((key) => {
+    module[key.replace("../../views", "")] = views[key]
   })
-  modules["layout"] = () => import("@/layouts/index.vue")
-  console.log("modules", modules)
+  const layouts = import.meta.glob("../../layouts/index.vue")
+  Object.keys(layouts).forEach((key) => {
+    module[key.replace("../..", "")] = layouts[key]
+  })
+  console.debug("module", module)
   /**
    * 菜单转route
    * @param menus 所有菜单
@@ -33,17 +38,29 @@ export const usePermissionStore = defineStore("permission", () => {
         const child = menuToRoute(menus, it.id)
         const route: RouteRecordRaw = {
           path: it.path,
-          component: () => modules[it.component || "layout"](),
+          component: () => module[it.component || "/layouts/index.vue"](),
           name: it.code,
-          meta: {
-            type: "async",
-            title: it.name,
-            svgIcon: it.icon || "menu"
-          },
+          meta: getRouteMeta(it),
           children: child.length > 0 ? child : undefined
         }
         return route
       })
+  }
+  const getRouteMeta = (it: MenuInfo) => {
+    const res: any = {
+      type: "async",
+      title: it.name,
+      keepAlive: true
+    }
+    // 菜单默认
+    if (it.icon?.startsWith("el-")) {
+      res.elIcon = it.icon.replace("el-", "")
+    } else if (it.icon) {
+      res.svgIcon = it.icon
+    } else if (it.parentId === "0") {
+      res.elIcon = "Menu"
+    }
+    return res
   }
   const getRootRouter = (accessedRoutes: RouteRecordRaw[]): RouteRecordRaw[] => {
     const arr: RouteRecordRaw[] = []
@@ -80,7 +97,6 @@ export const usePermissionStore = defineStore("permission", () => {
     if (!data.some((it) => it.path === "/")) {
       rootRouter.push(...getRootRouter(accessedRoutes))
     }
-    console.log("rootRouter", rootRouter)
     dynamicRoutes.value = routeSettings.thirdLevelRouteCache ? flatMultiLevelRoutes(accessedRoutes) : accessedRoutes
     routes.value = constantRoutes.concat(demoRoutes).concat(accessedRoutes).concat(rootRouter).concat(errorPageRouter)
     resetRouter()

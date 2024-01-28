@@ -19,10 +19,6 @@ declare module "vue-router" {
      */
     hidden?: boolean
     /**
-     * 设置该路由进入的权限，支持多个权限叠加
-     */
-    roles?: string[]
-    /**
      * 默认 true，如果设置为 false，则不会在面包屑中显示
      */
     breadcrumb?: boolean

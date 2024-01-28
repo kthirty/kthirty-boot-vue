@@ -5,8 +5,6 @@ declare interface ImportMetaEnv {
   readonly VITE_ROUTER_HISTORY: "hash" | "html5"
   readonly VITE_PUBLIC_PATH: string
 }
-declare module "@smallwei/avue"
-declare module "@smallwei/avue/*"
 
 interface ImportMeta {
   readonly env: ImportMetaEnv
