@@ -51,40 +51,41 @@ function createService() {
     (error) => {
       // status 是 HTTP 状态码
       const status = get(error, "response.status")
+      const message = get(error, "response.data.message")
       switch (status) {
         case 400:
-          error.message = "请求错误"
+          error.message = message || "请求错误"
           break
         case 401:
           // Token 过期时
           logout()
           break
         case 403:
-          error.message = "拒绝访问"
+          error.message = message || "拒绝访问"
           break
         case 404:
-          error.message = "请求地址出错"
+          error.message = message || "请求地址出错"
           break
         case 408:
-          error.message = "请求超时"
+          error.message = message || "请求超时"
           break
         case 500:
-          error.message = "服务器内部错误"
+          error.message = message || "服务器内部错误"
           break
         case 501:
-          error.message = "服务未实现"
+          error.message = message || "服务未实现"
           break
         case 502:
-          error.message = "网关错误"
+          error.message = message || "网关错误"
           break
         case 503:
-          error.message = "服务不可用"
+          error.message = message || "服务不可用"
           break
         case 504:
-          error.message = "网关超时"
+          error.message = message || "网关超时"
           break
         case 505:
-          error.message = "HTTP 版本不受支持"
+          error.message = message || "HTTP 版本不受支持"
           break
         default:
           break

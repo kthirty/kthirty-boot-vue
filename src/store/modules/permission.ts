@@ -38,7 +38,14 @@ export const usePermissionStore = defineStore("permission", () => {
         const child = menuToRoute(menus, it.id)
         const route: RouteRecordRaw = {
           path: it.path,
-          component: () => module[it.component || "/layouts/index.vue"](),
+          component: () => {
+            if (it.component && module[it.component]) {
+              return module[it.component]()
+            } else {
+              console.error("not found component", it.component)
+              return module["/layouts/index.vue"]()
+            }
+          },
           name: it.code,
           meta: getRouteMeta(it),
           children: child.length > 0 ? child : undefined

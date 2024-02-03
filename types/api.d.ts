@@ -5,3 +5,15 @@ interface ApiResponseData<T> {
   message: string
   success: boolean
 }
+interface ApiResponsePageData<T> {
+  code: string
+  data: {
+    records: T[]
+    pageNumber: number
+    pageSize: number
+    totalRow: number
+    totalPage: number
+  }
+  message: string
+  success: boolean
+}
