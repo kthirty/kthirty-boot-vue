@@ -1,5 +1,5 @@
 <template>
-  <vxe-curd ref="curdRef" :columns="columns" :api="api" :form-items="items">
+  <vxe-curd ref="curdRef" :columns="columns" :api="api" :search-items="items">
     <template #operate="{ row }">
       {{ row.id }}
     </template>
@@ -39,6 +39,6 @@ const items = reactive([
 const curdRef = ref(null)
 
 onMounted(() => {
-  console.log("curdRef", curdRef.value.demoFun())
+  console.log("curdRef", curdRef.value)
 })
 </script>

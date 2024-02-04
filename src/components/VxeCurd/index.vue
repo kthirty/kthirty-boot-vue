@@ -5,16 +5,26 @@
         <slot :name="name" v-bind="data" />
       </template>
     </vxe-grid>
-    <vxe-modal>
-      <vxe-form />
+    <vxe-modal ref="modalDom" v-bind="modalOpt">
+      <vxe-form ref="formDom" v-bind="formOpt" />
     </vxe-modal>
   </div>
 </template>
 <script lang="ts" setup>
-import { VxeFormItemProps, VxeGridProps, VxeTableDataRow, VxeTableDefines } from "vxe-table"
-import { reactive } from "vue"
+import {
+  type VxeFormInstance,
+  VxeFormItemProps,
+  type VxeFormProps,
+  VxeGridProps,
+  type VxeModalInstance,
+  type VxeModalProps,
+  VxeTableDataRow,
+  VxeTableDefines
+} from "vxe-table"
+import { reactive, ref } from "vue"
 import { request } from "@/utils/service"
-import { isString, startsWith } from "lodash-es"
+import { type VxeFormPropTypes } from "vxe-table/types/form"
+import { defaultSearchBtn } from "@/components/VxeCurd/helper"
 
 defineOptions({ name: "vxe-curd" })
 
@@ -24,7 +34,7 @@ interface Api {
 }
 
 const props = defineProps({
-  formItems: {
+  searchItems: {
     type: Array as () => VxeFormItemProps[],
     required: true
   },
@@ -35,15 +45,23 @@ const props = defineProps({
   columns: {
     type: Array as () => VxeTableDefines.ColumnOptions<VxeTableDataRow>[],
     required: true
+  },
+  formItems: {
+    type: Array as () => VxeFormItemProps[]
+  },
+  formRules: {
+    type: Object as () => VxeFormPropTypes.Rules
   }
 })
+
 const gridOpt: VxeGridProps = reactive({
   loading: true,
   formConfig: {
-    items: props.formItems
+    items: [...props.searchItems, defaultSearchBtn]
   },
   toolbarConfig: {
-    refresh: true
+    refresh: true,
+    custom: true
   },
   pagerConfig: {
     enabled: true
@@ -65,11 +83,10 @@ const gridOpt: VxeGridProps = reactive({
           request({
             url: `${props.api.query}`,
             method: "GET",
-            data: { ...page, ...form }
+            params: { ...page, ...form }
           })
             .then((res: any) => {
               gridOpt.loading = false
-              console.log("res.data", res.data)
               resolve(res.data)
             })
             .catch((err: Error) => {
@@ -81,10 +98,31 @@ const gridOpt: VxeGridProps = reactive({
     }
   }
 })
-const demoFun = () => {
-  console.log("11234")
-}
+
+const modalDom = ref<VxeModalInstance>()
+const modalOpt: VxeModalProps = reactive({
+  title: "操作",
+  showClose: true,
+  escClosable: true,
+  maskClosable: true,
+  beforeHideMethod: () => {
+    formDom.value?.clearValidate()
+    return Promise.resolve()
+  }
+})
+
+const formDom = ref<VxeFormInstance>()
+const formOpt: VxeFormProps = reactive({
+  span: 24,
+  titleWidth: "100px",
+  loading: false,
+  titleColon: false,
+  data: {},
+  items: props.formItems,
+  rules: props.formRules
+})
+
 defineExpose({
-  demoFun
+  getModalDom: () => modalDom
 })
 </script>
