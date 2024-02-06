@@ -34,8 +34,9 @@ export const usePermissionStore = defineStore("permission", () => {
   const menuToRoute = (menus: MenuInfo[], parentId: string): RouteRecordRaw[] => {
     return menus
       .filter((it) => it.parentId === parentId && it.path)
-      .map((it) => {
-        const child = menuToRoute(menus, it.id)
+      .sort((it) => it.sort || 0)
+      .map((it): RouteRecordRaw => {
+        const child = menuToRoute(menus, it.id) || {}
         const route: RouteRecordRaw = {
           path: it.path,
           component: () => {
@@ -48,7 +49,10 @@ export const usePermissionStore = defineStore("permission", () => {
           },
           name: it.code,
           meta: getRouteMeta(it),
-          children: child.length > 0 ? child : undefined
+          children: child && child.length > 0 ? child : undefined
+        }
+        if ((!it.component || it.component == "/layouts/index.vue") && child && child.length > 0) {
+          route.redirect = child[0].path
         }
         return route
       })
@@ -111,7 +115,6 @@ export const usePermissionStore = defineStore("permission", () => {
     console.log("加载路由，所有路由", routes.value)
   }
   const routeLoaded = () => menus.value.length > 0
-
   return { routes, dynamicRoutes, loadRoute, routeLoaded, permissions }
 })
 
