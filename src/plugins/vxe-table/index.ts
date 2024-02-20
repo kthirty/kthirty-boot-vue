@@ -27,15 +27,55 @@ VXETable.setup({
     emptyText: "暂无数据",
     rowConfig: {
       isHover: true,
-      isCurrent: true
+      isCurrent: true,
+      keyField: "_VXE_ID"
     },
     columnConfig: {
       resizable: false
     },
     align: "center",
-    headerAlign: "center",
-    /** 行数据的唯一主键字段名 */
-    rowId: "_VXE_ID"
+    headerAlign: "center"
+  },
+  grid: {
+    loading: true,
+    border: true,
+    showFooter: true,
+    pagerConfig: {
+      enabled: true
+    },
+    toolbarConfig: {
+      refresh: true, // 显示刷新按钮
+      import: true, // 显示导入按钮
+      export: true, // 显示导出按钮
+      print: true, // 显示打印按钮
+      zoom: true, // 显示全屏按钮
+      custom: true // 显示自定义列按钮
+    },
+    printConfig: {},
+    columns: [],
+    treeConfig: {
+      transform: false,
+      rowField: "id",
+      parentField: "parentId"
+      //childrenField: "children"
+    },
+    footerMethod: () => {
+      return []
+    },
+    rowConfig: {
+      isCurrent: false,
+      isHover: true
+    },
+    proxyConfig: {
+      seq: true,
+      form: true,
+      autoload: true,
+      props: {
+        result: "records",
+        total: "totalRow",
+        message: ""
+      }
+    }
   },
   pager: {
     // size: "medium",
@@ -43,12 +83,15 @@ VXETable.setup({
     perfect: false,
     pageSize: 10,
     pagerCount: 7,
-    pageSizes: [10, 20, 50],
+    pageSizes: [10, 20, 50, 100, 300, 500, 1000],
     layouts: ["Total", "PrevJump", "PrevPage", "Number", "NextPage", "NextJump", "Sizes", "FullJump"]
   },
   modal: {
+    escClosable: true,
+    showClose: true,
+    showZoom: true,
     minWidth: 500,
-    minHeight: 400,
+    height: 400,
     lockView: true,
     mask: true,
     // duration: 3000,
@@ -56,7 +99,7 @@ VXETable.setup({
     dblclickZoom: false,
     showTitleOverflow: true,
     transfer: true,
-    draggable: false
+    draggable: true
   }
 })
 
