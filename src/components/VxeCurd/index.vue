@@ -14,35 +14,22 @@
             <slot :name="name" v-bind="{ ...(data || {}), crudStore }" />
           </template>
         </template>
+        <template v-if="!solts['form-action']" #form-action><DefaultFormAction :store="crudStore" /></template>
       </vxe-form>
     </vxe-modal>
   </div>
 </template>
 <script lang="ts" setup>
-import type {
-  VxeFormInstance,
-  VxeFormItemProps,
-  VxeFormProps,
-  VxeFormPropTypes,
-  VxeGridProps,
-  VxeModalInstance,
-  VxeModalProps,
-  VxeTableDefines
-} from "vxe-table"
+import type { VxeFormInstance, VxeFormProps, VxeGridProps, VxeModalInstance, VxeModalProps } from "vxe-table"
 import VXETable, { VxeGridInstance } from "vxe-table"
 import { nextTick, reactive, ref, useSlots } from "vue"
-import {
-  afterDelete,
-  afterInsert,
-  Api,
-  defaultSearchBtn,
-  VxeCrudOptions,
-  VxeCrudRegister,
-  VxeCurdStore
-} from "@/components/VxeCurd/helper"
+import { afterDelete, afterInsert, defaultSearchBtn, initGridOpt } from "@/components/VxeCurd/helper"
+import { VxeCrudHolder, VxeCurdStore, VxeCrudOptions, CrudItem } from "@/components/VxeCurd/types"
 import { ElMessage, ElNotification } from "element-plus"
 import { request } from "@/utils/service"
 import { startsWith, get, merge, set } from "lodash-es"
+import DefaultFormAction from "./default/DefaultFormAction.vue"
+import type { Api } from "@/components/VxeCurd/types"
 
 defineOptions({ name: "vxe-curd" })
 const emit = defineEmits(["register"])
@@ -52,32 +39,16 @@ const modalDom = ref<VxeModalInstance>()
 const formDom = ref<VxeFormInstance>()
 
 const props = defineProps({
-  options: { type: Object as () => VxeCrudOptions, required: true }
+  options: { type: [VxeCrudOptions, Array as () => CrudItem[]], required: true },
+  api: { type: Object as () => Api, required: true }
 })
 
-const gridConfig = props.options.grid || {}
-// 添加搜索按钮
-set(gridConfig, "pagerConfig", {})
-gridConfig?.formConfig?.items && gridConfig?.formConfig?.items.push(defaultSearchBtn)
-// 设置工具栏插槽
-solts["toolbar-btns"] && set(gridConfig, "toolbarConfig.slots.buttons", "toolbar-btns")
-// 设置列表操作插槽
-const defaultActionSlot = { title: "操作", slots: { default: "action" } }
-solts["action"] && set(gridConfig, "columns", [...get(gridConfig, "columns", []), defaultActionSlot])
-// 设置请求代理
-const queryFunc = ({ page, form }: { page: any; form: any }) => {
-  return new Promise((resolve) => {
-    request({ url: props.options.api.query, method: "GET", params: { ...page, ...form } })
-      .then((res: any) => resolve(res.data))
-      .catch((err: Error) => console.error("loading error", err))
-  })
-}
-set(gridConfig, "proxyConfig.ajax.query", queryFunc)
-const gridOpt: VxeGridProps = reactive(gridConfig)
+const gridOpt: VxeGridProps = reactive(initGridOpt(props.options, props.api, solts))
 const modalOpt: VxeModalProps = reactive(
-  merge(props.options.modal || {}, {
+  merge(props.options?.modal || {}, {
     title: "操作",
-    fullscreen: (props.formItems?.length || 0) >= 10,
+    destroyOnClose: true,
+    fullscreen: (props.options?.form?.items?.length || 0) >= 10,
     transfer: false,
     beforeHideMethod: () => {
       formDom.value?.clearValidate()
@@ -86,7 +57,7 @@ const modalOpt: VxeModalProps = reactive(
   })
 )
 const formOpt: VxeFormProps = reactive(
-  merge(props.options.form || {}, {
+  merge(props.options?.form || {}, {
     span: 24,
     titleWidth: "100px",
     loading: false,
@@ -94,12 +65,12 @@ const formOpt: VxeFormProps = reactive(
     data: {},
     items: [
       ...(props.options?.form?.items || []),
-      solts["form-action"] ? { itemRender: {}, align: "right", slots: { default: "form-action" } } : {}
+      { itemRender: {}, align: "right", slots: { default: "form-action" } }
     ]
   })
 )
-
-const registerParam: VxeCrudRegister = {
+// register 回调
+const registerParam: VxeCrudHolder = {
   gridOpt,
   gridDom,
   modalOpt,
@@ -108,7 +79,7 @@ const registerParam: VxeCrudRegister = {
   formDom
 }
 emit("register", registerParam)
-
+// expose
 const crudStore: VxeCurdStore = reactive({
   form: {},
   isUpdate: false,
@@ -116,9 +87,6 @@ const crudStore: VxeCurdStore = reactive({
     crudStore.isUpdate = !!row?.id
     formOpt.data = row || {}
     modalDom.value?.open()
-    nextTick(() => {
-      formDom.value?.clearValidate()
-    })
   },
   closeModal: () => {
     modalDom.value?.close()
@@ -154,7 +122,10 @@ const crudStore: VxeCurdStore = reactive({
   onDelete: async (row: any) => {
     const type = await VXETable.modal.confirm("您确定要删除吗？")
     if (type === "confirm") {
-      const res: ApiResponseData<any> = await request({ url: `${props.api.delete}/${row["id"]}`, method: "DELETE" })
+      const res: ApiResponseData<any> = await request({
+        url: `${props.api.delete}/${row["id"]}`,
+        method: "DELETE"
+      })
       if (res?.success) {
         ElNotification({
           title: "系统提示",

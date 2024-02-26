@@ -1,43 +1,10 @@
 import { VxeFormItemProps } from "vxe-table/types/form-item"
-import { Ref, ref } from "vue"
-import {
-  VxeFormInstance,
-  VxeFormProps,
-  VxeGridInstance,
-  VxeGridProps,
-  VxeModalInstance,
-  VxeModalProps
-} from "vxe-table"
+import { Ref, Slot } from "vue"
+import { VxeGridInstance, VxeGridProps } from "vxe-table"
+import { Api, CrudItem, VxeCrudOptions } from "@/components/VxeCurd/types"
+import { get, set } from "lodash-es"
 import { request } from "@/utils/service"
-import { merge } from "lodash-es"
-export interface Api {
-  query: string
-  insert: string
-  update: string
-  delete: string
-}
-export interface VxeCrudRegister {
-  gridOpt: VxeGridProps
-  gridDom: Ref<VxeGridInstance | undefined>
-  modalOpt: VxeModalProps
-  modalDom: Ref<VxeModalInstance | undefined>
-  formOpt: VxeFormProps
-  formDom: Ref<VxeFormInstance | undefined>
-}
-export interface VxeCrudOptions {
-  grid?: VxeGridProps
-  modal?: VxeModalProps
-  form?: VxeFormProps
-  api: Api
-}
-export interface VxeCurdStore {
-  form: object
-  showModal: Function
-  closeModal: Function
-  onSubmitForm: Function
-  onDelete: Function
-  isUpdate: boolean
-}
+
 export const defaultSearchBtn: VxeFormItemProps = {
   itemRender: {
     name: "$buttons",
@@ -68,4 +35,61 @@ export const afterDelete = (xGridDom: Ref<VxeGridInstance | undefined>) => {
   if (pager && pager.currentPage > 1 && tableData.length === 1) {
     --pager.currentPage
   }
+}
+
+export const defaultRender: Map<String, Object> = new Map<String, Object>()
+defaultRender.set("input", { itemRender: { name: "$input", props: { placeholder: "请输入" } } })
+
+function handleExtra(info: string | Function | Object | undefined): any {
+  const type = typeof info
+  if (!info) {
+    return {}
+  }
+  switch (type) {
+    case "string":
+      return defaultRender.get(info.toString())
+    case "object":
+      return info
+    case "function":
+      return (info as Function)()
+    default:
+      return {}
+  }
+}
+
+export function initGridOpt(
+  opt: VxeCrudOptions | CrudItem[],
+  api: Api,
+  solts: Record<string, Function | undefined>
+): VxeGridProps | void {
+  if (Array.isArray(opt)) {
+    const defaultOpt = getDefaultGridOpt(solts, undefined, api)
+    opt.map((it) => {
+      return {
+        field: it.field,
+        title: it.title,
+        ...handleExtra(it.search)
+      }
+    })
+  } else {
+    return getDefaultGridOpt(solts, opt?.grid, api)
+  }
+}
+
+function getDefaultGridOpt(solts: Record<string, Function | undefined>, grid: VxeGridProps | undefined, api: Api) {
+  const gridConfig = grid || {}
+  set(gridConfig, "pagerConfig", {})
+  gridConfig?.formConfig?.items?.push(defaultSearchBtn)
+  solts["toolbar-btns"] && set(gridConfig, "toolbarConfig.slots.buttons", "toolbar-btns")
+  const defaultActionSlot = { title: "操作", slots: { default: "action" } }
+  solts["action"] && set(gridConfig, "columns", [...get(gridConfig, "columns", []), defaultActionSlot])
+  const queryFunc = ({ page, form }: { page: any; form: any }) => {
+    return new Promise((resolve) => {
+      request({ url: api.query, method: "GET", params: { ...page, ...form } })
+        .then((res: any) => resolve(res.data))
+        .catch((err: Error) => console.error("loading error", err))
+    })
+  }
+  set(gridConfig, "proxyConfig.ajax.query", queryFunc)
+  return gridConfig
 }

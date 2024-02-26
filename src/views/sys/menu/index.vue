@@ -1,8 +1,8 @@
 <template>
   <vxe-curd
     ref="curdRef"
+    :api="api"
     :options="{
-      api: api,
       grid: {
         columns,
         formConfig: {
@@ -13,12 +13,8 @@
         items: formItems
       }
     }"
-    @register="registerGrid"
+    @register="register"
   >
-    <template #form-action="{ crudStore }">
-      <vxe-button type="submit" status="primary" content="提交" />
-      <vxe-button type="button" content="取消" @click="crudStore.closeModal" />
-    </template>
     <template #action="{ row, crudStore }">
       <vxe-button type="text" status="primary" @click="crudStore.showModal(row)" content="编辑" />
       <vxe-button type="text" status="danger" @click="crudStore.onDelete(row)" content="删除" />
@@ -39,8 +35,8 @@
 import VxeCurd from "@/components/VxeCurd/index.vue"
 import { onMounted, reactive, ref } from "vue"
 import { set } from "lodash-es"
-import { type Api, VxeCrudRegister, VxeCurdStore } from "@/components/VxeCurd/helper"
-const registerGrid = (opt: VxeCrudRegister) => set(opt.gridOpt, "treeConfig.transform", true)
+import { type Api, VxeCrudHolder, VxeCurdStore } from "@/components/VxeCurd/types"
+const register = (opt: VxeCrudHolder) => set(opt.gridOpt, "treeConfig.transform", true)
 const api: Api = { query: "/menu/page", insert: "/menu/save", update: "/menu/update", delete: "/menu/remove" }
 
 const columns = reactive([
