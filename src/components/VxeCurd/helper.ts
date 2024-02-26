@@ -64,12 +64,14 @@ export function initGridOpt(
 ): VxeGridProps | void {
   if (Array.isArray(opt)) {
     const defaultOpt = getDefaultGridOpt(solts, undefined, api)
-    opt.map((it) => {
-      return {
-        field: it.field,
-        title: it.title,
-        ...handleExtra(it.search)
-      }
+    const searchItem = opt.map((it) => {
+      return { field: it.field, title: it.title, ...handleExtra(it.search) }
+    })
+    const columns = opt.map((it) => {
+      return { field: it.field, title: it.title, ...handleExtra(it.column) }
+    })
+    const formItems = opt.map((it) => {
+      return { field: it.field, title: it.title, ...handleExtra(it.form) }
     })
   } else {
     return getDefaultGridOpt(solts, opt?.grid, api)
