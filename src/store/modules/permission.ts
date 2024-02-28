@@ -1,7 +1,7 @@
 import { ref } from "vue"
 import store from "@/store"
 import { defineStore } from "pinia"
-import { type RouteRecordRaw } from "vue-router"
+import { type RouteRecordRaw, useRouter } from "vue-router"
 import router, { constantRoutes, demoRoutes, errorPageRouter, resetRouter } from "@/router"
 import { flatMultiLevelRoutes } from "@/router/helper"
 import routeSettings from "@/config/route"
@@ -24,7 +24,6 @@ export const usePermissionStore = defineStore("permission", () => {
   Object.keys(layouts).forEach((key) => {
     module[key.replace("../..", "")] = layouts[key]
   })
-  console.debug("module", module)
   /**
    * 菜单转route
    * @param menus 所有菜单
@@ -37,16 +36,11 @@ export const usePermissionStore = defineStore("permission", () => {
       .sort((it) => it.sort || 0)
       .map((it): RouteRecordRaw => {
         const child = menuToRoute(menus, it.id) || {}
+        const moduleFunction =
+          it.component && module[it.component] ? module[it.component]() : module["/layouts/index.vue"]()
         const route: RouteRecordRaw = {
           path: it.path,
-          component: () => {
-            if (it.component && module[it.component]) {
-              return module[it.component]()
-            } else {
-              console.error("not found component", it.component)
-              return module["/layouts/index.vue"]()
-            }
-          },
+          component: () => moduleFunction,
           name: it.code,
           meta: getRouteMeta(it),
           children: child && child.length > 0 ? child : undefined
@@ -102,17 +96,16 @@ export const usePermissionStore = defineStore("permission", () => {
     menus.value = data
     permissions.value = []
     data.filter((it) => it.permission).forEach((it) => permissions.value.push(it.permission || ""))
-    console.log("拥有的权限", permissions.value)
     const accessedRoutes = menuToRoute(data, "0")
     const rootRouter: RouteRecordRaw[] = []
     if (!data.some((it) => it.path === "/")) {
       rootRouter.push(...getRootRouter(accessedRoutes))
     }
     dynamicRoutes.value = routeSettings.thirdLevelRouteCache ? flatMultiLevelRoutes(accessedRoutes) : accessedRoutes
-    routes.value = constantRoutes.concat(demoRoutes).concat(accessedRoutes).concat(rootRouter).concat(errorPageRouter)
+    routes.value = [...constantRoutes, ...demoRoutes, ...accessedRoutes, ...rootRouter, ...errorPageRouter]
     resetRouter()
-    routes.value.forEach((it) => router.addRoute(it))
-    console.log("加载路由，所有路由", routes.value)
+    routes.value.filter((it) => it.name).forEach((it) => router.addRoute(it))
+    console.log("all permissions", permissions.value, "\n", "all routers", routes.value, "\n", "module", module)
   }
   const routeLoaded = () => menus.value.length > 0
   return { routes, dynamicRoutes, loadRoute, routeLoaded, permissions }

@@ -1,33 +1,17 @@
 <template>
-  <vxe-curd
-    ref="curdRef"
-    :api="api"
-    :options="{
-      grid: {
-        columns,
-        formConfig: {
-          items: items
-        }
-      },
-      form: {
-        items: formItems
-      }
-    }"
-    @register="register"
-  >
+  <vxe-curd ref="curdRef" :api="api" :options="opt" @register="register">
     <template #action="{ row, crudStore }">
-      <vxe-button type="text" status="primary" @click="crudStore.showModal(row)" content="编辑" />
-      <vxe-button type="text" status="danger" @click="crudStore.onDelete(row)" content="删除" />
-      <vxe-button transfer type="text" content="更多">
-        <template #dropdowns>
-          <vxe-button type="text" content="下拉按钮1" />
-          <vxe-button type="text" content="下拉按钮2" />
-          <vxe-button type="text" content="下拉按钮3" />
-        </template>
-      </vxe-button>
+      <default-list-action :row="row" :store="crudStore" />
+      <vxe-button icon="vxe-icon-add" type="text" status="primary" @click="crudStore.showModal({ parentId: row.id })" />
+      <vxe-button
+        icon="vxe-icon-copy"
+        type="text"
+        status="primary"
+        @click="crudStore.showModal({ ...row, name: row.name + '副本', id: '' })"
+      />
     </template>
     <template #toolbar-btns="{ crudStore }">
-      <vxe-button @click="crudStore.showModal()" icon="vxe-icon-add" content="新增" />
+      <default-toolbar-btn :store="crudStore" />
     </template>
   </vxe-curd>
 </template>
@@ -35,27 +19,18 @@
 import VxeCurd from "@/components/VxeCurd/index.vue"
 import { onMounted, reactive, ref } from "vue"
 import { set } from "lodash-es"
-import { type Api, VxeCrudHolder, VxeCurdStore } from "@/components/VxeCurd/types"
+import { Api, CrudItem, VxeCrudHolder, VxeCurdStore } from "@/components/VxeCurd/types"
+import DefaultListAction from "@/components/VxeCurd/default/DefaultListAction.vue"
+import DefaultToolbarBtn from "@/components/VxeCurd/default/DefaultToolbarBtn.vue"
 const register = (opt: VxeCrudHolder) => set(opt.gridOpt, "treeConfig.transform", true)
-const api: Api = { query: "/menu/page", insert: "/menu/save", update: "/menu/update", delete: "/menu/remove" }
+const api: Api = new Api("/sys/menu")
 
-const columns = reactive([
-  { field: "code", title: "编码", treeNode: true },
-  { field: "name", title: "菜单名称" },
-  { field: "path", title: "请求地址" },
-  { field: "permission", title: "权限标识" },
-  { field: "component", title: "前端组件" }
-])
-const items = reactive([
-  { field: "name", title: "名称", itemRender: { name: "$input", props: { placeholder: "请输入" } } }
-])
-const formItems = [
-  { field: "name", title: "菜单名称", itemRender: { name: "$input", props: { placeholder: "请输入" } } },
-  { field: "component", title: "前端组件", itemRender: { name: "$input", props: { placeholder: "请输入" } } },
-  { field: "path", title: "请求地址", itemRender: { name: "$input", props: { placeholder: "请输入" } } },
-  { field: "icon", title: "图标", itemRender: { name: "$input", props: { placeholder: "请输入" } } },
-  { field: "description", title: "描述", itemRender: { name: "$input", props: { placeholder: "请输入" } } },
-  { field: "permission", title: "权限标识", itemRender: { name: "$input", props: { placeholder: "请输入" } } }
+const opt: CrudItem[] = [
+  { field: "code", title: "编码", column: { treeNode: true }, search: "$input" },
+  { field: "name", title: "菜单名称", column: true, search: "$input", form: "$input", formRules: { required: true } },
+  { field: "path", title: "请求地址", column: true, form: "$input", formRules: { required: true } },
+  { field: "permission", title: "权限标识", column: true, form: "$input", formRules: { required: true } },
+  { field: "component", title: "前端组件", column: true, form: "$input", formRules: { required: true } }
 ]
 
 const curdRef = ref<VxeCurdStore>()

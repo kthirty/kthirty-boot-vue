@@ -22,17 +22,18 @@
 <script lang="ts" setup>
 import type { VxeFormInstance, VxeFormProps, VxeGridProps, VxeModalInstance, VxeModalProps } from "vxe-table"
 import VXETable, { VxeGridInstance } from "vxe-table"
-import { nextTick, reactive, ref, useSlots } from "vue"
-import { afterDelete, afterInsert, defaultSearchBtn, initGridOpt } from "@/components/VxeCurd/helper"
+import { nextTick, reactive, ref, useSlots, watch, watchEffect } from "vue"
+import { afterDelete, afterInsert, initFormOpt, initGridOpt, initModalOpt } from "@/components/VxeCurd/helper"
 import { VxeCrudHolder, VxeCurdStore, VxeCrudOptions, CrudItem } from "@/components/VxeCurd/types"
 import { ElMessage, ElNotification } from "element-plus"
 import { request } from "@/utils/service"
 import { startsWith, get, merge, set } from "lodash-es"
 import DefaultFormAction from "./default/DefaultFormAction.vue"
 import type { Api } from "@/components/VxeCurd/types"
+import DefaultListAction from "@/components/VxeCurd/default/DefaultListAction.vue"
 
 defineOptions({ name: "vxe-curd" })
-const emit = defineEmits(["register"])
+const emit = defineEmits(["register", "formChange"])
 const solts = useSlots()
 const gridDom = ref<VxeGridInstance>()
 const modalDom = ref<VxeModalInstance>()
@@ -44,31 +45,8 @@ const props = defineProps({
 })
 
 const gridOpt: VxeGridProps = reactive(initGridOpt(props.options, props.api, solts))
-const modalOpt: VxeModalProps = reactive(
-  merge(props.options?.modal || {}, {
-    title: "操作",
-    destroyOnClose: true,
-    fullscreen: (props.options?.form?.items?.length || 0) >= 10,
-    transfer: false,
-    beforeHideMethod: () => {
-      formDom.value?.clearValidate()
-      return Promise.resolve()
-    }
-  })
-)
-const formOpt: VxeFormProps = reactive(
-  merge(props.options?.form || {}, {
-    span: 24,
-    titleWidth: "100px",
-    loading: false,
-    titleColon: false,
-    data: {},
-    items: [
-      ...(props.options?.form?.items || []),
-      { itemRender: {}, align: "right", slots: { default: "form-action" } }
-    ]
-  })
-)
+const modalOpt: VxeModalProps = reactive(initModalOpt(props.options))
+const formOpt: VxeFormProps = reactive(initFormOpt(props.options, solts))
 // register 回调
 const registerParam: VxeCrudHolder = {
   gridOpt,
@@ -78,15 +56,22 @@ const registerParam: VxeCrudHolder = {
   formOpt,
   formDom
 }
+watch(
+  () => formOpt.data,
+  (value, oldValue) => emit("formChange", value, oldValue),
+  { deep: true }
+)
+
 emit("register", registerParam)
 // expose
 const crudStore: VxeCurdStore = reactive({
-  form: {},
+  holder: registerParam,
   isUpdate: false,
-  showModal: (row?: any) => {
+  showModal: (row?: any, title?: string) => {
     crudStore.isUpdate = !!row?.id
-    formOpt.data = row || {}
-    modalDom.value?.open()
+    formOpt.data = row ? { ...row } : {}
+    modalDom?.value?.open()
+    title && (modalOpt.title = title)
   },
   closeModal: () => {
     modalDom.value?.close()
@@ -111,6 +96,7 @@ const crudStore: VxeCurdStore = reactive({
       if (res.success) {
         callback(crudStore.isUpdate)
       } else {
+        formOpt.loading = false
         ElNotification({
           title: "系统提示",
           message: "操作失败" + res.message,
@@ -122,10 +108,7 @@ const crudStore: VxeCurdStore = reactive({
   onDelete: async (row: any) => {
     const type = await VXETable.modal.confirm("您确定要删除吗？")
     if (type === "confirm") {
-      const res: ApiResponseData<any> = await request({
-        url: `${props.api.delete}/${row["id"]}`,
-        method: "DELETE"
-      })
+      const res: ApiResponseData<any> = await request({ url: `${props.api.delete}/${row["id"]}`, method: "DELETE" })
       if (res?.success) {
         ElNotification({
           title: "系统提示",

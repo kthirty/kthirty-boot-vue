@@ -297,7 +297,6 @@ export const errorPageRouter: RouteRecordRaw[] = [
     }
   }
 ]
-
 const router = createRouter({
   history,
   routes: routeSettings.thirdLevelRouteCache ? flatMultiLevelRoutes(constantRoutes) : constantRoutes

@@ -5,7 +5,7 @@ import { MenusResponseData } from "./types/login"
 /** 获取登录验证码 */
 export function getLoginCodeApi() {
   return request<Login.LoginCodeResponseData>({
-    url: "auth/code",
+    url: "sys/auth/code",
     method: "get"
   })
 }
@@ -13,7 +13,7 @@ export function getLoginCodeApi() {
 /** 登录并返回 Token */
 export function loginApi(data: Login.LoginRequestData) {
   return request<Login.LoginResponseData>({
-    url: "auth/token",
+    url: "sys/auth/token",
     method: "post",
     data
   })
@@ -22,7 +22,7 @@ export function loginApi(data: Login.LoginRequestData) {
 /** 获取用户详情 */
 export function getUserInfoApi() {
   return request<Login.UserInfoResponseData>({
-    url: "auth/info",
+    url: "sys/auth/info",
     method: "get"
   })
 }
@@ -32,7 +32,7 @@ export function getUserInfoApi() {
  */
 export function getUserMenus() {
   return request<Login.MenusResponseData>({
-    url: "auth/menus",
+    url: "sys/auth/menus",
     method: "get"
   })
 }
