@@ -3,7 +3,7 @@
     <vxe-grid ref="gridDom" v-bind="gridOpt">
       <template v-for="(slot, name) in $slots" v-slot:[name]="data">
         <template v-if="!startsWith(name.toString(), 'form')">
-          <slot :name="name" v-bind="{ ...(data || {}), crudStore }" />
+          <slot :name="name" v-bind="{ ...(data || {}), store: crudStore }" />
         </template>
       </template>
     </vxe-grid>
@@ -11,10 +11,9 @@
       <vxe-form ref="formDom" v-bind="formOpt" @submit="crudStore.onSubmitForm()">
         <template v-for="(slot, name) in $slots" v-slot:[name]="data">
           <template v-if="startsWith(name.toString(), 'form')">
-            <slot :name="name" v-bind="{ ...(data || {}), crudStore }" />
+            <slot :name="name" v-bind="{ ...(data || {}), store: crudStore }" />
           </template>
         </template>
-        <template v-if="!solts['form-action']" #form-action><DefaultFormAction :store="crudStore" /></template>
       </vxe-form>
     </vxe-modal>
   </div>
@@ -22,15 +21,21 @@
 <script lang="ts" setup>
 import type { VxeFormInstance, VxeFormProps, VxeGridProps, VxeModalInstance, VxeModalProps } from "vxe-table"
 import VXETable, { VxeGridInstance } from "vxe-table"
-import { nextTick, reactive, ref, useSlots, watch, watchEffect } from "vue"
-import { afterDelete, afterInsert, initFormOpt, initGridOpt, initModalOpt } from "@/components/VxeCurd/helper"
-import { VxeCrudHolder, VxeCurdStore, VxeCrudOptions, CrudItem } from "@/components/VxeCurd/types"
+import { reactive, ref, useSlots, watch } from "vue"
+import {
+  afterDelete,
+  afterInsert,
+  buildOpt,
+  setColumns,
+  setFormItem,
+  setFormRule,
+  setSearchItem
+} from "@/components/VxeCurd/helper"
+import type { Api } from "@/components/VxeCurd/types"
+import { CrudItem, VxeCrudHolder, VxeCrudOptions, VxeCurdStore } from "@/components/VxeCurd/types"
 import { ElMessage, ElNotification } from "element-plus"
 import { request } from "@/utils/service"
-import { startsWith, get, merge, set } from "lodash-es"
-import DefaultFormAction from "./default/DefaultFormAction.vue"
-import type { Api } from "@/components/VxeCurd/types"
-import DefaultListAction from "@/components/VxeCurd/default/DefaultListAction.vue"
+import { startsWith } from "lodash-es"
 
 defineOptions({ name: "vxe-curd" })
 const emit = defineEmits(["register", "formChange"])
@@ -40,13 +45,15 @@ const modalDom = ref<VxeModalInstance>()
 const formDom = ref<VxeFormInstance>()
 
 const props = defineProps({
-  options: { type: [VxeCrudOptions, Array as () => CrudItem[]], required: true },
-  api: { type: Object as () => Api, required: true }
+  items: { type: Array as () => CrudItem[], required: true },
+  api: { type: Object as () => Api, required: true },
+  option: { type: Object as () => VxeCrudOptions, required: false }
 })
+const buildOptRes = buildOpt(solts, props.items, props.api, props.option || {})
 
-const gridOpt: VxeGridProps = reactive(initGridOpt(props.options, props.api, solts))
-const modalOpt: VxeModalProps = reactive(initModalOpt(props.options))
-const formOpt: VxeFormProps = reactive(initFormOpt(props.options, solts))
+const gridOpt: VxeGridProps = reactive(buildOptRes.grid)
+const modalOpt: VxeModalProps = reactive(buildOptRes.modal)
+const formOpt: VxeFormProps = reactive(buildOptRes.form)
 // register 回调
 const registerParam: VxeCrudHolder = {
   gridOpt,
@@ -56,13 +63,26 @@ const registerParam: VxeCrudHolder = {
   formOpt,
   formDom
 }
+emit("register", registerParam)
+// 监听
 watch(
   () => formOpt.data,
   (value, oldValue) => emit("formChange", value, oldValue),
   { deep: true }
 )
+watch(
+  () => {
+    return { items: props.items, option: props.option }
+  },
+  (val, oldValue) => {
+    setColumns(gridOpt, val.items, val.option || {})
+    setSearchItem(gridOpt, val.items)
+    setFormItem(formOpt, val.items, val.option || {})
+    setFormRule(formOpt, val.items)
+  },
+  { deep: true }
+)
 
-emit("register", registerParam)
 // expose
 const crudStore: VxeCurdStore = reactive({
   holder: registerParam,

@@ -1,4 +1,5 @@
 import {
+  VxeButtonPropTypes,
   VxeFormDefines,
   VxeFormInstance,
   VxeFormProps,
@@ -8,6 +9,7 @@ import {
   VxeModalProps
 } from "vxe-table"
 import { Ref } from "vue"
+import { VxeButtonEventProps, type VxeButtonProps } from "vxe-table/types/button"
 
 export class Api {
   query: string
@@ -29,11 +31,23 @@ export class VxeCrudHolder {
   formOpt?: VxeFormProps
   formDom?: Ref<VxeFormInstance | undefined>
 }
-export class VxeCrudOptions {
-  grid?: VxeGridProps
-  modal?: VxeModalProps
-  form?: VxeFormProps
+export interface VxeOriginOptions {
+  grid: VxeGridProps
+  modal: VxeModalProps
+  form: VxeFormProps
 }
+export class VxeCrudOptions {
+  action?: VxeCrudButtonProps[]
+  formAction?: VxeCrudButtonProps[]
+  toolbarButtons?: VxeCrudButtonProps[]
+}
+export interface VxeCrudButtonProps extends VxeButtonProps, VxeButtonEventProps {
+  /**
+   * 显示条件
+   */
+  condition?: Function
+}
+
 export class CrudItem {
   field?: string
   title?: string
