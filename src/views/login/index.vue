@@ -40,7 +40,6 @@ const handleLogin = () => {
       useUserStore()
         .login(loginFormData)
         .then(() => {
-          console.log("login success")
           router.push({ path: "/" })
         })
         .catch(() => {

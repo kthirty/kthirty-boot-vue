@@ -10,6 +10,9 @@ VXETable.setup({
   version: 0,
   /** 全局 loading 提示内容，如果为 null 则不显示文本 */
   loadingText: null,
+  input: {
+    clearable: true
+  },
   table: {
     showHeader: true,
     showOverflow: "tooltip",

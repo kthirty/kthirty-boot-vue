@@ -3,15 +3,15 @@
     <vxe-grid ref="gridDom" v-bind="gridOpt">
       <template v-for="(slot, name) in $slots" v-slot:[name]="data">
         <template v-if="!startsWith(name.toString(), 'form')">
-          <slot :name="name" v-bind="{ ...(data || {}), store: crudStore }" />
+          <slot :name="name" v-bind="{ ...(data || {}), store: store }" />
         </template>
       </template>
     </vxe-grid>
     <vxe-modal ref="modalDom" v-bind="modalOpt">
-      <vxe-form ref="formDom" v-bind="formOpt" @submit="crudStore.onSubmitForm()">
+      <vxe-form ref="formDom" v-bind="formOpt" @submit="store.onSubmitForm()">
         <template v-for="(slot, name) in $slots" v-slot:[name]="data">
           <template v-if="startsWith(name.toString(), 'form')">
-            <slot :name="name" v-bind="{ ...(data || {}), store: crudStore }" />
+            <slot :name="name" v-bind="{ ...(data || {}), store: store }" />
           </template>
         </template>
       </vxe-form>
@@ -21,7 +21,7 @@
 <script lang="ts" setup>
 import type { VxeFormInstance, VxeFormProps, VxeGridProps, VxeModalInstance, VxeModalProps } from "vxe-table"
 import VXETable, { VxeGridInstance } from "vxe-table"
-import { reactive, ref, useSlots, watch } from "vue"
+import { reactive, Ref, ref, useSlots, watch } from "vue"
 import {
   afterDelete,
   afterInsert,
@@ -43,13 +43,14 @@ const solts = useSlots()
 const gridDom = ref<VxeGridInstance>()
 const modalDom = ref<VxeModalInstance>()
 const formDom = ref<VxeFormInstance>()
+const store: Ref<VxeCurdStore> = ref({})
 
 const props = defineProps({
   items: { type: Array as () => CrudItem[], required: true },
   api: { type: Object as () => Api, required: true },
   option: { type: Object as () => VxeCrudOptions, required: false }
 })
-const buildOptRes = buildOpt(solts, props.items, props.api, props.option || {})
+const buildOptRes = buildOpt(store, solts, props.items, props.api, props.option || {})
 
 const gridOpt: VxeGridProps = reactive(buildOptRes.grid)
 const modalOpt: VxeModalProps = reactive(buildOptRes.modal)
@@ -75,20 +76,19 @@ watch(
     return { items: props.items, option: props.option }
   },
   (val, oldValue) => {
-    setColumns(gridOpt, val.items, val.option || {})
+    setColumns(store, gridOpt, val.items, val.option || {})
     setSearchItem(gridOpt, val.items)
-    setFormItem(formOpt, val.items, val.option || {})
+    setFormItem(store, formOpt, val.items, val.option || {})
     setFormRule(formOpt, val.items)
   },
   { deep: true }
 )
-
 // expose
-const crudStore: VxeCurdStore = reactive({
+store.value = {
   holder: registerParam,
   isUpdate: false,
   showModal: (row?: any, title?: string) => {
-    crudStore.isUpdate = !!row?.id
+    store.value.isUpdate = !!row?.id
     formOpt.data = row ? { ...row } : {}
     modalDom?.value?.open()
     title && (modalOpt.title = title)
@@ -101,7 +101,7 @@ const crudStore: VxeCurdStore = reactive({
     formDom.value?.validate(async (errMap) => {
       if (errMap) return
       formOpt.loading = true
-      const callback = (isUpdate: boolean) => {
+      const callback = (isUpdate?: boolean) => {
         formOpt.loading = false
         modalDom.value?.close()
         ElMessage.success("保存成功")
@@ -109,12 +109,13 @@ const crudStore: VxeCurdStore = reactive({
         gridDom.value?.commitProxy("query")
       }
       const res: ApiResponseData<any> = await request({
-        url: crudStore.isUpdate ? props.api.update : props.api.insert,
-        method: crudStore.isUpdate ? "PUT" : "POST",
+        url: store.value.isUpdate ? props.api.update : props.api.insert,
+        method: store.value.isUpdate ? "PUT" : "POST",
         data: formOpt.data
       })
+      formOpt.loading = false
       if (res.success) {
-        callback(crudStore.isUpdate)
+        callback(store.value.isUpdate)
       } else {
         formOpt.loading = false
         ElNotification({
@@ -146,6 +147,6 @@ const crudStore: VxeCurdStore = reactive({
       }
     }
   }
-})
-defineExpose(crudStore)
+}
+defineExpose(store.value)
 </script>

@@ -1,13 +1,48 @@
 import { VxeFormItemProps, VxeFormItemPropTypes } from "vxe-table/types/form-item"
 import { Ref } from "vue"
-import { VxeFormProps, VxeGridInstance, VxeGridProps, VxeModalProps } from "vxe-table"
-import { Api, CrudItem, VxeCrudOptions, VxeOriginOptions } from "@/components/VxeCurd/types"
-import { get, set } from "lodash-es"
+import { VxeFormDefines, VxeFormProps, VxeGridInstance, VxeGridProps, VxeModalProps } from "vxe-table"
+import { Api, CrudItem, VxeCrudOptions, VxeCurdStore, VxeOriginOptions } from "@/components/VxeCurd/types"
+import { cloneDeep, get, set } from "lodash-es"
 import { request } from "@/utils/service"
 import { VxeTableDefines } from "vxe-table/types/table"
 import { VxeColumnPropTypes } from "vxe-table/types/column"
 
-export const defaultSearchBtn: VxeFormItemProps = {
+interface VxeValidatorOption {
+  [field: string]: Function
+}
+export const VxeValidator: VxeValidatorOption = {
+  required: (item: CrudItem): VxeFormDefines.FormRule => {
+    return { required: true, content: `请输入${item.title}` }
+  }
+}
+export const VxeCurdProps = {
+  DefaultFormAction: [
+    { type: "submit", content: "提交", status: "primary" },
+    { content: "取消", onClick: (data: any) => data.store.closeModal() }
+  ],
+  DefaultAction: [
+    {
+      onClick: (data: any) => data.store.showModal(data.row),
+      icon: "vxe-icon-edit",
+      tooltip: "修改"
+    },
+    {
+      onClick: (data: any) => data.store.onDelete(data.row),
+      icon: "vxe-icon-delete",
+      tooltip: "删除",
+      status: "danger"
+    }
+  ],
+  DefaultToolbar: [
+    {
+      icon: "vxe-icon-add",
+      content: "新增",
+      onClick: (data: any) => data.store.showModal({})
+    }
+  ]
+}
+
+const defaultSearchBtn: VxeFormItemProps = {
   itemRender: {
     name: "$buttons",
     children: [
@@ -40,25 +75,28 @@ export const afterDelete = (xGridDom: Ref<VxeGridInstance | undefined>) => {
 }
 
 export function buildOpt(
+  store: Ref<VxeCurdStore>,
   solts: Record<string, Function | undefined>,
   items: CrudItem[],
   api: Api,
   option: VxeCrudOptions
 ): VxeOriginOptions {
-  const defaultGridOpt: VxeGridProps = getDefaultGridOpt(solts, undefined, api)
-  setColumns(defaultGridOpt, items, option)
+  const defaultGridOpt: VxeGridProps = getDefaultGridOpt(solts, { ...option.grid }, api)
+  setColumns(store, defaultGridOpt, items, option)
   setSearchItem(defaultGridOpt, items)
 
   const defaultFormOpt: VxeFormProps = { span: 24, titleWidth: "100px", data: {} }
-  setFormItem(defaultFormOpt, items, option)
+  setFormItem(store, defaultFormOpt, items, option)
   setFormRule(defaultFormOpt, items)
 
-  const defaultModalOpt: VxeModalProps = {}
+  const defaultModalOpt: VxeModalProps = {
+    destroyOnClose: true
+  }
 
   return { grid: defaultGridOpt, form: defaultFormOpt, modal: defaultModalOpt }
 }
 
-export function setColumns(opt: VxeGridProps, items: CrudItem[], option: VxeCrudOptions) {
+export function setColumns(store: Ref<VxeCurdStore>, opt: VxeGridProps, items: CrudItem[], option: VxeCrudOptions) {
   // 列表项
   const columns: VxeTableDefines.ColumnOptions[] = items
     .filter((it) => !!it.column)
@@ -68,10 +106,23 @@ export function setColumns(opt: VxeGridProps, items: CrudItem[], option: VxeCrud
   if (option.action && option.action.length > 0) {
     // 操作按钮
     const solts: VxeColumnPropTypes.Slots = {
-      default: ({ row }): JSX.Element[] => {
+      default: (slotParams): JSX.Element[] => {
         return (option.action || []).map((it) => {
           if (!it.condition) it.condition = () => true
-          return <vxe-button v-show={it.condition(row)} {...it} />
+          it.type = it.type || "text"
+          it.status = it.status || "primary"
+          // 重载OnClick添加参数
+          const copyIt = cloneDeep(it)
+          copyIt.onClick = (params: any) => it.onClick && it.onClick({ ...params, ...slotParams, store: store.value })
+          if (it.tooltip) {
+            return (
+              <el-tooltip effect="light" content={it.tooltip}>
+                <vxe-button v-show={it.condition(slotParams.row)} {...copyIt} />
+              </el-tooltip>
+            )
+          } else {
+            return <vxe-button v-show={it.condition(slotParams.row)} {...copyIt} />
+          }
         })
       }
     }
@@ -96,7 +147,7 @@ export function setSearchItem(opt: VxeGridProps, items: CrudItem[]) {
   searchItem.push(defaultSearchBtn)
   set(opt, "formConfig.items", searchItem)
 }
-export function setFormItem(opt: VxeFormProps, items: CrudItem[], option: VxeCrudOptions) {
+export function setFormItem(store: Ref<VxeCurdStore>, opt: VxeFormProps, items: CrudItem[], option: VxeCrudOptions) {
   const formItems: VxeFormItemProps[] = items
     .filter((it) => !!it.form)
     .map((it) => {
@@ -105,10 +156,13 @@ export function setFormItem(opt: VxeFormProps, items: CrudItem[], option: VxeCru
   if (option.formAction && option.formAction.length > 0) {
     // 操作按钮
     const solts: VxeFormItemPropTypes.Slots = {
-      default: ({ data }): JSX.Element[] => {
+      default: (slotParams): JSX.Element[] => {
         return (option.formAction || []).map((it) => {
           if (!it.condition) it.condition = () => true
-          return <vxe-button v-show={it.condition(data)} {...it} />
+          // 重载OnClick添加参数
+          const copyIt = cloneDeep(it)
+          copyIt.onClick = (params: any) => it.onClick && it.onClick({ ...params, ...slotParams, store: store.value })
+          return <vxe-button v-show={it.condition(slotParams.data)} {...copyIt} />
         })
       }
     }
@@ -120,8 +174,14 @@ export function setFormItem(opt: VxeFormProps, items: CrudItem[], option: VxeCru
 export function setFormRule(opt: VxeFormProps, items: CrudItem[]) {
   const rules = {}
   items
-    .filter((it) => !!it.formRules)
-    .forEach((it) => set(rules, it.field + "", Array.isArray(it.formRules) ? it.formRules : [it.formRules]))
+    .filter((it) => !!it.rules)
+    .forEach((it) => {
+      const arr = Array.isArray(it.rules) ? it.rules : [it.rules]
+      const val: VxeFormDefines.FormRule[] = arr.map((rule) =>
+        typeof rule === "string" ? VxeValidator[rule](it) : rule
+      )
+      set(rules, it.field + "", val)
+    })
   set(opt, "rules", rules)
 }
 function getDefaultGridOpt(solts: Record<string, Function | undefined>, grid: VxeGridProps | undefined, api: Api) {

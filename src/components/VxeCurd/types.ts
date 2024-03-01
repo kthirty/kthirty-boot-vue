@@ -40,12 +40,17 @@ export class VxeCrudOptions {
   action?: VxeCrudButtonProps[]
   formAction?: VxeCrudButtonProps[]
   toolbarButtons?: VxeCrudButtonProps[]
+  grid?: VxeGridProps
 }
 export interface VxeCrudButtonProps extends VxeButtonProps, VxeButtonEventProps {
   /**
    * 显示条件
    */
   condition?: Function
+  /**
+   * 提示
+   */
+  tooltip?: string
 }
 
 export class CrudItem {
@@ -62,7 +67,7 @@ export class CrudItem {
   /**
    * 验证规则
    */
-  formRules?: VxeFormDefines.FormRule | VxeFormDefines.FormRule[]
+  rules?: string | string[] | VxeFormDefines.FormRule | VxeFormDefines.FormRule[]
   /**
    * boolean 不添加其他属性
    * string 获取 VxeCurd/helper.ts#defaultRender map中的数据
@@ -73,11 +78,11 @@ export class CrudItem {
   column?: boolean | string | Function | Object
 }
 
-export interface VxeCurdStore {
-  showModal: Function
-  closeModal: Function
-  onSubmitForm: Function
-  onDelete: Function
-  isUpdate: boolean
-  holder: VxeCrudHolder
+export class VxeCurdStore {
+  showModal: Function = () => {}
+  closeModal: Function = () => {}
+  onSubmitForm: Function = () => {}
+  onDelete: Function = () => {}
+  isUpdate: boolean = false
+  holder: VxeCrudHolder = {}
 }

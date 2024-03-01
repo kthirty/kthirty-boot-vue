@@ -99,7 +99,7 @@ function createService() {
 
 /** 创建请求方法 */
 function createRequest(service: AxiosInstance) {
-  return function <T>(config: AxiosRequestConfig): Promise<T> {
+  return function <T = ApiResponseData<any>>(config: AxiosRequestConfig): Promise<T> {
     const { accessToken } = useUserStoreHook().token
     const defaultConfig = {
       headers: {
