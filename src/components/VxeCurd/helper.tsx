@@ -6,6 +6,9 @@ import { cloneDeep, get, set } from "lodash-es"
 import { request } from "@/utils/service"
 import { VxeTableDefines } from "vxe-table/types/table"
 import { VxeColumnPropTypes } from "vxe-table/types/column"
+import { usePermissionStoreHook } from "@/store/modules/permission"
+
+const { hasPermission } = usePermissionStoreHook()
 
 interface VxeValidatorOption {
   [field: string]: Function
@@ -84,6 +87,7 @@ export function buildOpt(
   const defaultGridOpt: VxeGridProps = getDefaultGridOpt(solts, { ...option.grid }, api)
   setColumns(store, defaultGridOpt, items, option)
   setSearchItem(defaultGridOpt, items)
+  setToolbar(store, defaultGridOpt, option)
 
   const defaultFormOpt: VxeFormProps = { span: 24, titleWidth: "100px", data: {} }
   setFormItem(store, defaultFormOpt, items, option)
@@ -96,10 +100,35 @@ export function buildOpt(
   return { grid: defaultGridOpt, form: defaultFormOpt, modal: defaultModalOpt }
 }
 
+export function setToolbar(store: Ref<VxeCurdStore>, opt: VxeGridProps, option: VxeCrudOptions) {
+  const solts = (slotParams: any): JSX.Element[] => {
+    return (option.toolbarButtons || [])
+      .filter((it) => hasPermission(it.permission))
+      .map((it) => {
+        if (!it.condition) it.condition = () => true
+        // 重载OnClick添加参数
+        const copyIt = cloneDeep(it)
+        copyIt.onClick = (params: any) => it.onClick && it.onClick({ ...params, ...slotParams, store: store.value })
+        if (it.tooltip) {
+          return (
+            <el-tooltip effect="light" content={it.tooltip}>
+              <vxe-button v-show={it.condition(slotParams.row)} {...copyIt} />
+            </el-tooltip>
+          )
+        } else {
+          return <vxe-button v-show={it.condition(slotParams.row)} {...copyIt} />
+        }
+      })
+  }
+
+  set(opt, "toolbarConfig.slots.buttons", solts)
+}
+
 export function setColumns(store: Ref<VxeCurdStore>, opt: VxeGridProps, items: CrudItem[], option: VxeCrudOptions) {
   // 列表项
   const columns: VxeTableDefines.ColumnOptions[] = items
     .filter((it) => !!it.column)
+    .filter((it) => hasPermission(it.permission))
     .map((it) => {
       return { field: it.field, title: it.title, ...handleExtra(it.column) }
     })
@@ -107,23 +136,25 @@ export function setColumns(store: Ref<VxeCurdStore>, opt: VxeGridProps, items: C
     // 操作按钮
     const solts: VxeColumnPropTypes.Slots = {
       default: (slotParams): JSX.Element[] => {
-        return (option.action || []).map((it) => {
-          if (!it.condition) it.condition = () => true
-          it.type = it.type || "text"
-          it.status = it.status || "primary"
-          // 重载OnClick添加参数
-          const copyIt = cloneDeep(it)
-          copyIt.onClick = (params: any) => it.onClick && it.onClick({ ...params, ...slotParams, store: store.value })
-          if (it.tooltip) {
-            return (
-              <el-tooltip effect="light" content={it.tooltip}>
-                <vxe-button v-show={it.condition(slotParams.row)} {...copyIt} />
-              </el-tooltip>
-            )
-          } else {
-            return <vxe-button v-show={it.condition(slotParams.row)} {...copyIt} />
-          }
-        })
+        return (option.action || [])
+          .filter((it) => hasPermission(it.permission))
+          .map((it) => {
+            if (!it.condition) it.condition = () => true
+            it.type = it.type || "text"
+            it.status = it.status || "primary"
+            // 重载OnClick添加参数
+            const copyIt = cloneDeep(it)
+            copyIt.onClick = (params: any) => it.onClick && it.onClick({ ...params, ...slotParams, store: store.value })
+            if (it.tooltip) {
+              return (
+                <el-tooltip effect="light" content={it.tooltip}>
+                  <vxe-button v-show={it.condition(slotParams.row)} {...copyIt} />
+                </el-tooltip>
+              )
+            } else {
+              return <vxe-button v-show={it.condition(slotParams.row)} {...copyIt} />
+            }
+          })
       }
     }
     const action: VxeTableDefines.ColumnOptions = {
@@ -140,6 +171,7 @@ export function setColumns(store: Ref<VxeCurdStore>, opt: VxeGridProps, items: C
 export function setSearchItem(opt: VxeGridProps, items: CrudItem[]) {
   const searchItem: VxeFormItemProps[] = items
     .filter((it) => !!it.search)
+    .filter((it) => hasPermission(it.permission))
     .map((it) => {
       return { field: it.field, title: it.title, ...handleExtra(it.search) }
     })
@@ -150,6 +182,7 @@ export function setSearchItem(opt: VxeGridProps, items: CrudItem[]) {
 export function setFormItem(store: Ref<VxeCurdStore>, opt: VxeFormProps, items: CrudItem[], option: VxeCrudOptions) {
   const formItems: VxeFormItemProps[] = items
     .filter((it) => !!it.form)
+    .filter((it) => hasPermission(it.permission))
     .map((it) => {
       return { field: it.field, title: it.title, ...handleExtra(it.form) }
     })
@@ -157,13 +190,15 @@ export function setFormItem(store: Ref<VxeCurdStore>, opt: VxeFormProps, items: 
     // 操作按钮
     const solts: VxeFormItemPropTypes.Slots = {
       default: (slotParams): JSX.Element[] => {
-        return (option.formAction || []).map((it) => {
-          if (!it.condition) it.condition = () => true
-          // 重载OnClick添加参数
-          const copyIt = cloneDeep(it)
-          copyIt.onClick = (params: any) => it.onClick && it.onClick({ ...params, ...slotParams, store: store.value })
-          return <vxe-button v-show={it.condition(slotParams.data)} {...copyIt} />
-        })
+        return (option.formAction || [])
+          .filter((it) => hasPermission(it.permission))
+          .map((it) => {
+            if (!it.condition) it.condition = () => true
+            // 重载OnClick添加参数
+            const copyIt = cloneDeep(it)
+            copyIt.onClick = (params: any) => it.onClick && it.onClick({ ...params, ...slotParams, store: store.value })
+            return <vxe-button v-show={it.condition(slotParams.data)} {...copyIt} />
+          })
       }
     }
     formItems.push({ itemRender: {}, align: "right", slots: solts })
@@ -175,6 +210,7 @@ export function setFormRule(opt: VxeFormProps, items: CrudItem[]) {
   const rules = {}
   items
     .filter((it) => !!it.rules)
+    .filter((it) => hasPermission(it.permission))
     .forEach((it) => {
       const arr = Array.isArray(it.rules) ? it.rules : [it.rules]
       const val: VxeFormDefines.FormRule[] = arr.map((rule) =>

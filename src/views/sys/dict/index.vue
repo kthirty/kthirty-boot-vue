@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import VxeCurd from "@/components/VxeCurd/index.vue"
 import { Api, CrudItem, VxeCrudOptions } from "@/components/VxeCurd/types"
-import { reactive } from "vue/dist/vue"
+import { reactive } from "vue"
 import { VxeCurdProps } from "@/components/VxeCurd/helper"
 
 defineOptions({ name: "sys-dict" })

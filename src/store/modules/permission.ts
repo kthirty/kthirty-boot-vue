@@ -108,7 +108,13 @@ export const usePermissionStore = defineStore("permission", () => {
     console.log("all permissions", permissions.value, "\n", "all routers", routes.value, "\n", "module", module)
   }
   const routeLoaded = () => menus.value.length > 0
-  return { routes, dynamicRoutes, loadRoute, routeLoaded, permissions }
+  const hasPermission = (perm: string[] | string | undefined): boolean => {
+    if (!perm) return true
+    if (!Array.isArray(perm)) perm = [perm]
+    const containsPerm = permissions.value.filter((it) => perm.includes(it))
+    return containsPerm.length == perm.length
+  }
+  return { routes, dynamicRoutes, loadRoute, routeLoaded, permissions, hasPermission }
 })
 
 /** 在 setup 外使用 */

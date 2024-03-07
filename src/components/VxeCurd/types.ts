@@ -48,6 +48,10 @@ export interface VxeCrudButtonProps extends VxeButtonProps, VxeButtonEventProps 
    */
   condition?: Function
   /**
+   * 权限显示
+   */
+  permission: string | string[]
+  /**
    * 提示
    */
   tooltip?: string
@@ -76,6 +80,10 @@ export class CrudItem {
    * see https://vxetable.cn/#/grid/api?filterName=form-config
    */
   column?: boolean | string | Function | Object
+  /**
+   * 权限显示
+   */
+  permission?: string | string[]
 }
 
 export class VxeCurdStore {
