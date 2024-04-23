@@ -7,9 +7,9 @@ import { VxeCurdProps } from "@/components/VxeCurd/helper"
 defineOptions({ name: "sys-dict" })
 const api = new Api("/sys/dict")
 const items: CrudItem[] = reactive([
-  { field: "code", title: "字典编码", column: true, search: true, form: true, rules: "required" },
-  { field: "name", title: "字典名称", column: true, search: true, form: true, rules: "required" },
-  { field: "description", title: "描述", column: true, search: true, form: true, rules: "required" }
+  { field: "code", title: "字典编码", column: true, search: "$input", form: true, rules: "required" },
+  { field: "name", title: "字典名称", column: true, search: "$input", form: true, rules: "required" },
+  { field: "description", title: "描述", column: true, search: "$input", form: true, rules: "required" }
 ])
 const option: VxeCrudOptions = reactive({
   action: VxeCurdProps.DefaultAction,

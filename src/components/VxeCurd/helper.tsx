@@ -177,6 +177,7 @@ export function setSearchItem(opt: VxeGridProps, items: CrudItem[]) {
     })
   // 添加搜索按钮
   searchItem.push(defaultSearchBtn)
+  console.log("searchItem", searchItem)
   set(opt, "formConfig.items", searchItem)
 }
 export function setFormItem(store: Ref<VxeCurdStore>, opt: VxeFormProps, items: CrudItem[], option: VxeCrudOptions) {

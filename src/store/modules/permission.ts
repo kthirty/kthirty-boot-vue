@@ -45,6 +45,9 @@ export const usePermissionStore = defineStore("permission", () => {
           meta: getRouteMeta(it),
           children: child && child.length > 0 ? child : undefined
         }
+        if (it.component && !module[it.component]) {
+          console.error("路由配置错误，找不到页面，已默认为/layouts/index.vue", it)
+        }
         if ((!it.component || it.component == "/layouts/index.vue") && child && child.length > 0) {
           route.redirect = child[0].path
         }
@@ -105,13 +108,24 @@ export const usePermissionStore = defineStore("permission", () => {
     routes.value = [...constantRoutes, ...demoRoutes, ...accessedRoutes, ...rootRouter, ...errorPageRouter]
     resetRouter()
     routes.value.filter((it) => it.name).forEach((it) => router.addRoute(it))
-    console.log("all permissions", permissions.value, "\n", "all routers", routes.value, "\n", "module", module)
+    console.log(
+      "all permissions",
+      permissions.value,
+      "\n",
+      "all routers",
+      routes.value,
+      "\n",
+      "module",
+      module,
+      "\n",
+      router.getRoutes()
+    )
   }
   const routeLoaded = () => menus.value.length > 0
   const hasPermission = (perm: string[] | string | undefined): boolean => {
     if (!perm) return true
     if (!Array.isArray(perm)) perm = [perm]
-    const containsPerm = permissions.value.filter((it) => perm.includes(it))
+    const containsPerm = permissions.value.filter((it) => perm?.includes(it))
     return containsPerm.length == perm.length
   }
   return { routes, dynamicRoutes, loadRoute, routeLoaded, permissions, hasPermission }
