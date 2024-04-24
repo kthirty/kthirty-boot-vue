@@ -41,6 +41,9 @@ export class VxeCrudOptions {
   formAction?: VxeCrudButtonProps[]
   toolbarButtons?: VxeCrudButtonProps[]
   grid?: VxeGridProps
+  beforeSubmit?: Function
+  beforeDelete?: Function
+  beforeSearch?: Function
 }
 export interface VxeCrudButtonProps extends VxeButtonProps, VxeButtonEventProps {
   /**
@@ -50,7 +53,7 @@ export interface VxeCrudButtonProps extends VxeButtonProps, VxeButtonEventProps 
   /**
    * 权限显示
    */
-  permission: string | string[]
+  permission?: string | string[]
   /**
    * 提示
    */

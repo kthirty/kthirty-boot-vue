@@ -44,6 +44,11 @@ export const VxeCurdProps = {
     }
   ]
 }
+export const VxeDefaultOption: VxeCrudOptions = {
+  action: VxeCurdProps.DefaultAction,
+  formAction: VxeCurdProps.DefaultFormAction,
+  toolbarButtons: VxeCurdProps.DefaultToolbar
+}
 
 const defaultSearchBtn: VxeFormItemProps = {
   itemRender: {
@@ -84,7 +89,7 @@ export function buildOpt(
   api: Api,
   option: VxeCrudOptions
 ): VxeOriginOptions {
-  const defaultGridOpt: VxeGridProps = getDefaultGridOpt(solts, { ...option.grid }, api)
+  const defaultGridOpt: VxeGridProps = getDefaultGridOpt(solts, { ...option.grid }, api, option)
   setColumns(store, defaultGridOpt, items, option)
   setSearchItem(defaultGridOpt, items)
   setToolbar(store, defaultGridOpt, option)
@@ -176,9 +181,12 @@ export function setSearchItem(opt: VxeGridProps, items: CrudItem[]) {
       return { field: it.field, title: it.title, ...handleExtra(it.search) }
     })
   // 添加搜索按钮
-  searchItem.push(defaultSearchBtn)
-  console.log("searchItem", searchItem)
-  set(opt, "formConfig.items", searchItem)
+  if (searchItem && searchItem.length > 0) {
+    searchItem.push(defaultSearchBtn)
+    set(opt, "formConfig.items", searchItem)
+  } else {
+    set(opt, "formConfig", false)
+  }
 }
 export function setFormItem(store: Ref<VxeCurdStore>, opt: VxeFormProps, items: CrudItem[], option: VxeCrudOptions) {
   const formItems: VxeFormItemProps[] = items
@@ -221,7 +229,12 @@ export function setFormRule(opt: VxeFormProps, items: CrudItem[]) {
     })
   set(opt, "rules", rules)
 }
-function getDefaultGridOpt(solts: Record<string, Function | undefined>, grid: VxeGridProps | undefined, api: Api) {
+function getDefaultGridOpt(
+  solts: Record<string, Function | undefined>,
+  grid: VxeGridProps | undefined,
+  api: Api,
+  option: VxeCrudOptions
+) {
   const gridConfig = grid || {}
   set(gridConfig, "pagerConfig", {})
   gridConfig?.formConfig?.items?.push(defaultSearchBtn)
@@ -230,7 +243,10 @@ function getDefaultGridOpt(solts: Record<string, Function | undefined>, grid: Vx
   solts["action"] && set(gridConfig, "columns", [...get(gridConfig, "columns", []), defaultActionSlot])
   const queryFunc = ({ page, form }: { page: any; form: any }) => {
     return new Promise((resolve) => {
-      request({ url: api.query, method: "GET", params: { ...page, ...form } })
+      const params = { ...page, ...form }
+      const result = option?.beforeSearch?.call(null, params) ?? true
+      if (!result) return
+      request({ url: api.query, method: "GET", params: params })
         .then((res: any) => resolve(res.data))
         .catch((err: Error) => console.error("loading error", err))
     })

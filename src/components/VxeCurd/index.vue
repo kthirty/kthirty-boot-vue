@@ -100,6 +100,10 @@ store.value = {
     if (formOpt.loading) return
     formDom.value?.validate(async (errMap) => {
       if (errMap) return
+      // 钩子函数
+      const result = props.option?.beforeSubmit?.call(store, formOpt.data) ?? true
+      if (!result) return
+      // 开始提交
       formOpt.loading = true
       const callback = (isUpdate?: boolean) => {
         formOpt.loading = false
@@ -129,6 +133,9 @@ store.value = {
   onDelete: async (row: any) => {
     const type = await VXETable.modal.confirm("您确定要删除吗？")
     if (type === "confirm") {
+      // 钩子函数
+      const result = props.option?.beforeDelete?.call(store, row) ?? true
+      if (!result) return
       const res: ApiResponseData<any> = await request({ url: `${props.api.delete}/${row["id"]}`, method: "DELETE" })
       if (res?.success) {
         ElNotification({
