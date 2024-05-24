@@ -149,7 +149,10 @@
     } catch (error) {
       createErrorModal({
         title: t('sys.api.errorTip'),
-        content: (error as unknown as Error).message || t('sys.api.networkExceptionMsg'),
+        content:
+          (error as unknown as Error)?.response?.data?.message ||
+          (error as unknown as Error).message ||
+          t('sys.api.networkExceptionMsg'),
         getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
       });
     } finally {
