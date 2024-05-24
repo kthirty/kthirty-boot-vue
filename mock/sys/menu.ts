@@ -237,7 +237,7 @@ const linkRoute = {
 
 export default [
   {
-    url: '/basic-api/getMenuList',
+    // url: '/basic-api/sys/auth/menus',
     timeout: 1000,
     method: 'get',
     response: (request: requestParams) => {
@@ -245,9 +245,9 @@ export default [
       if (!token) {
         return resultError('Invalid token!');
       }
-      const checkUser = createFakeUserList().find((item) => item.token === token);
+      let checkUser = createFakeUserList().find((item) => item.token === token);
       if (!checkUser) {
-        return resultError('Invalid user token!');
+        checkUser = createFakeUserList()[0];
       }
       const id = checkUser.userId;
       let menu: Object[];

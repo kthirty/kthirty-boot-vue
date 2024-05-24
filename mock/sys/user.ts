@@ -46,7 +46,7 @@ const fakeCodeList: any = {
 export default [
   // mock user login
   {
-    url: '/basic-api/login',
+    // url: '/basic-api/sys/auth/login',
     timeout: 200,
     method: 'post',
     response: ({ body }) => {
@@ -63,13 +63,14 @@ export default [
         userId,
         username: _username,
         token,
+        accessToken: token,
         realName,
         desc,
       });
     },
   },
   {
-    url: '/basic-api/getUserInfo',
+    // url: '/basic-api/sys/auth/info',
     method: 'get',
     response: (request: requestParams) => {
       const token = getRequestToken(request);
@@ -82,7 +83,7 @@ export default [
     },
   },
   {
-    url: '/basic-api/getPermCode',
+    // url: '/basic-api/sys/auth/permCode',
     timeout: 200,
     method: 'get',
     response: (request: requestParams) => {
@@ -98,7 +99,7 @@ export default [
     },
   },
   {
-    url: '/basic-api/logout',
+    // url: '/basic-api/sys/auth/logout',
     timeout: 200,
     method: 'get',
     response: (request: requestParams) => {
