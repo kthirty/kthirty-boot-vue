@@ -19,9 +19,8 @@ export const columns: BasicColumn[] = [
     },
   },
   {
-    title: '权限标识',
-    dataIndex: 'permission',
-    width: 180,
+    title: '请求路径',
+    dataIndex: 'path',
   },
   {
     title: '组件',
@@ -31,6 +30,10 @@ export const columns: BasicColumn[] = [
     title: '排序',
     dataIndex: 'sort',
     width: 50,
+  },
+  {
+    title: '权限标识',
+    dataIndex: 'permission',
   },
   {
     title: '状态',
@@ -60,7 +63,7 @@ export const searchFormSchema: FormSchema[] = [
     field: 'name',
     label: '菜单名称',
     component: 'Input',
-    colProps: { span: 8 },
+    colProps: { span: 6 },
   },
   {
     field: 'status',
@@ -72,7 +75,7 @@ export const searchFormSchema: FormSchema[] = [
         { label: '停用', value: '1' },
       ],
     },
-    colProps: { span: 8 },
+    colProps: { span: 6 },
   },
 ];
 
@@ -137,7 +140,13 @@ export const formSchema: FormSchema[] = [
     field: 'component',
     label: '组件路径',
     component: 'Input',
-    ifShow: ({ values }) => isMenu(values.type),
+    ifShow: ({ values }) => isMenu(values.type) || isDir(values.type),
+  },
+  {
+    field: 'componentName',
+    label: '组件名称',
+    component: 'Input',
+    ifShow: ({ values }) => isMenu(values.type) || isDir(values.type),
   },
   {
     field: 'permission',
@@ -149,7 +158,7 @@ export const formSchema: FormSchema[] = [
     field: 'status',
     label: '状态',
     component: 'RadioButtonGroup',
-    defaultValue: '0',
+    defaultValue: '1',
     componentProps: {
       options: [
         { label: '启用', value: '1' },

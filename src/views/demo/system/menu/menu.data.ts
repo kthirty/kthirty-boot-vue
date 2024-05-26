@@ -137,7 +137,7 @@ export const formSchema: FormSchema[] = [
     field: 'component',
     label: '组件路径',
     component: 'Input',
-    ifShow: ({ values }) => isMenu(values.type),
+    ifShow: ({ values }) => isMenu(values.type) || isDir(values.type),
   },
   {
     field: 'componentName',

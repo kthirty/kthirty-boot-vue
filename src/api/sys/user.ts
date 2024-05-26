@@ -1,5 +1,6 @@
 import { defHttp } from '@/utils/http/axios';
 import { LoginParams, LoginResultModel, GetUserInfoModel } from './model/userModel';
+import { getMenuListResultModel } from './model/menuModel';
 
 import { ErrorMessageMode } from '#/axios';
 
@@ -8,6 +9,7 @@ enum Api {
   Logout = '/sys/auth/logout',
   GetUserInfo = '/sys/auth/info',
   GetPermCode = '/sys/auth/permCode',
+  GetMenuList = '/sys/auth/menus',
   TestRetry = '/testRetry',
 }
 
@@ -40,6 +42,13 @@ export function getPermCode() {
 export function doLogout() {
   return defHttp.get({ url: Api.Logout });
 }
+/**
+ * @description: Get user menu based on id
+ */
+
+export const getMenuList = () => {
+  return defHttp.get<getMenuListResultModel>({ url: Api.GetMenuList });
+};
 
 export function testRetry() {
   return defHttp.get(

@@ -237,7 +237,7 @@ const linkRoute = {
 
 export default [
   {
-    url: '/basic-api/sys/auth/menus',
+    // url: '/basic-api/sys/auth/menus',
     timeout: 1000,
     method: 'get',
     response: (request: requestParams) => {
