@@ -17,7 +17,10 @@ enum Api {
   IsAccountExist = '/system/accountExist',
   DeptList = '/system/getDeptList',
   setRoleStatus = '/system/setRoleStatus',
-  MenuList = '/system/getMenuList',
+  MenuList = '/sys/menu/tree',
+  SaveMenu = '/sys/menu/save',
+  UpdateMenu = '/sys/menu/update',
+  DeleteMenu = '/sys/menu/remove',
   RolePageList = '/system/getRoleListByPage',
   GetAllRoleList = '/system/getAllRoleList',
 }
@@ -42,3 +45,7 @@ export const setRoleStatus = (id: number, status: string) =>
 
 export const isAccountExist = (account: string) =>
   defHttp.post({ url: Api.IsAccountExist, params: { account } }, { errorMessageMode: 'none' });
+
+export const saveMenu = (params: any) => defHttp.post({ url: Api.SaveMenu, params });
+export const updateMenu = (params: any) => defHttp.put({ url: Api.UpdateMenu, params });
+export const deleteMenu = (id: string) => defHttp.put({ url: `${Api.DeleteMenu}/${id}` });

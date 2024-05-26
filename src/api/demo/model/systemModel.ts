@@ -44,7 +44,7 @@ export interface DeptListItem {
 
 export interface MenuListItem {
   id: string;
-  orderNo: string;
+  sort: string;
   createTime: string;
   status: number;
   icon: string;

@@ -140,12 +140,6 @@ export const formSchema: FormSchema[] = [
     ifShow: ({ values }) => isMenu(values.type),
   },
   {
-    field: 'componentName',
-    label: '组件名称',
-    component: 'Input',
-    ifShow: ({ values }) => isMenu(values.type),
-  },
-  {
     field: 'permission',
     label: '权限标识',
     component: 'Input',
@@ -155,7 +149,7 @@ export const formSchema: FormSchema[] = [
     field: 'status',
     label: '状态',
     component: 'RadioButtonGroup',
-    defaultValue: '1',
+    defaultValue: '0',
     componentProps: {
       options: [
         { label: '启用', value: '1' },

@@ -180,7 +180,7 @@ export default [
     },
   },
   {
-    url: '/basic-api/system/getMenuList',
+    // url: '/basic-api/sys/menu/list',
     timeout: 100,
     method: 'get',
     response: () => {
