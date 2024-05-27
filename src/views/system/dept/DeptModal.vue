@@ -9,7 +9,7 @@
   import { BasicForm, useForm } from '@/components/Form';
   import { formSchema } from './dept.data';
 
-  import { getDeptList } from '@/api/demo/system';
+  import { getDeptList, saveDept, updateDept } from '@/api/system/dept';
 
   defineOptions({ name: 'DeptModal' });
 
@@ -25,18 +25,18 @@
   });
 
   const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
-    resetFields();
+    await resetFields();
     setModalProps({ confirmLoading: false });
     isUpdate.value = !!data?.isUpdate;
 
     if (unref(isUpdate)) {
-      setFieldsValue({
+      await setFieldsValue({
         ...data.record,
       });
     }
     const treeData = await getDeptList();
-    updateSchema({
-      field: 'parentDept',
+    await updateSchema({
+      field: 'parentId',
       componentProps: { treeData },
     });
   });
@@ -47,8 +47,11 @@
     try {
       const values = await validate();
       setModalProps({ confirmLoading: true });
-      // TODO custom api
-      console.log(values);
+      if (unref(isUpdate)) {
+        await updateDept(values);
+      } else {
+        await saveDept(values);
+      }
       closeModal();
       emit('success');
     } finally {

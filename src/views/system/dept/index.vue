@@ -31,7 +31,7 @@
 </template>
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { getDeptList } from '@/api/system/dept';
+  import { deleteDept, getDeptList } from '@/api/system/dept';
 
   import { useModal } from '@/components/Modal';
   import DeptModal from './DeptModal.vue';
@@ -79,7 +79,7 @@
   }
 
   function handleDelete(record: Recordable) {
-    console.log(record);
+    deleteDept(record.id);
   }
 
   function handleSuccess() {

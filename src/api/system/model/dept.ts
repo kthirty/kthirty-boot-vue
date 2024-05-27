@@ -2,9 +2,10 @@ import { BasicFetchResult } from '@/api/model/baseModel';
 
 export interface DeptListItem {
   id: string;
-  orderNo: string;
-  createTime: string;
-  remark: string;
+  sort: number;
+  createDate: string;
+  description: string;
   status: number;
+  parentId: string;
 }
 export type DeptListGetResultModel = BasicFetchResult<DeptListItem>;

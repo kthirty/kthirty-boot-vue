@@ -5,13 +5,13 @@ import { Tag } from 'ant-design-vue';
 export const columns: BasicColumn[] = [
   {
     title: '部门名称',
-    dataIndex: 'deptName',
+    dataIndex: 'name',
     width: 160,
     align: 'left',
   },
   {
     title: '排序',
-    dataIndex: 'orderNo',
+    dataIndex: 'sort',
     width: 50,
   },
   {
@@ -20,7 +20,7 @@ export const columns: BasicColumn[] = [
     width: 80,
     customRender: ({ record }) => {
       const status = record.status;
-      const enable = ~~status === 0;
+      const enable = ~~status === 1;
       const color = enable ? 'green' : 'red';
       const text = enable ? '启用' : '停用';
       return h(Tag, { color: color }, () => text);
@@ -28,12 +28,12 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '创建时间',
-    dataIndex: 'createTime',
+    dataIndex: 'createDate',
     width: 180,
   },
   {
-    title: '备注',
-    dataIndex: 'remark',
+    title: '描述',
+    dataIndex: 'description',
   },
 ];
 
@@ -50,8 +50,8 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       options: [
-        { label: '启用', value: '0' },
-        { label: '停用', value: '1' },
+        { label: '启用', value: '1' },
+        { label: '停用', value: '0' },
       ],
     },
     colProps: { span: 8 },
@@ -60,31 +60,30 @@ export const searchFormSchema: FormSchema[] = [
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'deptName',
+    field: 'name',
     label: '部门名称',
     component: 'Input',
     required: true,
   },
   {
-    field: 'parentDept',
+    field: 'parentId',
     label: '上级部门',
     component: 'TreeSelect',
     ifShow({ values }) {
-      const { deptName, parentDept } = values;
+      const { name, parentId } = values;
       // Hide without a parentDept when editing
-      return parentDept || (!deptName && !parentDept);
+      return parentId || (!name && !parentId);
     },
     componentProps: {
       fieldNames: {
-        label: 'deptName',
+        label: 'name',
         value: 'id',
       },
       getPopupContainer: () => document.body,
     },
-    required: true,
   },
   {
-    field: 'orderNo',
+    field: 'sort',
     label: '排序',
     component: 'InputNumber',
     required: true,
@@ -93,18 +92,32 @@ export const formSchema: FormSchema[] = [
     field: 'status',
     label: '状态',
     component: 'RadioButtonGroup',
-    defaultValue: '0',
+    defaultValue: '1',
     componentProps: {
       options: [
-        { label: '启用', value: '0' },
-        { label: '停用', value: '1' },
+        { label: '启用', value: '1' },
+        { label: '停用', value: '0' },
       ],
     },
     required: true,
   },
   {
-    label: '备注',
-    field: 'remark',
+    field: 'category',
+    label: '分类',
+    component: 'RadioButtonGroup',
+    defaultValue: '10',
+    componentProps: {
+      options: [
+        { label: '公司', value: '10' },
+        { label: '部门', value: '20' },
+        { label: '岗位', value: '30' },
+      ],
+    },
+    required: true,
+  },
+  {
+    label: '描述',
+    field: 'description',
     component: 'InputTextArea',
   },
 ];
