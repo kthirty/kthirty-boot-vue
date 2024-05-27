@@ -25,6 +25,9 @@ function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
       item.component = 'IFRAME';
     }
     const { component, name } = item;
+    if (!name) {
+      warn('找不到菜单对应的name, 请检查数据!' + JSON.stringify(item));
+    }
     const { children } = item;
     if (component) {
       const layoutFound = LayoutMap.get(component.toUpperCase());

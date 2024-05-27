@@ -37,10 +37,6 @@ export default defineApplicationConfig({
         clientFiles: ['./index.html', './src/{views,components}/*'],
       },
     },
-    plugins: [
-      Inspector({
-        openInEditorHost: 'http://localhost:5173',
-      }),
-    ],
+    plugins: [Inspector({})],
   },
 });
