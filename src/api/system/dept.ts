@@ -16,4 +16,4 @@ export const saveDept = (params?: any) =>
 export const updateDept = (params?: any) =>
   defHttp.put({ url: Api.UpdateList, params }, { successMessageMode: 'message' });
 export const deleteDept = (id: string) =>
-  defHttp.put({ url: `${Api.DeleteList}/${id}` }, { successMessageMode: 'message' });
+  defHttp.delete({ url: `${Api.DeleteList}/${id}` }, { successMessageMode: 'message' });

@@ -78,8 +78,9 @@
     });
   }
 
-  function handleDelete(record: Recordable) {
-    deleteDept(record.id);
+  async function handleDelete(record: Recordable) {
+    await deleteDept(record.id);
+    await reload();
   }
 
   function handleSuccess() {
