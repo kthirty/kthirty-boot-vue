@@ -32,8 +32,8 @@ export interface RequestOptions {
 
 export interface RetryRequest {
   isOpenRetry: boolean;
-  count: number;
-  waitTime: number;
+  count?: number;
+  waitTime?: number;
 }
 export interface Result<T = any> {
   code: number;

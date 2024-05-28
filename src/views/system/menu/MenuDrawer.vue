@@ -16,7 +16,7 @@
   import { formSchema } from './menu.data';
   import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
 
-  import { getMenuList, saveMenu, updateMenu } from '@/api/demo/system';
+  import { getMenuList, saveMenu, updateMenu } from '@/api/system/menu';
 
   defineOptions({ name: 'MenuDrawer' });
 
