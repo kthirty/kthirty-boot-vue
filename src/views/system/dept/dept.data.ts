@@ -9,11 +9,11 @@ export const columns: BasicColumn[] = [
     width: 160,
     align: 'left',
   },
-  {
+  /*{
     title: '排序',
     dataIndex: 'sort',
     width: 50,
-  },
+  },*/
   {
     title: '状态',
     dataIndex: 'status',
