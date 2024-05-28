@@ -38,7 +38,7 @@
 
   import { columns, searchFormSchema } from './dept.data';
 
-  defineOptions({ name: 'DeptManagement' });
+  defineOptions({ name: 'SysDept' });
 
   const [registerModal, { openModal }] = useModal();
   const [registerTable, { reload }] = useTable({

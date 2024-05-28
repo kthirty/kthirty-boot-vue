@@ -38,7 +38,7 @@
 
   import { columns, searchFormSchema } from './role.data';
 
-  defineOptions({ name: 'RoleManagement' });
+  defineOptions({ name: 'SysRole' });
 
   const [registerDrawer, { openDrawer }] = useDrawer();
   const [registerTable, { reload }] = useTable({

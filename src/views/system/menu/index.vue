@@ -40,7 +40,7 @@
 
   import { columns, searchFormSchema } from './menu.data';
 
-  defineOptions({ name: 'MenuManagement' });
+  defineOptions({ name: 'SysMenu' });
 
   const [registerDrawer, { openDrawer }] = useDrawer();
   const [registerTable, { reload, expandAll }] = useTable({
