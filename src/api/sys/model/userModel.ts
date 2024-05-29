@@ -7,8 +7,8 @@ export interface LoginParams {
 }
 
 export interface RoleInfo {
-  roleName: string;
-  value: string;
+  name: string;
+  code: string;
 }
 
 /**
@@ -19,14 +19,13 @@ export interface LoginResultModel {
   userId: string | number;
   accessToken: string;
   refreshToken: string;
-  roles: RoleInfo[];
 }
 
 /**
  * @description: Get user information return value
  */
 export interface GetUserInfoModel {
-  roles: RoleInfo[];
+  roles: string[];
   // 用户id
   userId: string | number;
   // 用户名

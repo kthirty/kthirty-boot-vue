@@ -2,7 +2,6 @@ import type { UserInfo } from '#/store';
 import type { ErrorMessageMode } from '#/axios';
 import { defineStore } from 'pinia';
 import { store } from '@/store';
-import { RoleEnum } from '@/enums/roleEnum';
 import { PageEnum } from '@/enums/pageEnum';
 import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '@/utils/auth';
@@ -14,13 +13,12 @@ import { router } from '@/router';
 import { usePermissionStore } from '@/store/modules/permission';
 import { RouteRecordRaw } from 'vue-router';
 import { PAGE_NOT_FOUND_ROUTE } from '@/router/routes/basic';
-import { isArray } from '@/utils/is';
 import { h } from 'vue';
 
 interface UserState {
   userInfo: Nullable<UserInfo>;
   token?: string;
-  roleList: RoleEnum[];
+  roleList: string[];
   sessionTimeout?: boolean;
   lastUpdateTime: number;
 }
@@ -46,8 +44,8 @@ export const useUserStore = defineStore({
     getToken(state): string {
       return state.token || getAuthCache<string>(TOKEN_KEY);
     },
-    getRoleList(state): RoleEnum[] {
-      return state.roleList.length > 0 ? state.roleList : getAuthCache<RoleEnum[]>(ROLES_KEY);
+    getRoleList(state): string[] {
+      return state.roleList.length > 0 ? state.roleList : getAuthCache<string[]>(ROLES_KEY);
     },
     getSessionTimeout(state): boolean {
       return !!state.sessionTimeout;
@@ -61,7 +59,7 @@ export const useUserStore = defineStore({
       this.token = info ? info : ''; // for null or undefined value
       setAuthCache(TOKEN_KEY, info);
     },
-    setRoleList(roleList: RoleEnum[]) {
+    setRoleList(roleList: string[]) {
       this.roleList = roleList;
       setAuthCache(ROLES_KEY, roleList);
     },
@@ -129,13 +127,8 @@ export const useUserStore = defineStore({
       if (!this.getToken) return null;
       const userInfo = await getUserInfo();
       const { roles = [] } = userInfo;
-      if (isArray(roles)) {
-        const roleList = roles.map((item) => item.value) as RoleEnum[];
-        this.setRoleList(roleList);
-      } else {
-        userInfo.roles = [];
-        this.setRoleList([]);
-      }
+      userInfo.roles = roles;
+      this.setRoleList(roles);
       this.setUserInfo(userInfo);
       return userInfo;
     },
