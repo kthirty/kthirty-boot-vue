@@ -59,6 +59,7 @@ export const searchFormSchema: FormSchema[] = [
 ];
 
 export const formSchema: FormSchema[] = [
+  { field: 'id', ifShow: false, component: 'Input' },
   {
     field: 'name',
     label: '部门名称',

@@ -30,8 +30,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { nextTick } from 'vue';
-
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { getMenuList, deleteMenu } from '@/api/system/menu';
 

@@ -29,6 +29,7 @@
   import { BasicTree, TreeItem } from '@/components/Tree';
 
   import { getMenuList } from '@/api/system/menu';
+  import { saveRole, updateRole } from '@/api/system/role';
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(true);
@@ -63,8 +64,11 @@
     try {
       const values = await validate();
       setDrawerProps({ confirmLoading: true });
-      // TODO custom api
-      console.log(values);
+      if (unref(isUpdate)) {
+        await updateRole(values);
+      } else {
+        await saveRole(values);
+      }
       closeDrawer();
       emit('success');
     } finally {

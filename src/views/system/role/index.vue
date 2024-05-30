@@ -13,6 +13,10 @@
                 onClick: handleEdit.bind(null, record),
               },
               {
+                icon: 'carbon:security',
+                onClick: handleConfig.bind(null, record),
+              },
+              {
                 icon: 'ant-design:delete-outlined',
                 color: 'error',
                 popConfirm: {
@@ -27,20 +31,23 @@
       </template>
     </BasicTable>
     <RoleDrawer @register="registerDrawer" @success="handleSuccess" />
+    <RoleConfigDrawer @register="registerConfigDrawer" />
   </div>
 </template>
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { getRoleList } from '@/api/system/role';
+  import { deleteRole, getRoleList } from '@/api/system/role';
 
   import { useDrawer } from '@/components/Drawer';
   import RoleDrawer from './RoleDrawer.vue';
+  import RoleConfigDrawer from './RoleConfigDrawer.vue';
 
   import { columns, searchFormSchema } from './role.data';
 
   defineOptions({ name: 'SysRole' });
 
   const [registerDrawer, { openDrawer }] = useDrawer();
+  const [registerConfigDrawer, { openDrawer: openConfigDrawer }] = useDrawer();
   const [registerTable, { reload }] = useTable({
     title: '角色列表',
     api: getRoleList,
@@ -54,7 +61,7 @@
     bordered: true,
     showIndexColumn: false,
     actionColumn: {
-      width: 80,
+      width: 120,
       title: '操作',
       dataIndex: 'action',
       // slots: { customRender: 'action' },
@@ -74,9 +81,15 @@
       isUpdate: true,
     });
   }
+  function handleConfig(record: Recordable) {
+    openConfigDrawer(true, {
+      record,
+    });
+  }
 
   function handleDelete(record: Recordable) {
-    console.log(record);
+    deleteRole(record.id);
+    reload();
   }
 
   function handleSuccess() {
