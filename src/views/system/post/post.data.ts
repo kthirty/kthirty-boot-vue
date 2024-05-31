@@ -4,16 +4,17 @@ import { Tag } from 'ant-design-vue';
 
 export const columns: BasicColumn[] = [
   {
-    title: '部门名称',
+    title: '岗位名称',
     dataIndex: 'name',
+    align: 'left',
+    width: 300,
+  },
+  {
+    title: '岗位代码',
+    dataIndex: 'code',
     width: 160,
     align: 'left',
   },
-  /*{
-    title: '排序',
-    dataIndex: 'sort',
-    width: 50,
-  },*/
   {
     title: '状态',
     dataIndex: 'status',
@@ -31,16 +32,12 @@ export const columns: BasicColumn[] = [
     dataIndex: 'createDate',
     width: 180,
   },
-  {
-    title: '描述',
-    dataIndex: 'description',
-  },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
     field: 'name',
-    label: '部门名称',
+    label: '岗位名称',
     component: 'Input',
     colProps: { span: 8 },
   },
@@ -62,13 +59,13 @@ export const formSchema: FormSchema[] = [
   { field: 'id', ifShow: false, component: 'Input' },
   {
     field: 'name',
-    label: '部门名称',
+    label: '岗位名称',
     component: 'Input',
     required: true,
   },
   {
     field: 'parentId',
-    label: '上级部门',
+    label: '上级岗位',
     component: 'TreeSelect',
     ifShow({ values }) {
       const { name, parentId } = values;
@@ -98,20 +95,6 @@ export const formSchema: FormSchema[] = [
       options: [
         { label: '启用', value: '1' },
         { label: '停用', value: '0' },
-      ],
-    },
-    required: true,
-  },
-  {
-    field: 'category',
-    label: '分类',
-    component: 'RadioButtonGroup',
-    defaultValue: '10',
-    componentProps: {
-      options: [
-        { label: '公司', value: '10' },
-        { label: '部门', value: '20' },
-        { label: '岗位', value: '30' },
       ],
     },
     required: true,

@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> 新增菜单 </a-button>
+        <a-button type="primary" @click="handleCreate"> 新增岗位 </a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -11,13 +11,6 @@
               {
                 icon: 'clarity:note-edit-line',
                 onClick: handleEdit.bind(null, record),
-                tooltip: '修改',
-              },
-              {
-                icon: 'clarity:administrator-line',
-                onClick: handleDataPermission.bind(null, record.id),
-                tooltip: '数据权限规则',
-                ifShow: record.type === '1',
               },
               {
                 icon: 'ant-design:delete-outlined',
@@ -33,30 +26,29 @@
         </template>
       </template>
     </BasicTable>
-    <MenuDrawer @register="registerDrawer" @success="handleSuccess" />
+    <PostModal @register="registerModal" @success="handleSuccess" />
   </div>
 </template>
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { getMenuList, deleteMenu } from '@/api/system/menu';
+  import { deletePost, getPostList } from '@/api/system/post';
 
-  import { useDrawer } from '@/components/Drawer';
-  import MenuDrawer from './MenuDrawer.vue';
+  import { useModal } from '@/components/Modal';
+  import PostModal from './PostModal.vue';
 
-  import { columns, searchFormSchema } from './menu.data';
+  import { columns, searchFormSchema } from './post.data';
 
-  defineOptions({ name: 'SysMenu' });
+  defineOptions({ name: 'SysPost' });
 
-  const [registerDrawer, { openDrawer }] = useDrawer();
-  const [registerTable, { reload, expandAll }] = useTable({
-    title: '菜单列表',
-    api: getMenuList,
+  const [registerModal, { openModal }] = useModal();
+  const [registerTable, { reload }] = useTable({
+    title: '岗位列表',
+    api: getPostList,
     columns,
     formConfig: {
       labelWidth: 120,
       schemas: searchFormSchema,
     },
-    isTreeTable: true,
     pagination: false,
     striped: false,
     useSearchForm: true,
@@ -65,7 +57,7 @@
     showIndexColumn: false,
     canResize: false,
     actionColumn: {
-      width: 120,
+      width: 80,
       title: '操作',
       dataIndex: 'action',
       // slots: { customRender: 'action' },
@@ -74,27 +66,24 @@
   });
 
   function handleCreate() {
-    openDrawer(true, {
+    openModal(true, {
       isUpdate: false,
     });
   }
 
   function handleEdit(record: Recordable) {
-    openDrawer(true, {
+    openModal(true, {
       record,
       isUpdate: true,
     });
   }
 
   async function handleDelete(record: Recordable) {
-    await deleteMenu(record.id);
+    await deletePost(record.id);
     await reload();
   }
 
   function handleSuccess() {
     reload();
-  }
-  function handleDataPermission(record: Recordable) {
-    console.log('record', record);
   }
 </script>
