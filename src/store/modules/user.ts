@@ -148,10 +148,10 @@ export const useUserStore = defineStore({
       this.setUserInfo(null);
       if (goLogin) {
         // 直接回登陆页
-        router.replace(PageEnum.BASE_LOGIN);
+        await router.replace(PageEnum.BASE_LOGIN);
       } else {
         // 回登陆页带上当前路由地址
-        router.replace({
+        await router.replace({
           path: PageEnum.BASE_LOGIN,
           query: {
             redirect: encodeURIComponent(router.currentRoute.value.fullPath),

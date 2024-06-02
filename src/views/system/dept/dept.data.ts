@@ -9,11 +9,6 @@ export const columns: BasicColumn[] = [
     width: 160,
     align: 'left',
   },
-  /*{
-    title: '排序',
-    dataIndex: 'sort',
-    width: 50,
-  },*/
   {
     title: '状态',
     dataIndex: 'status',
@@ -48,12 +43,7 @@ export const searchFormSchema: FormSchema[] = [
     field: 'status',
     label: '状态',
     component: 'Select',
-    componentProps: {
-      options: [
-        { label: '启用', value: '1' },
-        { label: '停用', value: '0' },
-      ],
-    },
+    dictCode: 'enable_status',
     colProps: { span: 8 },
   },
 ];
@@ -72,7 +62,6 @@ export const formSchema: FormSchema[] = [
     component: 'TreeSelect',
     ifShow({ values }) {
       const { name, parentId } = values;
-      // Hide without a parentDept when editing
       return parentId || (!name && !parentId);
     },
     componentProps: {
@@ -94,12 +83,7 @@ export const formSchema: FormSchema[] = [
     label: '状态',
     component: 'RadioButtonGroup',
     defaultValue: '1',
-    componentProps: {
-      options: [
-        { label: '启用', value: '1' },
-        { label: '停用', value: '0' },
-      ],
-    },
+    dictCode: 'enable_status',
     required: true,
   },
   {
@@ -107,13 +91,7 @@ export const formSchema: FormSchema[] = [
     label: '分类',
     component: 'RadioButtonGroup',
     defaultValue: '10',
-    componentProps: {
-      options: [
-        { label: '公司', value: '10' },
-        { label: '部门', value: '20' },
-        { label: '岗位', value: '30' },
-      ],
-    },
+    dictCode: 'dept_category',
     required: true,
   },
   {

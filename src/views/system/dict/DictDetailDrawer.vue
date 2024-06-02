@@ -42,6 +42,7 @@
   const [registerTable, { reload }] = useTable({
     api: getDictItemList,
     searchInfo: unref(params),
+    isTreeTable: true,
     pagination: false,
     columns: dictDetailColumns,
     canResize: true,

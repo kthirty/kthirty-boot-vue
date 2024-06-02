@@ -33,17 +33,17 @@ export const searchFormSchema: FormSchema[] = [
 export const formSchema: FormSchema[] = [
   { field: 'id', ifShow: false, component: 'Input' },
   {
-    field: 'name',
-    label: '字典名称',
-    required: true,
-    component: 'Input',
-  },
-  {
     field: 'code',
     label: '字典代码',
     required: true,
     component: 'Input',
     dynamicDisabled: (param) => !!param.model.id,
+  },
+  {
+    field: 'name',
+    label: '字典名称',
+    required: true,
+    component: 'Input',
   },
   {
     label: '描述',
@@ -73,8 +73,15 @@ export const dictDetailColumns: BasicColumn[] = [
 export const dictDetailFormSchema: FormSchema[] = [
   { field: 'id', ifShow: false, component: 'Input' },
   { field: 'code', ifShow: false, component: 'Input' },
-  { field: 'value', label: '字典值', required: true, component: 'Input' },
   { field: 'label', label: '字典标签', required: true, component: 'Input' },
-  { field: 'sort', label: '排序', required: true, component: 'InputNumber' },
+  { field: 'value', label: '字典值', required: true, component: 'Input' },
+  { field: 'sort', label: '排序', required: true, component: 'InputNumber', defaultValue: '0' },
+  {
+    field: 'status',
+    label: '状态',
+    component: 'RadioButtonGroup',
+    defaultValue: '1',
+    dictCode: 'enable_status',
+  },
   { field: 'description', label: '描述', component: 'InputTextArea' },
 ];

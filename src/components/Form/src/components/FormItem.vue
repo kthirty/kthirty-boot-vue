@@ -24,6 +24,7 @@
   import { cloneDeep, upperFirst } from 'lodash-es';
   import { useItemLabelWidth } from '../hooks/useLabelWidth';
   import { useI18n } from '@/hooks/web/useI18n';
+  import { useDict } from '@/hooks/web/useDict';
 
   export default defineComponent({
     name: 'BasicFormItem',
@@ -106,6 +107,16 @@
             componentProps,
           );
         }
+        // 自动填充选项
+        if (
+          schema.dictCode &&
+          componentProps &&
+          !componentProps[schema.autoAddDictPropName || 'options']
+        ) {
+          const { getDict } = useDict();
+          componentProps[schema.autoAddDictPropName || 'options'] = getDict(schema.dictCode);
+        }
+
         return componentProps as Recordable<any>;
       });
 
@@ -383,9 +394,9 @@
               labelCol={labelCol}
               wrapperCol={wrapperCol}
               name={field}
-              class={{ 
-                'suffix-item': !!suffix, 
-                'prefix-item': !!prefix 
+              class={{
+                'suffix-item': !!suffix,
+                'prefix-item': !!prefix,
               }}
             >
               <BasicTitle {...unref(getComponentsProps)}>{renderLabelHelpMessage()}</BasicTitle>

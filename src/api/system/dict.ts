@@ -8,6 +8,7 @@ enum Api {
   UpdateDict = '/sys/dict/update',
   GetDictItemList = '/sys/dict/queryItem',
   SaveDictItem = '/sys/dict/saveItem',
+  GetDictItemAll = '/sys/dict/queryAllItem',
 }
 
 export const getDictList = (params: DictInfo) =>
@@ -24,3 +25,5 @@ export const getDictItemList = (params: Recordable) => {
 };
 
 export const saveDictItem = (params: Recordable) => defHttp.post({ url: Api.SaveDictItem, params });
+
+export const queryAllItem = () => defHttp.get({ url: Api.GetDictItemAll });
