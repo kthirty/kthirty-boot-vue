@@ -2,7 +2,7 @@ import { defHttp } from '@/utils/http/axios';
 import { RolePageListGetResultModel, RolePageParams } from './model/role';
 
 enum Api {
-  GetRoleList = '/sys/role/list',
+  GetRoleList = '/sys/role/page',
   SaveRole = '/sys/role/save',
   UpdateRole = '/sys/role/update',
   DeleteRole = '/sys/role/remove',
