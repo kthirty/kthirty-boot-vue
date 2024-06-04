@@ -61,21 +61,13 @@ export const dictDetailColumns: BasicColumn[] = [
     title: '字典值',
     dataIndex: 'value',
   },
-  {
-    title: '排序',
-    dataIndex: 'sort',
-  },
-  {
-    title: '上级标签',
-    dataIndex: 'parentId',
-  },
 ];
 export const dictDetailFormSchema: FormSchema[] = [
   { field: 'id', ifShow: false, component: 'Input' },
   { field: 'code', ifShow: false, component: 'Input' },
   { field: 'label', label: '字典标签', required: true, component: 'Input' },
   { field: 'value', label: '字典值', required: true, component: 'Input' },
-  { field: 'sort', label: '排序', required: true, component: 'InputNumber', defaultValue: '0' },
+  { field: 'weight', label: '排序', required: true, component: 'InputNumber', defaultValue: '0' },
   {
     field: 'status',
     label: '状态',
