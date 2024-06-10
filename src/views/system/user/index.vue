@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> 新增机构 </a-button>
+        <a-button type="primary" @click="handleCreate"> 新增用户 </a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -26,24 +26,24 @@
         </template>
       </template>
     </BasicTable>
-    <DeptModal @register="registerModal" @success="handleSuccess" />
+    <PostModal @register="registerModal" @success="handleSuccess" />
   </div>
 </template>
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { deleteDept, getDeptList } from '@/api/system/dept';
 
   import { useModal } from '@/components/Modal';
-  import DeptModal from './DeptModal.vue';
+  import PostModal from './PostModal.vue';
 
-  import { columns, searchFormSchema } from './dept.data';
+  import { columns, searchFormSchema } from './user.data';
+  import { deleteUser, getUserList } from '@/api/system/user';
 
-  defineOptions({ name: 'SysDept' });
+  defineOptions({ name: 'SysUser' });
 
   const [registerModal, { openModal }] = useModal();
   const [registerTable, { reload }] = useTable({
-    title: '机构列表',
-    api: getDeptList,
+    title: '用户列表',
+    api: getUserList,
     columns,
     formConfig: {
       labelWidth: 120,
@@ -60,7 +60,6 @@
       width: 80,
       title: '操作',
       dataIndex: 'action',
-      // slots: { customRender: 'action' },
       fixed: undefined,
     },
   });
@@ -79,7 +78,7 @@
   }
 
   async function handleDelete(record: Recordable) {
-    await deleteDept(record.id);
+    await deleteUser(record.id);
     await reload();
   }
 

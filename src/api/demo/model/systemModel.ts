@@ -50,6 +50,7 @@ export interface MenuListItem {
   icon: string;
   component: string;
   permission: string;
+  children?: MenuListItem[];
 }
 
 export interface RoleListItem {

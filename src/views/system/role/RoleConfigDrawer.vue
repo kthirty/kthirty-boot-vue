@@ -12,10 +12,12 @@
         <BasicTree
           v-model:value="model[field]"
           :treeData="treeData"
+          search
+          defaultExpandAll
+          title="菜单选择"
           :fieldNames="{ title: 'name', key: 'id' }"
           checkable
           toolbar
-          default-expand-all
         />
       </template>
     </BasicForm>
@@ -27,15 +29,15 @@
   import { BasicForm, useForm } from '@/components/Form';
   import { ref, unref } from 'vue';
   import { getMenuList } from '@/api/system/menu';
-  import { getRoleMenus } from '@/api/system/role';
+  import { getRoleMenus, saveRoleMenus } from '@/api/system/role';
 
   const treeData = ref<TreeItem[]>([]);
 
-  const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
+  const [registerForm, { setFieldsValue, validate }] = useForm({
     labelWidth: 90,
     baseColProps: { span: 24 },
     schemas: [
-      { field: 'id', ifShow: false, component: 'Input' },
+      { field: 'roleId', ifShow: false, component: 'Input' },
       { field: 'menus', slot: 'menu' },
     ],
     showActionButtonGroup: false,
@@ -45,14 +47,15 @@
       treeData.value = (await getMenuList()) as any as TreeItem[];
     }
     const menus = await getRoleMenus(record['id']);
+    console.log('menus', menus);
     await setFieldsValue({
-      id: record['id'],
+      roleId: record['id'],
       menus,
     });
   });
 
   async function handleSubmit() {
     const values = await validate();
-    console.log('handleSubmit', values);
+    await saveRoleMenus(values);
   }
 </script>

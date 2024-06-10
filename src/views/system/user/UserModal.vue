@@ -7,11 +7,11 @@
   import { ref, computed, unref } from 'vue';
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { BasicForm, useForm } from '@/components/Form';
-  import { formSchema } from './post.data';
+  import { formSchema } from './user.data';
 
   import { getPostList, savePost, updatePost } from '@/api/system/post';
 
-  defineOptions({ name: 'PostModal' });
+  defineOptions({ name: 'UserModal' });
 
   const emit = defineEmits(['success', 'register']);
 
@@ -41,7 +41,7 @@
     });
   });
 
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增岗位' : '编辑岗位'));
+  const getTitle = computed(() => (!unref(isUpdate) ? '新增用户' : '编辑用户'));
 
   async function handleSubmit() {
     try {

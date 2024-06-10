@@ -41,7 +41,7 @@
     });
   });
 
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增部门' : '编辑部门'));
+  const getTitle = computed(() => (!unref(isUpdate) ? '新增机构' : '编辑机构'));
 
   async function handleSubmit() {
     try {
