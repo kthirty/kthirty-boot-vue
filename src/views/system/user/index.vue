@@ -26,14 +26,14 @@
         </template>
       </template>
     </BasicTable>
-    <PostModal @register="registerModal" @success="handleSuccess" />
+    <UserModal @register="registerModal" @success="handleSuccess" />
   </div>
 </template>
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
 
   import { useModal } from '@/components/Modal';
-  import PostModal from './PostModal.vue';
+  import UserModal from './UserModal.vue';
 
   import { columns, searchFormSchema } from './user.data';
   import { deleteUser, getUserList } from '@/api/system/user';
@@ -49,7 +49,6 @@
       labelWidth: 120,
       schemas: searchFormSchema,
     },
-    pagination: false,
     striped: false,
     useSearchForm: true,
     showTableSetting: true,

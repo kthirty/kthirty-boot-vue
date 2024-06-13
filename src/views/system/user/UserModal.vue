@@ -9,7 +9,7 @@
   import { BasicForm, useForm } from '@/components/Form';
   import { formSchema } from './user.data';
 
-  import { getPostList, savePost, updatePost } from '@/api/system/post';
+  import { saveUser, updateUser } from '@/api/system/user';
 
   defineOptions({ name: 'UserModal' });
 
@@ -17,7 +17,7 @@
 
   const isUpdate = ref(true);
 
-  const [registerForm, { resetFields, setFieldsValue, updateSchema, validate }] = useForm({
+  const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
     labelWidth: 100,
     baseColProps: { span: 24 },
     schemas: formSchema,
@@ -34,11 +34,6 @@
         ...data.record,
       });
     }
-    const treeData = await getPostList();
-    await updateSchema({
-      field: 'parentId',
-      componentProps: { treeData },
-    });
   });
 
   const getTitle = computed(() => (!unref(isUpdate) ? '新增用户' : '编辑用户'));
@@ -48,9 +43,9 @@
       const values = await validate();
       setModalProps({ confirmLoading: true });
       if (unref(isUpdate)) {
-        await updatePost(values);
+        await updateUser(values);
       } else {
-        await savePost(values);
+        await saveUser(values);
       }
       closeModal();
       emit('success');

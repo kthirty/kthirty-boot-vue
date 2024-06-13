@@ -2,7 +2,7 @@ import { defHttp } from '@/utils/http/axios';
 import { UserPageListGetResultModel, UserPageParams } from '@/api/system/model/user';
 
 enum Api {
-  UserList = '/sys/user/list',
+  UserList = '/sys/user/page',
   DeleteUser = '/sys/user/remove',
   UpdateUser = '/sys/user/update',
   SaveUser = '/sys/user/save',
