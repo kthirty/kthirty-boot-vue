@@ -6,7 +6,6 @@ export const columns: BasicColumn[] = [
   {
     title: '部门名称',
     dataIndex: 'name',
-    width: 160,
     align: 'left',
   },
   {

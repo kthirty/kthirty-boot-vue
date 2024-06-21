@@ -30,6 +30,7 @@
     isUpdate.value = !!data?.isUpdate;
 
     if (unref(isUpdate)) {
+      console.log('...data.record', data.record);
       await setFieldsValue({
         ...data.record,
       });

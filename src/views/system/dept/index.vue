@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BasicTable @register="registerTable">
+    <BasicTable @register="registerTable" @fetch-success="onFetchSuccess">
       <template #toolbar>
         <a-button type="primary" @click="handleCreate"> 新增机构 </a-button>
       </template>
@@ -37,11 +37,12 @@
   import DeptModal from './DeptModal.vue';
 
   import { columns, searchFormSchema } from './dept.data';
+  import { nextTick } from 'vue';
 
   defineOptions({ name: 'SysDept' });
 
   const [registerModal, { openModal }] = useModal();
-  const [registerTable, { reload }] = useTable({
+  const [registerTable, { reload, expandAll }] = useTable({
     title: '机构列表',
     api: getDeptList,
     columns,
@@ -51,6 +52,7 @@
     },
     pagination: false,
     striped: false,
+    isTreeTable: true,
     useSearchForm: true,
     showTableSetting: true,
     bordered: true,
@@ -82,7 +84,9 @@
     await deleteDept(record.id);
     await reload();
   }
-
+  function onFetchSuccess() {
+    nextTick(() => expandAll());
+  }
   function handleSuccess() {
     reload();
   }
