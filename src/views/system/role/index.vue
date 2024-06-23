@@ -36,7 +36,7 @@
 </template>
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { deleteRole, getRoleList } from '@/api/system/role';
+  import { deleteRole, getRolePage } from '@/api/system/role';
 
   import { useDrawer } from '@/components/Drawer';
   import RoleDrawer from './RoleDrawer.vue';
@@ -50,7 +50,7 @@
   const [registerConfigDrawer, { openDrawer: openConfigDrawer }] = useDrawer();
   const [registerTable, { reload }] = useTable({
     title: '角色列表',
-    api: getRoleList,
+    api: getRolePage,
     columns,
     formConfig: {
       labelWidth: 120,

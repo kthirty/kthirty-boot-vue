@@ -8,7 +8,6 @@ import { useUserStoreWithOut } from '@/store/modules/user';
 import { PAGE_NOT_FOUND_ROUTE } from '@/router/routes/basic';
 
 import { RootRoute } from '@/router/routes';
-import { useDictStore } from '@/store/modules/dict';
 
 const LOGIN_PATH = PageEnum.BASE_LOGIN;
 
@@ -76,7 +75,6 @@ export function createPermissionGuard(router: Router) {
     if (userStore.getLastUpdateTime === 0) {
       try {
         await userStore.getUserInfoAction();
-        await useDictStore().loadAllDict();
       } catch (err) {
         next();
         return;

@@ -59,10 +59,6 @@ export const formSchema: FormSchema[] = [
     field: 'parentId',
     label: '上级部门',
     component: 'TreeSelect',
-    ifShow({ values }) {
-      const { name, parentId } = values;
-      return parentId || (!name && !parentId);
-    },
     componentProps: {
       fieldNames: {
         label: 'name',
@@ -76,6 +72,7 @@ export const formSchema: FormSchema[] = [
     label: '排序',
     component: 'InputNumber',
     required: true,
+    defaultValue: '0',
   },
   {
     field: 'status',

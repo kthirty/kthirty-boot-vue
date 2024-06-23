@@ -328,7 +328,7 @@
         propsData.formValues = unref(getValues);
 
         const bindValue: Recordable<any> = {
-          [valueField || (isCheck ? 'checked' : 'value')]: props.formModel[field],
+          [valueField || (isCheck ? 'checked' : 'value')]: props.formModel[field] ?? undefined,
         };
 
         const compAttr: Recordable<any> = {

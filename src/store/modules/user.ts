@@ -14,6 +14,7 @@ import { usePermissionStore } from '@/store/modules/permission';
 import { RouteRecordRaw } from 'vue-router';
 import { PAGE_NOT_FOUND_ROUTE } from '@/router/routes/basic';
 import { h } from 'vue';
+import { useDictStore } from '@/store/modules/dict';
 
 interface UserState {
   userInfo: Nullable<UserInfo>;
@@ -130,6 +131,7 @@ export const useUserStore = defineStore({
       userInfo.roles = roles;
       this.setRoleList(roles);
       this.setUserInfo(userInfo);
+      await useDictStore().loadAllDict();
       return userInfo;
     },
     /**
@@ -146,6 +148,7 @@ export const useUserStore = defineStore({
       this.setToken(undefined);
       this.setSessionTimeout(false);
       this.setUserInfo(null);
+      this.lastUpdateTime = 0;
       if (goLogin) {
         // 直接回登陆页
         await router.replace(PageEnum.BASE_LOGIN);

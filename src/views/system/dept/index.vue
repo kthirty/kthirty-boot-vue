@@ -13,6 +13,10 @@
                 onClick: handleEdit.bind(null, record),
               },
               {
+                icon: 'clarity:add-text-line',
+                onClick: handleAddChild.bind(null, record),
+              },
+              {
                 icon: 'ant-design:delete-outlined',
                 color: 'error',
                 popConfirm: {
@@ -59,7 +63,7 @@
     showIndexColumn: false,
     canResize: false,
     actionColumn: {
-      width: 80,
+      width: 120,
       title: '操作',
       dataIndex: 'action',
       // slots: { customRender: 'action' },
@@ -77,6 +81,12 @@
     openModal(true, {
       record,
       isUpdate: true,
+    });
+  }
+  function handleAddChild(record: Recordable) {
+    openModal(true, {
+      record: { parentId: record.id },
+      isUpdate: false,
     });
   }
 
