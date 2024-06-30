@@ -1,21 +1,21 @@
 <template>
-  <BasicDrawer
+  <BasicModal
     v-bind="$attrs"
-    @register="registerDrawer"
+    @register="registerModal"
     showFooter
     :title="getTitle"
     width="40%"
     @ok="handleSubmit"
   >
     <BasicForm @register="registerForm" />
-  </BasicDrawer>
+  </BasicModal>
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref } from 'vue';
   import { BasicForm, useForm } from '@/components/Form';
   import { formSchema } from './dict.data';
-  import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
   import { saveDict, updateDict } from '@/api/system/dict';
+  import { BasicModal, useModalInner } from '@/components/Modal';
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(true);
@@ -27,9 +27,9 @@
     showActionButtonGroup: false,
   });
 
-  const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
+  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     await resetFields();
-    setDrawerProps({ confirmLoading: false });
+    setModalProps({ confirmLoading: false });
     isUpdate.value = !!data?.isUpdate;
 
     if (unref(isUpdate)) {
@@ -44,16 +44,16 @@
   async function handleSubmit() {
     try {
       const values = await validate();
-      setDrawerProps({ confirmLoading: true });
+      setModalProps({ confirmLoading: true });
       if (unref(isUpdate)) {
         await updateDict(values);
       } else {
         await saveDict(values);
       }
-      closeDrawer();
+      closeModal();
       emit('success');
     } finally {
-      setDrawerProps({ confirmLoading: false });
+      setModalProps({ confirmLoading: false });
     }
   }
 </script>
