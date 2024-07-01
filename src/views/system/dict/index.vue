@@ -32,19 +32,11 @@
     <a-col :span="12">
       <BasicTable @register="registerItemTable">
         <template #toolbar>
-          <a-button type="primary" @click="handleAdd"> 新增 </a-button>
+          <a-button type="primary" @click="handleAddItem"> 新增 </a-button>
         </template>
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
-            <TableAction
-              :actions="[
-                {
-                  icon: 'clarity:note-edit-line',
-                  tooltip: '编辑',
-                  onClick: handleEdit.bind(null, record),
-                },
-              ]"
-            />
+            <TableAction :actions="createActions(record)" />
           </template>
         </template>
       </BasicTable>
@@ -53,7 +45,7 @@
   </a-row>
 </template>
 <script lang="ts" setup>
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
+  import { BasicTable, useTable, TableAction, EditRecordRow, ActionItem } from '@/components/Table';
   import { deleteDict, getDictItemList, getDictList } from '@/api/system/dict';
 
   import { useModal } from '@/components/Modal';
@@ -63,10 +55,10 @@
 
   defineOptions({ name: 'SysDict' });
   const dictCode = ref<string>();
+  const currentEditKeyRef = ref('');
 
   const [registerModal, { openModal }] = useModal();
   const [registerTable, { reload }] = useTable({
-    title: '字典列表',
     api: getDictList,
     columns,
     formConfig: {
@@ -74,7 +66,6 @@
       schemas: searchFormSchema,
     },
     useSearchForm: true,
-    showTableSetting: true,
     bordered: true,
     showIndexColumn: false,
     actionColumn: {
@@ -92,24 +83,78 @@
       },
     },
   });
-  const [registerItemTable, { reload: loadDetail }] = useTable({
-    title: '数据字典选项',
+  const [registerItemTable, { reload: loadDetail, insertTableDataRecord }] = useTable({
     api: getDictItemList,
-    beforeFetch: () => {
-      return { code: unref(dictCode) };
+    beforeFetch: (param) => {
+      console.log(param);
+      return { code: unref(dictCode), ...param };
+    },
+    afterFetch: () => {
+      currentEditKeyRef.value = '';
     },
     immediate: false,
+    useSearchForm: true,
+    bordered: true,
+    showIndexColumn: false,
+    formConfig: {
+      labelWidth: 120,
+      schemas: [
+        {
+          field: 'label',
+          label: '字典标签',
+          component: 'Input',
+          colProps: { span: 8 },
+        },
+      ],
+    },
     columns: [
       {
         title: '字典标签',
         dataIndex: 'label',
+        editRow: true,
       },
       {
         title: '字典值',
         dataIndex: 'value',
+        editRow: true,
       },
     ],
+    actionColumn: {
+      width: 160,
+      dataIndex: 'action',
+    },
   });
+  function createActions(record: EditRecordRow): ActionItem[] {
+    if (!record.editable) {
+      return [
+        {
+          label: '编辑',
+          disabled: currentEditKeyRef.value ? currentEditKeyRef.value !== record.key : false,
+          onClick: () => {
+            currentEditKeyRef.value = record.key;
+            record.onEdit?.(true);
+          },
+        },
+      ];
+    }
+    return [
+      {
+        label: '保存',
+        onClick: () => {
+          console.log('record', record);
+        },
+      },
+      {
+        label: '取消',
+        popConfirm: {
+          title: '是否取消编辑',
+          confirm: () => {
+            record.onEdit?.(false, false);
+          },
+        },
+      },
+    ];
+  }
 
   function handleCreate() {
     openModal(true, {
@@ -122,6 +167,9 @@
       record,
       isUpdate: true,
     });
+  }
+  function handleAddItem() {
+    insertTableDataRecord({ code: dictCode.value });
   }
 
   function handleDelete(record: Recordable) {
