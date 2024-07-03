@@ -12,8 +12,9 @@
         <BasicTree
           v-model:value="model[field]"
           :treeData="treeData"
+          :checkStrictly="true"
+          :autoBindArray="true"
           search
-          defaultExpandAll
           title="菜单选择"
           :fieldNames="{ title: 'name', key: 'id' }"
           checkable

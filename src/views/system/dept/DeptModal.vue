@@ -29,7 +29,7 @@
     setModalProps({ confirmLoading: false });
     isUpdate.value = !!data?.isUpdate;
 
-    if (unref(isUpdate)) {
+    if (unref(isUpdate) || data.record) {
       console.log('...data.record', data.record);
       await setFieldsValue({
         ...data.record,

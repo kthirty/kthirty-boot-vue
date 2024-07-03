@@ -135,6 +135,8 @@ export const treeProps = buildProps({
     default: false,
   },
   treeWrapperClassName: String,
+  // 是否将数组中的半选择和全选中合并为一个数组绑定
+  autoBindArray: Boolean,
 });
 
 export type TreeProps = ExtractPropTypes<typeof treeProps>;

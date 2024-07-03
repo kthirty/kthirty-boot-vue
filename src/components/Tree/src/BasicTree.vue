@@ -100,8 +100,11 @@
             } else {
               state.checkedKeys = v;
             }
-
-            const rawVal = toRaw(state.checkedKeys);
+            const rawVal = props.autoBindArray
+              ? Array.isArray(state.checkedKeys)
+                ? toRaw(state.checkedKeys)
+                : [...toRaw(state.checkedKeys.checked), ...toRaw(state.checkedKeys.halfChecked)]
+              : toRaw(state.checkedKeys);
             emit('update:value', rawVal);
             emit('check', rawVal, e);
           },

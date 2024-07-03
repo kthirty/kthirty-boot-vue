@@ -10,6 +10,7 @@ import {
   Steps,
   Tooltip,
   Drawer,
+  Tree,
   Dropdown,
 } from 'ant-design-vue';
 import VXETable from 'vxe-table';
@@ -20,6 +21,7 @@ export function registerGlobComp(app: App) {
     .use(Alert)
     .use(Tabs)
     .use(Steps)
+    .use(Tree)
     .use(Row)
     .use(Col)
     .use(Button)
