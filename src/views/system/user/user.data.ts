@@ -1,7 +1,6 @@
 import { BasicColumn, FormSchema } from '@/components/Table';
 import { getDeptList } from '@/api/system/dept';
 import { getRoleList } from '@/api/system/role';
-import { getPostList } from '@/api/system/post';
 
 export const columns: BasicColumn[] = [
   { title: '用户名', dataIndex: 'username' },
@@ -10,7 +9,6 @@ export const columns: BasicColumn[] = [
   { title: '邮箱', dataIndex: 'email' },
   { title: '手机号', dataIndex: 'phone' },
   { title: '部门', dataIndex: 'deptName' },
-  { title: '岗位', dataIndex: 'postName' },
   { title: '角色', dataIndex: 'roleName' },
   { title: '状态', dataIndex: 'statusLabel' },
 ];
@@ -32,17 +30,6 @@ export const formSchema: FormSchema[] = [
     component: 'ApiTreeSelect',
     componentProps: {
       api: getDeptList,
-      labelField: 'name',
-      valueField: 'id',
-      multiple: true,
-    },
-  },
-  {
-    field: 'postIds',
-    label: '岗位',
-    component: 'ApiTreeSelect',
-    componentProps: {
-      api: getPostList,
       labelField: 'name',
       valueField: 'id',
       multiple: true,

@@ -23,4 +23,4 @@ export const deleteRole = (id: string) => defHttp.delete({ url: `${Api.DeleteRol
 export const getRoleMenus = (id: string) =>
   defHttp.get<string[]>({ url: `${Api.GetRoleMenus}/${id}` });
 export const saveRoleMenus = (params: Recordable) =>
-  defHttp.post({ url: Api.SaveRoleMenus, params });
+  defHttp.post({ url: Api.SaveRoleMenus, params }, { successMessageMode: 'message' });

@@ -41,14 +41,13 @@
   async function handleSubmit() {
     try {
       const values = await validate();
-      console.log('values', values);
-      // setModalProps({ confirmLoading: true });
-      // if (unref(isUpdate)) {
-      //   await updateUser(values);
-      // } else {
-      //   await saveUser(values);
-      // }
-      // closeModal();
+      setModalProps({ confirmLoading: true });
+      if (unref(isUpdate)) {
+        await updateUser(values);
+      } else {
+        await saveUser(values);
+      }
+      closeModal();
       emit('success');
     } finally {
       setModalProps({ confirmLoading: false });

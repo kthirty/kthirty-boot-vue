@@ -43,7 +43,7 @@
     ],
     showActionButtonGroup: false,
   });
-  const [registerDrawer] = useDrawerInner(async ({ record }) => {
+  const [registerDrawer, { closeDrawer }] = useDrawerInner(async ({ record }) => {
     if (unref(treeData).length === 0) {
       treeData.value = (await getMenuList()) as any as TreeItem[];
     }
@@ -58,5 +58,6 @@
   async function handleSubmit() {
     const values = await validate();
     await saveRoleMenus(values);
+    closeDrawer();
   }
 </script>
