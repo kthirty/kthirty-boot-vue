@@ -14,6 +14,12 @@ export interface RoleListItem {
   createTime: string;
 }
 
+export interface UserRoleRl {
+  id: string;
+  roleId: string;
+  userId: string;
+}
+
 export type RoleModel = RoleListItem;
 export type RolePageParams = BasicPageParams & RoleParams;
 

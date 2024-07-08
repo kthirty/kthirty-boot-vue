@@ -15,7 +15,7 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   { label: '用户名', field: 'username', component: 'Input' },
-  { label: '真实姓名', field: 'realName', component: 'Input' },
+  { label: '真实姓名', field: 'realName', component: 'Input' },G
 ];
 
 export const formSchema: FormSchema[] = [

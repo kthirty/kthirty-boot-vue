@@ -1,5 +1,6 @@
 import { defHttp } from '@/utils/http/axios';
-import { RolePageListGetResultModel, RolePageParams } from './model/role';
+import { RolePageListGetResultModel, RolePageParams, UserRoleRl } from './model/role';
+import { UserInfo } from '#/store';
 
 enum Api {
   GetRolePage = '/sys/role/page',
@@ -9,6 +10,9 @@ enum Api {
   DeleteRole = '/sys/role/remove',
   GetRoleMenus = '/sys/role/menus',
   SaveRoleMenus = '/sys/role/configMenus',
+  GetUsersByRole = '/sys/role/users',
+  RemoveUserLink = '/sys/role/removeLink',
+  AddUserLink = '/sys/role/addLink',
 }
 
 export const getRolePage = (params?: RolePageParams) =>
@@ -24,3 +28,20 @@ export const getRoleMenus = (id: string) =>
   defHttp.get<string[]>({ url: `${Api.GetRoleMenus}/${id}` });
 export const saveRoleMenus = (params: Recordable) =>
   defHttp.post({ url: Api.SaveRoleMenus, params }, { successMessageMode: 'message' });
+/**
+ * 获取拥有此角色的用户
+ * @param id 角色ID
+ */
+export const getUsersByRole = (id: string) =>
+  defHttp.get<UserInfo>({ url: `${Api.GetUsersByRole}/${id}` });
+/**
+ * 删除用户与角色的关联
+ * @param params UserRoleRl
+ */
+export const removeUserLink = (params: UserRoleRl) =>
+  defHttp.delete({ url: Api.RemoveUserLink, params });
+/**
+ * 分配给用户角色
+ * @param params UserRoleRl
+ */
+export const addUserLink = (params: UserRoleRl) => defHttp.post({ url: Api.AddUserLink, params });
