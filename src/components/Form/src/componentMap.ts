@@ -34,6 +34,7 @@ import { IconPicker } from '@/components/Icon';
 import { CountdownInput } from '@/components/CountDown';
 import { BasicTitle } from '@/components/Basic';
 import { CropperAvatar } from '@/components/Cropper';
+import ApiModalTableSelect from './components/ApiModalTableSelect.vue';
 
 const componentMap = new Map<ComponentType | string, Component>();
 
@@ -62,6 +63,7 @@ componentMap.set('Slider', Slider);
 componentMap.set('Rate', Rate);
 componentMap.set('Transfer', Transfer);
 componentMap.set('ApiTransfer', ApiTransfer);
+componentMap.set('ApiModalTableSelect', ApiModalTableSelect);
 
 componentMap.set('DatePicker', DatePicker);
 componentMap.set('MonthPicker', DatePicker.MonthPicker);

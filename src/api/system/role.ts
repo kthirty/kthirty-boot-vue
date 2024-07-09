@@ -1,5 +1,5 @@
 import { defHttp } from '@/utils/http/axios';
-import { RolePageListGetResultModel, RolePageParams, UserRoleRl } from './model/role';
+import { AddLinkInfo, RolePageListGetResultModel, RolePageParams, UserRoleRl } from './model/role';
 import { UserInfo } from '#/store';
 
 enum Api {
@@ -39,9 +39,10 @@ export const getUsersByRole = (id: string) =>
  * @param params UserRoleRl
  */
 export const removeUserLink = (params: UserRoleRl) =>
-  defHttp.delete({ url: Api.RemoveUserLink, params });
+  defHttp.delete({ url: Api.RemoveUserLink, params }, { successMessageMode: 'message' });
 /**
  * 分配给用户角色
  * @param params UserRoleRl
  */
-export const addUserLink = (params: UserRoleRl) => defHttp.post({ url: Api.AddUserLink, params });
+export const addUserLink = (params: AddLinkInfo) =>
+  defHttp.post({ url: Api.AddUserLink, params }, { successMessageMode: 'message' });

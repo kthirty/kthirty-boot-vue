@@ -15,9 +15,13 @@ export interface RoleListItem {
 }
 
 export interface UserRoleRl {
-  id: string;
+  id?: string;
   roleId: string;
   userId: string;
+}
+export interface AddLinkInfo {
+  roleId: string;
+  userIds: Array<string>;
 }
 
 export type RoleModel = RoleListItem;
