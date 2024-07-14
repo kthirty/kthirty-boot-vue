@@ -43,6 +43,7 @@
   const [registerTable, { reload }] = useTable({
     api: () => getUsersByRole(currentRole.value!.id),
     showIndexColumn: false,
+    pagination: false,
     inset: true,
     columns: [
       {
