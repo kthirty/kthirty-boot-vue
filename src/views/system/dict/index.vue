@@ -46,7 +46,7 @@
 </template>
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction, EditRecordRow, ActionItem } from '@/components/Table';
-  import { deleteDict, getDictItemList, getDictList } from '@/api/system/dict';
+  import { deleteDict, getDictItemList, getDictList, saveDictItem } from '@/api/system/dict';
 
   import { useModal } from '@/components/Modal';
   import DictModal from './DictModal.vue';
@@ -86,7 +86,6 @@
   const [registerItemTable, { reload: loadDetail, insertTableDataRecord }] = useTable({
     api: getDictItemList,
     beforeFetch: (param) => {
-      console.log(param);
       return { code: unref(dictCode), ...param };
     },
     afterFetch: () => {
@@ -118,6 +117,12 @@
         dataIndex: 'value',
         editRow: true,
       },
+      {
+        dataIndex: 'weight',
+        title: '排序',
+        editRow: true,
+        editComponent: 'InputNumber',
+      },
     ],
     actionColumn: {
       width: 160,
@@ -129,7 +134,6 @@
       return [
         {
           label: '编辑',
-          disabled: currentEditKeyRef.value ? currentEditKeyRef.value !== record.key : false,
           onClick: () => {
             currentEditKeyRef.value = record.key;
             record.onEdit?.(true);
@@ -140,8 +144,10 @@
     return [
       {
         label: '保存',
-        onClick: () => {
-          console.log('record', record);
+        onClick: async () => {
+          record.onEdit?.(false);
+          await saveDictItem(record);
+          await reload();
         },
       },
       {

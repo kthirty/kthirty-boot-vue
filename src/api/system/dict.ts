@@ -24,6 +24,7 @@ export const getDictItemList = (params: Recordable) => {
   return defHttp.get<DictItem[]>({ url: `${Api.GetDictItemList}`, params });
 };
 
-export const saveDictItem = (params: Recordable) => defHttp.post({ url: Api.SaveDictItem, params });
+export const saveDictItem = (params: Recordable) =>
+  defHttp.post({ url: Api.SaveDictItem, params }, { successMessageMode: 'message' });
 
 export const queryAllItem = () => defHttp.get({ url: Api.GetDictItemAll });

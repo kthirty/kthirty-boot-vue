@@ -13,7 +13,6 @@ import {
   Tree,
   Dropdown,
 } from 'ant-design-vue';
-import VXETable from 'vxe-table';
 
 export function registerGlobComp(app: App) {
   app
@@ -28,6 +27,5 @@ export function registerGlobComp(app: App) {
     .use(Drawer)
     .use(Dropdown)
     .use(Tooltip)
-    .use(Layout)
-    .use(VXETable);
+    .use(Layout);
 }
