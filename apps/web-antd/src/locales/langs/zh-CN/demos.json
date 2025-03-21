@@ -8,5 +8,13 @@
     "antdv": "Ant Design Vue 版本",
     "naive-ui": "Naive UI 版本",
     "element-plus": "Element Plus 版本"
+  },
+  "access": {
+    "pageAccess": "页面授权",
+    "backendPermissions": "后端权限",
+    "superVisible": "超级管理员可见",
+    "buttonControl": "按钮控制",
+    "menuVisible403": "页面鉴权403",
+    "userVisible": "User可见"
   }
 }
