@@ -50,6 +50,46 @@ export const MOCK_CODES = [
     username: 'jack',
   },
 ];
+const systemRoutes = [
+  {
+    meta: {
+      icon: 'ion:settings-outline',
+      order: 9997,
+      title: 'system.title',
+    },
+    name: 'System',
+    path: '/system',
+    children: [
+      {
+        path: '/system/role',
+        name: 'SystemRole',
+        meta: {
+          icon: 'mdi:account-group',
+          title: 'system.role.title',
+        },
+        component: '/system/role/list',
+      },
+      {
+        path: '/system/menu',
+        name: 'SystemMenu',
+        meta: {
+          icon: 'mdi:menu',
+          title: 'system.menu.title',
+        },
+        component: '/system/menu/list',
+      },
+      {
+        path: '/system/dept',
+        name: 'SystemDept',
+        meta: {
+          icon: 'charm:organisation',
+          title: 'system.dept.title',
+        },
+        component: '/system/dept/list',
+      },
+    ],
+  },
+];
 
 const dashboardMenus = [
   {
@@ -173,15 +213,15 @@ const createDemosMenus = (role: 'admin' | 'super' | 'user') => {
 
 export const MOCK_MENUS = [
   {
-    menus: [...dashboardMenus, ...createDemosMenus('super')],
+    menus: [...dashboardMenus, ...systemRoutes, ...createDemosMenus('super')],
     username: 'vben',
   },
   {
-    menus: [...dashboardMenus, ...createDemosMenus('admin')],
+    menus: [...dashboardMenus, ...systemRoutes, ...createDemosMenus('admin')],
     username: 'admin',
   },
   {
-    menus: [...dashboardMenus, ...createDemosMenus('user')],
+    menus: [...dashboardMenus, ...systemRoutes, ...createDemosMenus('user')],
     username: 'jack',
   },
 ];

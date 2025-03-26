@@ -42,6 +42,5 @@ setupVbenForm<ComponentType>({
 const useVbenForm = useForm<ComponentType>;
 
 export { useVbenForm, z };
-
 export type VbenFormSchema = FormSchema<ComponentType>;
 export type { VbenFormProps };
