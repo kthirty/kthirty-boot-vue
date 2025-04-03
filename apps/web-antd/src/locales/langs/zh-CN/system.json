@@ -4,6 +4,7 @@
     "createTime": "创建时间",
     "deptName": "部门名称",
     "name": "部门",
+    "code": "编码",
     "operation": "操作",
     "parentDept": "上级部门",
     "remark": "备注",

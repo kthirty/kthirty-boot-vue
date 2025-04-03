@@ -85,6 +85,11 @@ export function useColumns<T = SystemRoleApi.SystemRole>(
       width: 200,
     },
     {
+      field: 'code',
+      title: $t('system.role.roleName'),
+      width: 200,
+    },
+    {
       field: 'id',
       title: $t('system.role.id'),
       width: 200,
@@ -99,12 +104,12 @@ export function useColumns<T = SystemRoleApi.SystemRole>(
       width: 100,
     },
     {
-      field: 'remark',
+      field: 'description',
       minWidth: 100,
       title: $t('system.role.remark'),
     },
     {
-      field: 'createTime',
+      field: 'createDate',
       title: $t('system.role.createTime'),
       width: 200,
     },

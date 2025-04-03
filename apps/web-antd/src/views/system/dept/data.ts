@@ -88,17 +88,22 @@ export function useColumns(
     },
     {
       cellRender: { name: 'CellTag' },
-      field: 'status',
+      field: 'statusLabel',
       title: $t('system.dept.status'),
       width: 100,
     },
     {
-      field: 'createTime',
+      field: 'code',
+      title: $t('system.dept.code'),
+      width: 180,
+    },
+    {
+      field: 'createDate',
       title: $t('system.dept.createTime'),
       width: 180,
     },
     {
-      field: 'remark',
+      field: 'description',
       title: $t('system.dept.remark'),
     },
     {
