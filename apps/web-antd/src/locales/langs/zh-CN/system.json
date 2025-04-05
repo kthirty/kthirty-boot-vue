@@ -20,6 +20,7 @@
     "advancedSettings": "其它设置",
     "affixTab": "固定在标签",
     "authCode": "权限标识",
+    "permission": "权限标识",
     "badge": "徽章内容",
     "badgeVariants": "徽标样式",
     "badgeType": {
