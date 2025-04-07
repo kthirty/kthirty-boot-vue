@@ -117,6 +117,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
       parentField: 'pid',
       rowField: 'id',
       transform: false,
+      expandAll: true,
     },
   } as VxeTableGridOptions,
 });
@@ -124,8 +125,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
 /**
  * 刷新表格
  */
-function refreshGrid() {
-  gridApi.query();
+async function refreshGrid() {
+  await gridApi.query();
+  // 刷新后自动展开所有树节点
+  gridApi.grid.setAllTreeExpand(true);
 }
 </script>
 <template>

@@ -134,7 +134,7 @@ function onDelete(row: SystemMenuApi.SystemMenu) {
               class="size-full"
             />
           </div>
-          <span class="flex-auto">{{ $t(row.meta?.title) }}</span>
+          <span class="flex-auto">{{ $t(row.meta?.title || row.name) }}</span>
           <div class="items-center justify-end"></div>
         </div>
         <MenuBadge

@@ -122,7 +122,7 @@ async function isMenuPathExists(
 async function createMenu(
   data: Omit<SystemMenuApi.SystemMenu, 'children' | 'id'>,
 ) {
-  return requestClient.post('/sys/menu', data);
+  return requestClient.post('/sys/menu/save', data);
 }
 
 /**
@@ -135,7 +135,7 @@ async function updateMenu(
   id: string,
   data: Omit<SystemMenuApi.SystemMenu, 'children' | 'id'>,
 ) {
-  return requestClient.put(`/sys/menu`, data);
+  return requestClient.put(`/sys/menu/update`, { id, ...data });
 }
 
 /**
@@ -143,7 +143,7 @@ async function updateMenu(
  * @param id 菜单 ID
  */
 async function deleteMenu(id: string) {
-  return requestClient.delete(`/sys/menu/${id}`);
+  return requestClient.delete(`/sys/menu/remove/${id}`);
 }
 
 export {
