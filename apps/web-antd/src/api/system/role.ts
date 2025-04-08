@@ -24,7 +24,7 @@ async function getRoleList(params: Recordable<any>) {
  * @param data 角色数据
  */
 async function createRole(data: Omit<SystemRoleApi.SystemRole, 'id'>) {
-  return requestClient.post('/sys/role', data);
+  return requestClient.post('/sys/role/save', data);
 }
 
 /**
@@ -37,7 +37,7 @@ async function updateRole(
   id: string,
   data: Omit<SystemRoleApi.SystemRole, 'id'>,
 ) {
-  return requestClient.put(`/sys/role/${id}`, data);
+  return requestClient.put(`/sys/role/update`, { ...data, id });
 }
 
 /**
@@ -45,7 +45,7 @@ async function updateRole(
  * @param id 角色 ID
  */
 async function deleteRole(id: string) {
-  return requestClient.delete(`/sys/role/${id}`);
+  return requestClient.delete(`/sys/role/remove/${id}`);
 }
 
 export { createRole, deleteRole, getRoleList, updateRole };

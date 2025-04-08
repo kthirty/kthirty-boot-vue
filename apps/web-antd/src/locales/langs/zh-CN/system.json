@@ -9,10 +9,17 @@
     "parentDept": "上级部门",
     "remark": "备注",
     "status": "状态",
-    "title": "部门管理"
+    "title": "部门管理",
+    "category": "类型",
+    "categoryOptions": {
+      "company": "公司",
+      "dept": "部门",
+      "center": "中心"
+    }
   },
   "menu": {
     "list": "菜单列表",
+    "sort": "排序",
     "activeIcon": "激活图标",
     "activePath": "激活路径",
     "activePathHelp": "跳转到当前路由时，需要激活的菜单路径。\n当不在导航菜单中显示时，需要指定激活路径",
@@ -59,11 +66,12 @@
     "roleName": "角色名称",
     "id": "角色ID",
     "status": "状态",
-    "remark": "备注",
+    "description": "描述",
     "createTime": "创建时间",
     "operation": "操作",
     "permissions": "权限",
-    "setPermissions": "授权"
+    "setPermissions": "授权",
+    "roleCode": "角色编码"
   },
   "title": "系统管理"
 }

@@ -76,11 +76,10 @@ export function useColumns(
     },
     {
       cellRender: { name: 'CellTag' },
-      field: 'status',
+      field: 'statusLabel',
       title: $t('system.menu.status'),
       width: 100,
     },
-
     {
       align: 'right',
       cellRender: {

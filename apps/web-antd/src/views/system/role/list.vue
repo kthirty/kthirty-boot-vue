@@ -103,8 +103,8 @@ async function onStatusChange(
   row: SystemRoleApi.SystemRole,
 ) {
   const status: Recordable<string> = {
-    0: '禁用',
-    1: '启用',
+    '0': '禁用',
+    '1': '启用',
   };
   try {
     await confirm(

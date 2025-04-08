@@ -8,11 +8,42 @@ import { z } from '#/adapter/form';
 import { getDeptList } from '#/api/system/dept';
 import { $t } from '#/locales';
 
+export function getDeptCategoryOptions() {
+  return [
+    {
+      color: 'default',
+      label: $t('system.dept.categoryOptions.company'),
+      value: 'company',
+    },
+    {
+      color: 'default',
+      label: $t('system.dept.categoryOptions.dept'),
+      value: 'dept',
+    },
+    {
+      color: 'default',
+      label: $t('system.dept.categoryOptions.center'),
+      value: 'center',
+    },
+  ];
+}
+
 /**
  * 获取编辑表单的字段配置。如果没有使用多语言，可以直接export一个数组常量
  */
 export function useSchema(): VbenFormSchema[] {
   return [
+    {
+      component: 'RadioGroup',
+      componentProps: {
+        buttonStyle: 'solid',
+        options: getDeptCategoryOptions(),
+        optionType: 'button',
+      },
+      defaultValue: 'dept',
+      fieldName: 'category',
+      label: $t('system.dept.category'),
+    },
     {
       component: 'Input',
       fieldName: 'name',
@@ -43,12 +74,12 @@ export function useSchema(): VbenFormSchema[] {
       componentProps: {
         buttonStyle: 'solid',
         options: [
-          { label: $t('common.enabled'), value: 1 },
-          { label: $t('common.disabled'), value: 0 },
+          { label: $t('common.enabled'), value: '1' },
+          { label: $t('common.disabled'), value: '0' },
         ],
         optionType: 'button',
       },
-      defaultValue: 1,
+      defaultValue: '0',
       fieldName: 'status',
       label: $t('system.dept.status'),
     },

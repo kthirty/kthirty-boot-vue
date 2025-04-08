@@ -8,6 +8,12 @@ export function useFormSchema(): VbenFormSchema[] {
   return [
     {
       component: 'Input',
+      fieldName: 'code',
+      label: $t('system.role.roleCode'),
+      rules: 'required',
+    },
+    {
+      component: 'Input',
       fieldName: 'name',
       label: $t('system.role.roleName'),
       rules: 'required',
@@ -17,19 +23,19 @@ export function useFormSchema(): VbenFormSchema[] {
       componentProps: {
         buttonStyle: 'solid',
         options: [
-          { label: $t('common.enabled'), value: 1 },
-          { label: $t('common.disabled'), value: 0 },
+          { label: $t('common.enabled'), value: '1' },
+          { label: $t('common.disabled'), value: '0' },
         ],
         optionType: 'button',
       },
-      defaultValue: 1,
+      defaultValue: '1',
       fieldName: 'status',
       label: $t('system.role.status'),
     },
     {
       component: 'Textarea',
-      fieldName: 'remark',
-      label: $t('system.role.remark'),
+      fieldName: 'description',
+      label: $t('system.role.description'),
     },
     {
       component: 'Input',
@@ -48,14 +54,18 @@ export function useGridFormSchema(): VbenFormSchema[] {
       fieldName: 'name',
       label: $t('system.role.roleName'),
     },
-    { component: 'Input', fieldName: 'id', label: $t('system.role.id') },
+    {
+      component: 'Input',
+      fieldName: 'code',
+      label: $t('system.role.roleCode'),
+    },
     {
       component: 'Select',
       componentProps: {
         allowClear: true,
         options: [
-          { label: $t('common.enabled'), value: 1 },
-          { label: $t('common.disabled'), value: 0 },
+          { label: $t('common.enabled'), value: '1' },
+          { label: $t('common.disabled'), value: '0' },
         ],
       },
       fieldName: 'status',
@@ -63,8 +73,8 @@ export function useGridFormSchema(): VbenFormSchema[] {
     },
     {
       component: 'Input',
-      fieldName: 'remark',
-      label: $t('system.role.remark'),
+      fieldName: 'description',
+      label: $t('system.role.description'),
     },
     {
       component: 'RangePicker',
@@ -86,12 +96,7 @@ export function useColumns<T = SystemRoleApi.SystemRole>(
     },
     {
       field: 'code',
-      title: $t('system.role.roleName'),
-      width: 200,
-    },
-    {
-      field: 'id',
-      title: $t('system.role.id'),
+      title: $t('system.role.roleCode'),
       width: 200,
     },
     {

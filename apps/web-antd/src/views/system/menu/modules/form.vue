@@ -238,6 +238,11 @@ const schema: VbenFormSchema[] = [
     rules: z.string().url($t('ui.formRules.invalidURL')),
   },
   {
+    component: 'InputNumber',
+    fieldName: 'sort',
+    label: $t('system.menu.sort'),
+  },
+  {
     component: 'Input',
     dependencies: {
       rules: (values) => {
@@ -248,20 +253,20 @@ const schema: VbenFormSchema[] = [
       },
       triggerFields: ['type'],
     },
-    fieldName: 'authCode',
-    label: $t('system.menu.authCode'),
+    fieldName: 'permission',
+    label: $t('system.menu.permission'),
   },
   {
     component: 'RadioGroup',
     componentProps: {
       buttonStyle: 'solid',
       options: [
-        { label: $t('common.enabled'), value: 1 },
-        { label: $t('common.disabled'), value: 0 },
+        { label: $t('common.enabled'), value: '1' },
+        { label: $t('common.disabled'), value: '0' },
       ],
       optionType: 'button',
     },
-    defaultValue: 1,
+    defaultValue: '0',
     fieldName: 'status',
     label: $t('system.menu.status'),
   },

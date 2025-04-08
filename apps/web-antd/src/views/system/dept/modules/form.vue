@@ -5,6 +5,7 @@ import { computed, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import { Button } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
@@ -62,11 +63,13 @@ const [Modal, modalApi] = useVbenModal({
     }
   },
 });
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isHorizontal = computed(() => breakpoints.greaterOrEqual('md').value);
 </script>
 
 <template>
-  <Modal :title="getTitle">
-    <Form class="mx-4" />
+  <Modal :title="getTitle" class="w-full max-w-[800px]">
+    <Form class="mx-4" :layout="isHorizontal ? 'horizontal' : 'vertical'" />
     <template #prepend-footer>
       <div class="flex-auto">
         <Button type="primary" danger @click="resetForm">

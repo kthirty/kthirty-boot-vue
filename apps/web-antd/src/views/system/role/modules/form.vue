@@ -111,8 +111,8 @@ function getNodeClass(node: Recordable<any>) {
             icon-field="meta.icon"
           >
             <template #node="{ value }">
-              <IconifyIcon v-if="value.meta.icon" :icon="value.meta.icon" />
-              {{ $t(value.meta.title) }}
+              <IconifyIcon v-if="value?.meta?.icon" :icon="value?.meta?.icon" />
+              {{ $t(value?.meta?.title ?? '') }}
             </template>
           </VbenTree>
         </Spin>
