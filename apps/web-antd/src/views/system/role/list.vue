@@ -17,10 +17,16 @@ import { deleteRole, getRoleList, updateRole } from '#/api';
 import { $t } from '#/locales';
 
 import { useColumns, useGridFormSchema } from './data';
+import AuthConfig from './modules/auth-config.vue';
 import Form from './modules/form.vue';
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
   connectedComponent: Form,
+  destroyOnClose: true,
+});
+
+const [AuthConfigDrawer, authConfigDrawerApi] = useVbenDrawer({
+  connectedComponent: AuthConfig,
   destroyOnClose: true,
 });
 
@@ -61,6 +67,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
 function onActionClick(e: OnActionClickParams<SystemRoleApi.SystemRole>) {
   switch (e.code) {
+    case 'authorize': {
+      onAuthorize(e.row);
+      break;
+    }
     case 'delete': {
       onDelete(e.row);
       break;
@@ -70,6 +80,9 @@ function onActionClick(e: OnActionClickParams<SystemRoleApi.SystemRole>) {
       break;
     }
   }
+}
+function onAuthorize(row: SystemRoleApi.SystemRole) {
+  authConfigDrawerApi.setData({ id: row.id }).open();
 }
 
 /**
@@ -152,6 +165,7 @@ function onCreate() {
 <template>
   <Page auto-content-height>
     <FormDrawer />
+    <AuthConfigDrawer />
     <Grid :table-title="$t('system.role.list')">
       <template #toolbar-tools>
         <Button type="primary" @click="onCreate">

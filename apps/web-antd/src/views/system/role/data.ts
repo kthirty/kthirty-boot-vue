@@ -4,6 +4,18 @@ import type { SystemRoleApi } from '#/api';
 
 import { $t } from '#/locales';
 
+export function useAuthorizeFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      component: 'Input',
+      fieldName: 'permissions',
+      formItemClass: 'items-start',
+      label: $t('system.role.setPermissions'),
+      modelPropName: 'modelValue',
+    },
+  ];
+}
+
 export function useFormSchema(): VbenFormSchema[] {
   return [
     {
@@ -36,13 +48,6 @@ export function useFormSchema(): VbenFormSchema[] {
       component: 'Textarea',
       fieldName: 'description',
       label: $t('system.role.description'),
-    },
-    {
-      component: 'Input',
-      fieldName: 'permissions',
-      formItemClass: 'items-start',
-      label: $t('system.role.setPermissions'),
-      modelPropName: 'modelValue',
     },
   ];
 }
@@ -111,7 +116,7 @@ export function useColumns<T = SystemRoleApi.SystemRole>(
     {
       field: 'description',
       minWidth: 100,
-      title: $t('system.role.remark'),
+      title: $t('system.role.description'),
     },
     {
       field: 'createDate',
@@ -126,6 +131,7 @@ export function useColumns<T = SystemRoleApi.SystemRole>(
           nameTitle: $t('system.role.name'),
           onClick: onActionClick,
         },
+        options: [{ text: '授权', code: 'authorize' }, 'edit', 'delete'],
         name: 'CellOperation',
       },
       field: 'operation',

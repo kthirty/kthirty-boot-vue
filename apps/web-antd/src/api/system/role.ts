@@ -8,6 +8,10 @@ export namespace SystemRoleApi {
     id: string;
     name: string;
   }
+  export interface RoleMenu {
+    id: string;
+    permissions: string[];
+  }
 }
 
 /**
@@ -48,4 +52,25 @@ async function deleteRole(id: string) {
   return requestClient.delete(`/sys/role/remove/${id}`);
 }
 
-export { createRole, deleteRole, getRoleList, updateRole };
+async function getRolePermissions(id: string) {
+  return requestClient.get(`/sys/role/menus/${id}`);
+}
+
+async function updateRolePermissions(
+  id: string,
+  data: { permissions: string[] },
+) {
+  return requestClient.post(`/sys/role/configMenus`, {
+    roleId: id,
+    menus: data.permissions,
+  });
+}
+
+export {
+  createRole,
+  deleteRole,
+  getRoleList,
+  getRolePermissions,
+  updateRole,
+  updateRolePermissions,
+};
