@@ -12,6 +12,8 @@ import { defineStore } from 'pinia';
 import { getAccessCodesApi, getUserInfoApi, loginApi, logoutApi } from '#/api';
 import { $t } from '#/locales';
 
+import { useDictStore } from './dict';
+
 export const useAuthStore = defineStore('auth', () => {
   const accessStore = useAccessStore();
   const userStore = useUserStore();
@@ -48,7 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
 
         userStore.setUserInfo(userInfo);
         accessStore.setAccessCodes(accessCodes);
-
+        useDictStore().loadAllDict();
         if (accessStore.loginExpired) {
           accessStore.setLoginExpired(false);
         } else {
