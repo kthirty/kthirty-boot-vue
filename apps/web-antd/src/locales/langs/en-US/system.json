@@ -61,5 +61,26 @@
     "operation": "Operation",
     "permissions": "Permissions",
     "setPermissions": "Permissions"
+  },
+  "user": {
+    "title": "User Management",
+    "list": "User List",
+    "name": "User",
+    "code": "User Code",
+    "roleCode": "Role Code",
+    "username": "Username",
+    "realName": "Real Name",
+    "email": "Email",
+    "phone": "Phone",
+    "birthday": "Birthday",
+    "sex": "Gender",
+    "avatar": "Avatar",
+    "operation": "Operation",
+    "roleName": "Role Name",
+    "deptName": "Department Name",
+    "status": "Status",
+    "createTime": "Creation Time",
+    "password": "Password",
+    "repeatPassword": "Repeat Password"
   }
 }

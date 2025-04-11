@@ -4,18 +4,20 @@ export namespace SystemDeptApi {
   export interface SystemDept {
     [key: string]: any;
     children?: SystemDept[];
-    id: string;
-    name: string;
+    id?: string;
+    name?: string;
     remark?: string;
-    status: 0 | 1;
+    status?: 0 | 1;
   }
 }
 
 /**
  * 获取部门列表数据
  */
-async function getDeptList() {
-  return requestClient.get<Array<SystemDeptApi.SystemDept>>('/sys/dept/tree');
+async function getDeptList(params?: SystemDeptApi.SystemDept) {
+  return requestClient.get<Array<SystemDeptApi.SystemDept>>('/sys/dept/tree', {
+    params,
+  });
 }
 
 /**

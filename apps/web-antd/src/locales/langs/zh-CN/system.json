@@ -73,5 +73,26 @@
     "setPermissions": "授权",
     "roleCode": "角色编码"
   },
+  "user": {
+    "title": "用户管理",
+    "list": "用户列表",
+    "name": "用户",
+    "code": "用户编码",
+    "roleCode": "角色编码",
+    "username": "用户名",
+    "realName": "真实姓名",
+    "email": "邮箱",
+    "phone": "手机号",
+    "birthday": "生日",
+    "sex": "性别",
+    "avatar": "头像",
+    "operation": "操作",
+    "roleName": "角色名称",
+    "deptName": "部门名称",
+    "status": "状态",
+    "createTime": "创建时间",
+    "password": "密码",
+    "repeatPassword": "确认密码"
+  },
   "title": "系统管理"
 }
