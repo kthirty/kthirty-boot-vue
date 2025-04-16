@@ -71,7 +71,13 @@ const [Drawer, drawerApi] = useVbenDrawer({
 </script>
 
 <template>
-  <Drawer :title="formData?.id ? '编辑字典类型' : '新建字典类型'">
+  <Drawer
+    :title="
+      formData?.id
+        ? $t('ui.actionTitle.edit', [$t('system.dict.title')])
+        : $t('ui.actionTitle.create', [$t('system.dict.title')])
+    "
+  >
     <Form />
   </Drawer>
 </template>

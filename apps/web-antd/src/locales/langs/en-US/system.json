@@ -82,5 +82,21 @@
     "createTime": "Creation Time",
     "password": "Password",
     "repeatPassword": "Repeat Password"
+  },
+  "dict": {
+    "name": "Dictionary",
+    "operation": "Operation",
+    "label": "Label",
+    "value": "Value",
+    "description": "Description",
+    "weight": "Weight",
+    "status": "Status",
+    "code": "Dictionary Code",
+    "dictName": "Dictionary Name",
+    "subTitle": "Dictionary Data",
+    "subOperation": "Operation",
+    "subList": "Dictionary Option List",
+    "title": "Dictionary Type",
+    "parent": "Parent Dictionary Option"
   }
 }

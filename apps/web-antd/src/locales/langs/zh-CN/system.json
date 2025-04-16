@@ -94,5 +94,21 @@
     "password": "密码",
     "repeatPassword": "确认密码"
   },
-  "title": "系统管理"
+  "title": "系统管理",
+  "dict": {
+    "name": "字典",
+    "operation": "操作",
+    "label": "标签",
+    "value": "值",
+    "description": "描述",
+    "weight": "权重",
+    "status": "状态",
+    "code": "字典编码",
+    "dictName": "字典名称",
+    "subTitle": "字典选项",
+    "subOperation": "操作",
+    "subList": "字典选项列表",
+    "title": "字典类型",
+    "parent": "上级字典选项"
+  }
 }
