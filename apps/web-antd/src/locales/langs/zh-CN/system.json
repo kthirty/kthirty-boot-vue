@@ -71,7 +71,8 @@
     "operation": "操作",
     "permissions": "权限",
     "setPermissions": "授权",
-    "roleCode": "角色编码"
+    "roleCode": "角色编码",
+    "authorize": "授权"
   },
   "user": {
     "title": "用户管理",
@@ -92,11 +93,12 @@
     "status": "状态",
     "createTime": "创建时间",
     "password": "密码",
-    "repeatPassword": "确认密码"
+    "repeatPassword": "确认密码",
+    "authorize": "授权"
   },
   "title": "系统管理",
   "dict": {
-    "name": "字典",
+    "name": "名称",
     "operation": "操作",
     "label": "标签",
     "value": "值",
@@ -109,6 +111,6 @@
     "subOperation": "操作",
     "subList": "字典选项列表",
     "title": "字典类型",
-    "parent": "上级字典选项"
+    "parent": "上级选项"
   }
 }

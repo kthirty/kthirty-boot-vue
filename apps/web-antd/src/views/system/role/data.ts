@@ -131,13 +131,17 @@ export function useColumns<T = SystemRoleApi.SystemRole>(
           nameTitle: $t('system.role.name'),
           onClick: onActionClick,
         },
-        options: [{ text: '授权', code: 'authorize' }, 'edit', 'delete'],
+        options: [
+          { text: $t('system.role.authorize'), code: 'authorize' },
+          'edit',
+          'delete',
+        ],
         name: 'CellOperation',
       },
       field: 'operation',
       fixed: 'right',
       title: $t('system.role.operation'),
-      width: 130,
+      width: 160,
     },
   ];
 }

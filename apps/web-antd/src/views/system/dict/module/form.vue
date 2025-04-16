@@ -7,6 +7,7 @@ import { useVbenDrawer } from '@vben/common-ui';
 
 import { useVbenForm } from '#/adapter/form';
 import { createDictType, updateDictType } from '#/api';
+import { $t } from '#/locales';
 
 const emits = defineEmits(['success']);
 
@@ -16,19 +17,19 @@ const [Form, formApi] = useVbenForm({
   schema: [
     {
       fieldName: 'code',
-      label: '字典编码',
+      label: $t('system.dict.code'),
       component: 'Input',
       rules: 'required',
     },
     {
       fieldName: 'name',
-      label: '字典名称',
+      label: $t('system.dict.name'),
       component: 'Input',
       rules: 'required',
     },
     {
       fieldName: 'description',
-      label: '描述',
+      label: $t('system.dict.description'),
       component: 'Textarea',
     },
   ],

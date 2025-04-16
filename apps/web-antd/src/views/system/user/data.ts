@@ -60,12 +60,17 @@ export function useColumns<T = SystemUserApi.SystemUser>(
           nameTitle: $t('system.user.name'),
           onClick: onActionClick,
         },
+        options: [
+          { text: $t('system.user.authorize'), code: 'authorize' },
+          'edit',
+          'delete',
+        ],
         name: 'CellOperation',
       },
       field: 'operation',
       fixed: 'right',
       title: $t('system.user.operation'),
-      width: 130,
+      width: 160,
     },
   ];
 }

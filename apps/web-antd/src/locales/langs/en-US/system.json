@@ -60,7 +60,10 @@
     "createTime": "Creation Time",
     "operation": "Operation",
     "permissions": "Permissions",
-    "setPermissions": "Permissions"
+    "setPermissions": "Permissions",
+    "authorize": "Authorize",
+    "roleCode": "Role Code",
+    "description": "Description"
   },
   "user": {
     "title": "User Management",
@@ -81,22 +84,23 @@
     "status": "Status",
     "createTime": "Creation Time",
     "password": "Password",
-    "repeatPassword": "Repeat Password"
+    "repeatPassword": "Repeat Password",
+    "authorize": "Authorize"
   },
   "dict": {
-    "name": "Dictionary",
+    "name": "Name",
     "operation": "Operation",
     "label": "Label",
     "value": "Value",
     "description": "Description",
     "weight": "Weight",
     "status": "Status",
-    "code": "Dictionary Code",
+    "code": "Code",
     "dictName": "Dictionary Name",
     "subTitle": "Dictionary Data",
     "subOperation": "Operation",
     "subList": "Dictionary Option List",
     "title": "Dictionary Type",
-    "parent": "Parent Dictionary Option"
+    "parent": "Parent Option"
   }
 }

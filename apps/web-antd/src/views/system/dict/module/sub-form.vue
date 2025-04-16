@@ -45,30 +45,30 @@ const [Form, formApi] = useVbenForm({
   schema: [
     {
       fieldName: 'label',
-      label: '标签',
+      label: $t('system.dict.label'),
       component: 'Input',
       rules: 'required',
     },
     {
       fieldName: 'value',
-      label: '值',
+      label: $t('system.dict.value'),
       component: 'Input',
       rules: 'required',
     },
     {
       fieldName: 'weight',
-      label: '权重',
+      label: $t('system.dict.weight'),
       component: 'InputNumber',
       defaultValue: 0,
     },
     {
       fieldName: 'description',
-      label: '描述',
+      label: $t('system.dict.description'),
       component: 'Textarea',
     },
     {
       fieldName: 'status',
-      label: '状态',
+      label: $t('system.dict.status'),
       component: 'RadioGroup',
       defaultValue: '1',
       componentProps: {
