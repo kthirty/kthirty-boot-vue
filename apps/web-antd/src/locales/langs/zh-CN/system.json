@@ -94,7 +94,14 @@
     "createTime": "创建时间",
     "password": "密码",
     "repeatPassword": "确认密码",
-    "authorize": "授权"
+    "authorize": "授权",
+    "auth": {
+      "dept": "部门",
+      "post": "岗位",
+      "isMain": "是否主岗位",
+      "role": "角色",
+      "roleCode": "角色编码"
+    }
   },
   "title": "系统管理",
   "dict": {

@@ -8,7 +8,15 @@ import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
 import { get, isFunction, isString } from '@vben/utils';
 
 import { objectOmit } from '@vueuse/core';
-import { Button, Image, Popconfirm, Switch, Tag } from 'ant-design-vue';
+import {
+  Button,
+  Image,
+  Popconfirm,
+  Select,
+  Switch,
+  Tag,
+  TreeSelect,
+} from 'ant-design-vue';
 
 import { $t } from '#/locales';
 
@@ -52,6 +60,27 @@ setupVbenVxeTable({
       if (key.startsWith('Cell')) {
         vxeUI.renderer.delete(key);
       }
+    });
+    // 表格配置项可用CellApiComponent
+    vxeUI.renderer.add('CellTreeSelect', {
+      renderTableDefault(renderOpts) {
+        const { props, attrs } = renderOpts;
+        return h(TreeSelect, {
+          placeholder: $t('ui.placeholder.select'),
+          ...props,
+          ...attrs,
+        });
+      },
+    });
+    vxeUI.renderer.add('CellSelect', {
+      renderTableDefault(renderOpts) {
+        const { props, attrs } = renderOpts;
+        return h(Select, {
+          placeholder: $t('ui.placeholder.select'),
+          ...props,
+          ...attrs,
+        });
+      },
     });
 
     // 表格配置项可以用 cellRender: { name: 'CellImage' },

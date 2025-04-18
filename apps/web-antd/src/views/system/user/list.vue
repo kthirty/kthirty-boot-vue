@@ -21,6 +21,7 @@ import { deleteUser, getUserPage } from '#/api/system/user';
 import { $t } from '#/locales';
 
 import { useColumns, useGridFormSchema } from './data';
+import Auth from './modules/auth.vue';
 import Form from './modules/form.vue';
 
 const deptTree = ref<DataNode[]>([]);
@@ -69,6 +70,11 @@ const [Grid, gridApi] = useVbenVxeGrid({
 });
 async function onActionClick(e: OnActionClickParams<SystemUserApi.SystemUser>) {
   switch (e.code) {
+    case 'authorize': {
+      onAuthorize(e.row);
+      break;
+    }
+
     case 'delete': {
       onDelete(e.row);
       break;
@@ -78,6 +84,9 @@ async function onActionClick(e: OnActionClickParams<SystemUserApi.SystemUser>) {
       break;
     }
   }
+}
+async function onAuthorize(row: SystemUserApi.SystemUser) {
+  authDrawerApi.setData({ id: row.id }).open();
 }
 
 async function onCreate() {
@@ -114,6 +123,10 @@ const [FormDrawer, formDrawerApi] = useVbenDrawer({
 watch(currentDept, () => {
   onRefresh();
 });
+const [AuthDrawer, authDrawerApi] = useVbenDrawer({
+  connectedComponent: Auth,
+  destroyOnClose: true,
+});
 </script>
 <template>
   <div class="bg-background flex h-screen">
@@ -138,6 +151,7 @@ watch(currentDept, () => {
     </div>
     <div class="flex-1 overflow-y-auto p-4">
       <FormDrawer />
+      <AuthDrawer />
       <Grid :table-title="$t('system.user.list')">
         <template #toolbar-tools>
           <Button type="primary" @click="onCreate">

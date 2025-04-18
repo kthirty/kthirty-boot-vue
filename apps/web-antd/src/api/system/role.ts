@@ -23,6 +23,12 @@ async function getRoleList(params: Recordable<any>) {
   });
 }
 
+async function getRoleAllList(params?: Recordable<any>) {
+  return requestClient.get<Array<SystemRoleApi.SystemRole>>('/sys/role/list', {
+    params,
+  });
+}
+
 /**
  * 创建角色
  * @param data 角色数据
@@ -69,6 +75,7 @@ async function updateRolePermissions(
 export {
   createRole,
   deleteRole,
+  getRoleAllList,
   getRoleList,
   getRolePermissions,
   updateRole,

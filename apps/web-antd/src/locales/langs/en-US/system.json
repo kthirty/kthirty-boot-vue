@@ -85,7 +85,14 @@
     "createTime": "Creation Time",
     "password": "Password",
     "repeatPassword": "Repeat Password",
-    "authorize": "Authorize"
+    "authorize": "Authorize",
+    "auth": {
+      "dept": "Department",
+      "post": "Post",
+      "isMain": "Is Main",
+      "role": "Role",
+      "roleCode": "Role Code"
+    }
   },
   "dict": {
     "name": "Name",
