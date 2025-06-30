@@ -1,4 +1,7 @@
-import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+import type { FlwModelApi } from './api';
+
+import type { VbenFormSchema } from '#/adapter/form';
+import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { $t } from '#/locales';
 
@@ -6,8 +9,8 @@ import { $t } from '#/locales';
  * 模型列表表格列配置
  * @param onActionClick 操作按钮点击回调
  */
-export function useColumns(
-  onActionClick: (params: { code: string; row: any }) => void,
+export function useColumns<T = FlwModelApi.Model>(
+  onActionClick: OnActionClickFn<T>,
 ): VxeTableGridOptions['columns'] {
   return [
     {
@@ -63,6 +66,46 @@ export function useColumns(
       fixed: 'right',
       title: $t('flowable.model.operation'),
       width: 130,
+    },
+  ];
+}
+export function useSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'name',
+      label: '模型名称',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入模型名称',
+      },
+    },
+    {
+      fieldName: 'key',
+      label: '模型标识',
+      component: 'Input',
+      componentProps: {
+        placeholder: '请输入模型标识',
+      },
+    },
+    {
+      fieldName: 'category',
+      label: '模型分类',
+      component: 'Select',
+      componentProps: {
+        placeholder: '请选择模型分类',
+        options: [
+          { label: '表单', value: 'form' },
+          { label: '流程', value: 'process' },
+        ],
+      },
+    },
+    {
+      fieldName: 'remark',
+      label: '备注',
+      component: 'Textarea',
+      componentProps: {
+        placeholder: '请输入备注',
+      },
     },
   ];
 }

@@ -1,5 +1,14 @@
 import { requestClient } from '#/api/request';
 
+export namespace FlwModelApi {
+  export interface Model {
+    id?: string;
+    code: string;
+    name: string;
+    [key: string]: any;
+  }
+}
+
 /**
  * 获取模型列表
  */
