@@ -1,0 +1,12 @@
+{
+  "model": {
+    "operation": "操作",
+    "title": "流程模型",
+    "category": "模型分类",
+    "key": "模型标识",
+    "name": "模型名称",
+    "seq": "序号",
+    "revision": "版本",
+    "lastUpdateTime": "最后更新时间"
+  }
+}

@@ -24,7 +24,7 @@ export function useColumns<T = SystemDictApi.DictType>(
       cellRender: {
         attrs: {
           nameField: 'name',
-          nameTitle: $t('system.role.name'),
+          nameTitle: $t('system.dict.name'),
           onClick: onActionClick,
         },
         options: ['edit', 'delete'],
