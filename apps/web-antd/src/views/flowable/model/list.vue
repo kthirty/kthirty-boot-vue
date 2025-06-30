@@ -15,6 +15,7 @@ import Form from './modules/form.vue';
 const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
   destroyOnClose: true,
+  fullscreen: true,
 });
 
 /**
