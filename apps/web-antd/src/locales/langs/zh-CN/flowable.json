@@ -9,10 +9,15 @@
     "revision": "版本",
     "lastUpdateTime": "最后更新时间",
     "deployed": "是否已部署",
+
     "button": {
       "preview": "预览",
       "deploy": "部署",
       "deployConfirmTitle": "确认部署流程模型吗？"
+    },
+    "action": {
+      "deploying": "正在部署{0}中...",
+      "deploySuccess": "部署{0}成功"
     }
   }
 }

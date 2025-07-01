@@ -11,7 +11,7 @@ import { Button, message } from 'ant-design-vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { $t } from '#/locales';
 
-import { deleteModel, getModelList } from './api';
+import { deleteModel, deployModel, getModelList } from './api';
 import { useColumns, useSearchSchema } from './data';
 import Form from './modules/form.vue';
 import Preview from './modules/preview.vue';
@@ -45,8 +45,24 @@ function onCreate() {
 function onPreview(row: any) {
   previewModalApi.setData(row).open();
 }
-// function onDeploy(_row: FlwModelApi.Model) {
-// }
+function onDeploy(row: FlwModelApi.Model) {
+  const hideLoading = message.loading({
+    content: $t('flowable.model.action.deploying', [row.name]),
+    duration: 0,
+    key: 'action_process_msg',
+  });
+  deployModel(row.id!)
+    .then(() => {
+      message.success({
+        content: $t('flowable.model.action.deploySuccess', [row.name]),
+        key: 'action_process_msg',
+      });
+      refreshGrid();
+    })
+    .catch(() => {
+      hideLoading();
+    });
+}
 
 /**
  * 删除模型
@@ -87,7 +103,7 @@ function onActionClick({
       break;
     }
     case 'deploy': {
-      // onDeploy(row);
+      onDeploy(row);
       break;
     }
     case 'edit': {

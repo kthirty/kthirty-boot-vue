@@ -51,3 +51,9 @@ export async function saveModel(data: any) {
 export async function deleteModel(id: string) {
   return requestClient.delete(`/flw/model/delete/${id}`);
 }
+/**
+ * 部署模型
+ */
+export async function deployModel(id: string) {
+  return requestClient.put(`/flw/model/deploy?modelId=${id}`);
+}
