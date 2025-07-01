@@ -59,52 +59,54 @@ export function useColumns<T = FlwModelApi.Model>(
           nameTitle: $t('flowable.model.title'),
           onClick: onActionClick,
         },
-        options: ['edit', 'delete'],
+        options: [
+          {
+            code: 'preview',
+            text: $t('flowable.model.button.preview'),
+          },
+          'edit',
+          {
+            code: 'deploy',
+            text: $t('flowable.model.button.deploy'),
+            title:
+              $t('flowable.model.button.deploy') + $t('flowable.model.title'),
+            titleConfirm: $t('flowable.model.button.deployConfirmTitle'),
+          },
+          'delete',
+        ],
         name: 'CellOperation',
       },
       field: 'operation',
       fixed: 'right',
       title: $t('flowable.model.operation'),
-      width: 130,
+      width: 200,
     },
   ];
 }
-export function useSchema(): VbenFormSchema[] {
+
+export function useSearchSchema(): VbenFormSchema[] {
   return [
     {
       fieldName: 'name',
-      label: '模型名称',
+      label: $t('flowable.model.name'),
       component: 'Input',
-      componentProps: {
-        placeholder: '请输入模型名称',
-      },
     },
     {
       fieldName: 'key',
-      label: '模型标识',
+      label: $t('flowable.model.key'),
       component: 'Input',
-      componentProps: {
-        placeholder: '请输入模型标识',
-      },
     },
     {
-      fieldName: 'category',
-      label: '模型分类',
+      fieldName: 'deployed',
+      label: $t('flowable.model.deployed'),
       component: 'Select',
       componentProps: {
-        placeholder: '请选择模型分类',
+        allowClear: true,
         options: [
-          { label: '表单', value: 'form' },
-          { label: '流程', value: 'process' },
+          { label: $t('common.yes'), value: 'true' },
+          { label: $t('common.no'), value: 'false' },
         ],
-      },
-    },
-    {
-      fieldName: 'remark',
-      label: '备注',
-      component: 'Textarea',
-      componentProps: {
-        placeholder: '请输入备注',
+        optionType: 'button',
       },
     },
   ];

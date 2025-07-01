@@ -692,9 +692,9 @@ importers:
       dayjs:
         specifier: 'catalog:'
         version: 1.11.13
-      kthirty-bpmn-vue:
-        specifier: ^1.0.0
-        version: 1.0.0(@types/node@22.13.11)(less@4.2.2)(sass@1.86.0)(terser@5.39.0)(typescript@5.8.2)
+      kthirty-bpmn-vue3:
+        specifier: ^0.0.3
+        version: 0.0.3(diagram-js@14.11.3)(typescript@5.8.2)
       pinia:
         specifier: ^2.3.1
         version: 2.3.1(typescript@5.8.2)(vue@3.5.13(typescript@5.8.2))
@@ -2595,6 +2595,15 @@ packages:
   '@bpmn-io/diagram-js-ui@0.2.3':
     resolution: {integrity: sha512-OGyjZKvGK8tHSZ0l7RfeKhilGoOGtFDcoqSGYkX0uhFlo99OVZ9Jn1K7TJGzcE9BdKwvA5Y5kGqHEhdTxHvFfw==}
 
+  '@bpmn-io/element-template-chooser@1.1.1':
+    resolution: {integrity: sha512-PZUCAHKqxls9mZi1W9CVeKOLTBjHUFvnZ60JK5amqcB0oQWXN/vdt8xWv8xrE62KglzW6K7VEkU5iXWJN/7nSg==}
+    peerDependencies:
+      bpmn-js: '>= 11'
+      diagram-js: '>= 11.3.0'
+
+  '@bpmn-io/moddle-utils@0.2.1':
+    resolution: {integrity: sha512-iv9zwk7PEGupSq9bkVZNFL0ZmoJLHExlUcjsiYx200Nh3a5mH9BHXF+PLaSaiE4882KVEirklpWf3oQLAmShSA==}
+
   '@changesets/apply-release-plan@7.0.10':
     resolution: {integrity: sha512-wNyeIJ3yDsVspYvHnEz1xQDq18D9ifed3lI+wxRQRK4pArUcuHgCTrHv0QRnnwjhVCQACxZ+CBih3wgOct6UXw==}
 
@@ -3552,24 +3561,12 @@ packages:
     resolution: {integrity: sha512-nmG512G8QOABsserleechwHGZxzKSAlggGf9hQX0nltvSwyKNVuB/4o6iFeG2OnjXK253r8p8eSDOZf8PgFdWw==}
     engines: {node: '>= 16'}
 
-  '@intlify/core-base@9.14.4':
-    resolution: {integrity: sha512-vtZCt7NqWhKEtHa3SD/322DlgP5uR9MqWxnE0y8Q0tjDs9H5Lxhss+b5wv8rmuXRoHKLESNgw9d+EN9ybBbj9g==}
-    engines: {node: '>= 16'}
-
   '@intlify/message-compiler@11.1.2':
     resolution: {integrity: sha512-T/xbNDzi+Yv0Qn2Dfz2CWCAJiwNgU5d95EhhAEf4YmOgjCKktpfpiUSmLcBvK1CtLpPQ85AMMQk/2NCcXnNj1g==}
     engines: {node: '>= 16'}
 
-  '@intlify/message-compiler@9.14.4':
-    resolution: {integrity: sha512-vcyCLiVRN628U38c3PbahrhbbXrckrM9zpy0KZVlDk2Z0OnGwv8uQNNXP3twwGtfLsCf4gu3ci6FMIZnPaqZsw==}
-    engines: {node: '>= 16'}
-
   '@intlify/shared@11.1.2':
     resolution: {integrity: sha512-dF2iMMy8P9uKVHV/20LA1ulFLL+MKSbfMiixSmn6fpwqzvix38OIc7ebgnFbBqElvghZCW9ACtzKTGKsTGTWGA==}
-    engines: {node: '>= 16'}
-
-  '@intlify/shared@9.14.4':
-    resolution: {integrity: sha512-P9zv6i1WvMc9qDBWvIgKkymjY2ptIiQ065PjDv7z7fDqH3J/HBRBN5IoiR46r/ujRcU7hCuSIZWvCAFCyuOYZA==}
     engines: {node: '>= 16'}
 
   '@intlify/unplugin-vue-i18n@6.0.5':
@@ -5019,11 +5016,38 @@ packages:
     resolution: {integrity: sha512-F3PH5k5juxom4xktynS7MoFY+NUWH5LC4CnH11YB8NPew+HLpmBLCybSAEyb2F+4pRXhuhWqFesoQd6DAyc2hw==}
     engines: {node: '>=18'}
 
+  bpmn-js-bpmnlint@0.22.3:
+    resolution: {integrity: sha512-cDDK58/FA4ETXb05Zxmr9bXuqYd9hrzhvtlooxSqeYI/Yw2rOIrAtbC3u8I3otYDCAMQVC2vJ5isd8Ee/bZusw==}
+    peerDependencies:
+      bpmn-js: '*'
+      bpmnlint: '>= 3.2'
+      diagram-js: '*'
+
+  bpmn-js-color-picker@0.7.1:
+    resolution: {integrity: sha512-SsDKewfopMPFTETAS1ZUWNKZvnQ7OBsODVcFEL2GzrQusW1VtnoCB2wc2vOtcafLAUPoUaRnVx5gZNtvywnJQA==}
+    peerDependencies:
+      bpmn-js: '>= 14'
+
+  bpmn-js-create-append-anything@0.5.2:
+    resolution: {integrity: sha512-JN1kGDb81YzCmmuOqYrA0cW92zRMHS5liO4OIj/DDf8fIpB/g8qPccJSqYJgxtvwTmvMD5d5cjX3NZ/RLdTACw==}
+
   bpmn-js@17.11.1:
     resolution: {integrity: sha512-ywCeTg5kvN8lYkU+fHE+YXTGlfKc55lRBn7zW3k1//toeMNPy/PS/uQiujRWdFhMrH5dbtDvlwWukNw2pjWw8Q==}
 
   bpmn-moddle@8.1.0:
     resolution: {integrity: sha512-yI5OAFfYVJwViKTsTsonVfCBPtB3MlefADUORwNIxxBOMp21vnoxuxsdgUWlPH/dvAEZh/+mr8UtqOBNu8NC5Q==}
+
+  bpmn-moddle@9.0.2:
+    resolution: {integrity: sha512-HXWMJ+UZSm2PeBS9FuY713AB6Pjwbzp6l2ncWdUpuPrQVGdtcsS/FIK5P3CVQKR8LYrf0BUaM+ID+0Xu7PdsIw==}
+    engines: {node: '>= 18'}
+
+  bpmnlint-utils@1.1.1:
+    resolution: {integrity: sha512-Afdb77FmwNB3INyUfbzXW40yY+mc0qYU3SgDFeI4zTtduiVomOlfqoXiEaUIGI8Hyh7aVYpmf3O97P2w7x0DYQ==}
+
+  bpmnlint@10.3.1:
+    resolution: {integrity: sha512-yKkL9iJLBWGTRgiJNiZ4zsJHXwyJmmgQij/4fhRMMfsEDWNk0V5iFtGYF57jH4o/riXTfIototyy/MxOCAyu2g==}
+    engines: {node: '>= 16'}
+    hasBin: true
 
   brace-expansion@1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
@@ -5228,6 +5252,10 @@ packages:
     resolution: {integrity: sha512-ywqV+5MmyL4E7ybXgKys4DugZbX0FC6LnwrhjuykIjnK9k8OQacQ7axGKnjDXWNhns0xot3bZI5h55H8yo9cJg==}
     engines: {node: '>=6'}
 
+  cli-table@0.3.11:
+    resolution: {integrity: sha512-IqLQi4lO0nIB4tcdTpN4LCB9FI3uqrJZK7RC515EnhZ6qBaglkIgICb1wjeAqpdoOabm1+SuQtkXIPdYC93jhQ==}
+    engines: {node: '>= 0.2.0'}
+
   cli-truncate@4.0.0:
     resolution: {integrity: sha512-nPdaFdQ0h/GEigbPClz11D0v/ZJEwxmeVZGeMo3Z5StPtUTkA9o1lD6QwoirYiSDzbcwn2XcjwmCp68W1IS4TA==}
     engines: {node: '>=18'}
@@ -5264,6 +5292,10 @@ packages:
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
 
+  color-support@1.1.3:
+    resolution: {integrity: sha512-qiBjkpbMLO/HL68y+lh4q0/O1MZFj2RX6X/KmMa3+gJD3z+WwI1ZzDHysvqHGS3mP6mznPckpXmw1nI9cJjyRg==}
+    hasBin: true
+
   colord@2.9.3:
     resolution: {integrity: sha512-jeC1axXpnb0/2nn/Y1LPuLdgXBLH7aDcHu4KEKfqw3CUhX7ZpfBSlPKyqXE6btIgEzfWtrX3/tyBCaCvXvMkOw==}
 
@@ -5272,6 +5304,10 @@ packages:
 
   colorette@2.0.20:
     resolution: {integrity: sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==}
+
+  colors@1.0.3:
+    resolution: {integrity: sha512-pFGrxThWcWQ2MsAz6RtgeWe4NK2kUE1WfsrvvlctdII745EW9I0yflqhe7++M5LEc7bV2c/9/5zc8sFcpL0Drw==}
+    engines: {node: '>=0.1.90'}
 
   combined-stream@1.0.8:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
@@ -6624,6 +6660,9 @@ packages:
     resolution: {integrity: sha512-DpLKbNU4WylpxJykQujfCcwYWiV/Jhm50Goo0wrVILAv5jOr9d+H+UR3PhSCD2rCCEIg0uc+G+muBTwD54JhDQ==}
     engines: {node: '>= 0.4'}
 
+  globalyzer@0.1.0:
+    resolution: {integrity: sha512-40oNTM9UfG6aBmuKxk/giHn5nQ8RVz/SS4Ir6zgzOv9/qC3kKZ9v4etGTcJbEl/NyVQH7FGU7d+X1egr57Md2Q==}
+
   globby@11.1.0:
     resolution: {integrity: sha512-jhIXaOzy1sb8IyocaruWSn1TjmnBVs8Ayhcy83rmxNJ8q2uWKCAj3CnJY+KpGSXCueAPc0i05kVvVKtP1t9S3g==}
     engines: {node: '>=10'}
@@ -6634,6 +6673,9 @@ packages:
 
   globjoin@0.1.4:
     resolution: {integrity: sha512-xYfnw62CKG8nLkZBfWbhWwDw02CHty86jfPcc2cr3ZfeuK9ysoVPPEUxf21bAD/rWAgk52SuBrLJlefNy8mvFg==}
+
+  globrex@0.1.2:
+    resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
 
   good-listener@1.2.2:
     resolution: {integrity: sha512-goW1b+d9q/HIwbVYZzZ6SsTr4IgE+WA44A0GmPIQstuOrgsFcT7VEJ48nmr9GaRtNu0XTKacFLGnBPAM6Afouw==}
@@ -7307,9 +7349,8 @@ packages:
   kolorist@1.8.0:
     resolution: {integrity: sha512-Y+60/zizpJ3HRH8DCss+q95yr6145JXZo46OTpFvDZWLfRCE4qChOyk1b26nMaNpfHHgxagk9dXT5OP0Tfe+dQ==}
 
-  kthirty-bpmn-vue@1.0.0:
-    resolution: {integrity: sha512-u9CbT+ZxelAqWPAO/V68oIWoWMkVUY7vq9+PyLdWsFOLBOsTHdIzfeNZAXp26dUOx5fFdK14EeC2Y4wp5UEg/g==}
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+  kthirty-bpmn-vue3@0.0.3:
+    resolution: {integrity: sha512-j0QvGIbtfWFaKehGgT0A220pojRla7TGpTDXJJfn55lZbz6pHGQUWqJjF/fSNpYG6FkTFopurXsiWax9dJKMBw==}
 
   ky@1.7.5:
     resolution: {integrity: sha512-HzhziW6sc5m0pwi5M196+7cEBtbt0lCYi67wNsiwMUmz833wloE0gbzJPWKs1gliFKQb34huItDQX97LyOdPdA==}
@@ -7493,6 +7534,11 @@ packages:
   lru-cache@6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
     engines: {node: '>=10'}
+
+  lucide-vue-next@0.424.0:
+    resolution: {integrity: sha512-RXOGJnqYcRFI48KcitDCfSz9wMtcx2tg7YfvtBX5f2aopaDwY2bABccFgjoapnpwPy1zser7zPS4CgBlp1/img==}
+    peerDependencies:
+      vue: ^3.5.13
 
   lucide-vue-next@0.469.0:
     resolution: {integrity: sha512-EjOap+vY3xEzCMrnaccDHO4BH3k3Lr+sOyvzRQCaayYxkxKla0w6Jr4h3cHAzA4vMSp63Dcy7vDiGeCPcCY+Gg==}
@@ -7731,8 +7777,17 @@ packages:
   moddle-xml@10.1.0:
     resolution: {integrity: sha512-erWckwLt+dYskewKXJso9u+aAZ5172lOiYxSOqKCPTy7L/xmqH1PoeoA7eVC7oJTt3PqF5TkZzUmbjGH6soQBg==}
 
+  moddle-xml@11.0.0:
+    resolution: {integrity: sha512-L3Sseepfcq9Uy0iIfqEDTXSoYLva1Y/JGbN/4AMOeQ6cqbu8Ma/SDJIdOFm7smsAa64j2z3SwCGG3FIilQVnUg==}
+    engines: {node: '>= 18'}
+    peerDependencies:
+      moddle: '>= 6.2.0'
+
   moddle@6.2.3:
     resolution: {integrity: sha512-bLVN+ZHL3aKnhxc19XtjUfvdJsS3EsiEJC7bT6YPD11qYmTzvsxrGgyYz1Ouof7TZuGw0lDJ1OLmEnxcpQWk3Q==}
+
+  moddle@7.2.0:
+    resolution: {integrity: sha512-x1+JREThy7JBOBR3g2hbOnOfrlC/YAWXX9RzrSZS5HhqeuBly9H/PCtOBtcQs+Y2sjRAXF+WTNSgHvn8Uq+6Yw==}
 
   mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
@@ -8201,6 +8256,10 @@ packages:
 
   please-upgrade-node@3.2.0:
     resolution: {integrity: sha512-gQR3WpIgNIKwBMVLkpMUeR3e1/E1y42bqDQZfql+kDeXd8COYfM8PQA4X6y7a8u9Ua9FHmsrrmirW2vHs45hWg==}
+
+  pluralize@7.0.0:
+    resolution: {integrity: sha512-ARhBOdzS3e41FbkW/XWrTEtukqqLoK5+Z/4UeDaLuSW+39JPeFgs4gCGqsrJHVZX0fUrx//4OF0K1CUGwlIFow==}
+    engines: {node: '>=4'}
 
   pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
@@ -9070,6 +9129,10 @@ packages:
   sax@1.4.1:
     resolution: {integrity: sha512-+aWOz7yVScEGoKNd4PA10LZ8sk0A/z5+nXQG5giUO5rprX9jgYsTdov9qCchZiPIZezbZH+jRut8nPodFAX4Jg==}
 
+  saxen@10.0.0:
+    resolution: {integrity: sha512-RXsmWok/SAWqOG/f5ADEz51DN9WtZEzqih3e08ranldcaXekxjx8NBKjGh/y5hlowjo0JH/LekBu6gtPFD1G6g==}
+    engines: {node: '>= 18'}
+
   saxen@8.1.2:
     resolution: {integrity: sha512-xUOiiFbc3Ow7p8KMxwsGICPx46ZQvy3+qfNVhrkwfz3Vvq45eGt98Ft5IQaA1R/7Tb5B5MKh9fUR9x3c3nDTxw==}
 
@@ -9631,6 +9694,9 @@ packages:
 
   tiny-emitter@2.1.0:
     resolution: {integrity: sha512-NB6Dk1A9xgQPMoGqC5CVXn123gWyte215ONT5Pp5a0yt4nlEoO1ZWeCwpncaekPHXO60i47ihFnZPiRPjRMq4Q==}
+
+  tiny-glob@0.2.9:
+    resolution: {integrity: sha512-g/55ssRPUjShh+xkfx9UPDXqhckHEsHr4Vd9zX55oSdGZc/MD0m3sferOkwWtp98bv+kcVfEHtRJgBVJzelrzg==}
 
   tiny-svg@3.1.3:
     resolution: {integrity: sha512-9mwnPqXInRsBmH/DO6NMxBE++9LsqpVXQSSTZGc5bomoKKvL5OX/Hlotw7XVXP6XLRcHWIzZpxfovGqWKgCypQ==}
@@ -10227,12 +10293,6 @@ packages:
 
   vue-i18n@11.1.2:
     resolution: {integrity: sha512-MfdkdKGUHN+jkkaMT5Zbl4FpRmN7kfelJIwKoUpJ32ONIxdFhzxZiLTVaAXkAwvH3y9GmWpoiwjDqbPIkPIMFA==}
-    engines: {node: '>= 16'}
-    peerDependencies:
-      vue: ^3.5.13
-
-  vue-i18n@9.14.4:
-    resolution: {integrity: sha512-B934C8yUyWLT0EMud3DySrwSUJI7ZNiWYsEEz2gknTthqKiG4dzWE/WSa8AzCuSQzwBEv4HtG1jZDhgzPfWSKQ==}
     engines: {node: '>= 16'}
     peerDependencies:
       vue: ^3.5.13
@@ -11423,6 +11483,15 @@ snapshots:
       htm: 3.1.1
       preact: 10.26.4
 
+  '@bpmn-io/element-template-chooser@1.1.1(bpmn-js@17.11.1)(diagram-js@14.11.3)':
+    dependencies:
+      bpmn-js: 17.11.1
+      diagram-js: 14.11.3
+
+  '@bpmn-io/moddle-utils@0.2.1':
+    dependencies:
+      min-dash: 4.2.3
+
   '@changesets/apply-release-plan@7.0.10':
     dependencies:
       '@changesets/config': 3.1.1
@@ -12466,24 +12535,12 @@ snapshots:
       '@intlify/message-compiler': 11.1.2
       '@intlify/shared': 11.1.2
 
-  '@intlify/core-base@9.14.4':
-    dependencies:
-      '@intlify/message-compiler': 9.14.4
-      '@intlify/shared': 9.14.4
-
   '@intlify/message-compiler@11.1.2':
     dependencies:
       '@intlify/shared': 11.1.2
       source-map-js: 1.2.1
 
-  '@intlify/message-compiler@9.14.4':
-    dependencies:
-      '@intlify/shared': 9.14.4
-      source-map-js: 1.2.1
-
   '@intlify/shared@11.1.2': {}
-
-  '@intlify/shared@9.14.4': {}
 
   '@intlify/unplugin-vue-i18n@6.0.5(@vue/compiler-dom@3.5.13)(eslint@9.23.0(jiti@2.4.2))(rollup@4.37.0)(typescript@5.8.2)(vue-i18n@11.1.2(vue@3.5.13(typescript@5.8.2)))(vue@3.5.13(typescript@5.8.2))':
     dependencies:
@@ -14158,6 +14215,25 @@ snapshots:
       widest-line: 5.0.0
       wrap-ansi: 9.0.0
 
+  bpmn-js-bpmnlint@0.22.3(bpmn-js@17.11.1)(bpmnlint@10.3.1)(diagram-js@14.11.3):
+    dependencies:
+      bpmn-js: 17.11.1
+      bpmnlint: 10.3.1
+      diagram-js: 14.11.3
+      min-dash: 4.2.3
+      min-dom: 4.2.1
+
+  bpmn-js-color-picker@0.7.1(bpmn-js@17.11.1):
+    dependencies:
+      bpmn-js: 17.11.1
+
+  bpmn-js-create-append-anything@0.5.2(bpmn-js@17.11.1)(diagram-js@14.11.3):
+    dependencies:
+      '@bpmn-io/element-template-chooser': 1.1.1(bpmn-js@17.11.1)(diagram-js@14.11.3)
+    transitivePeerDependencies:
+      - bpmn-js
+      - diagram-js
+
   bpmn-js@17.11.1:
     dependencies:
       bpmn-moddle: 8.1.0
@@ -14174,6 +14250,27 @@ snapshots:
       min-dash: 4.2.3
       moddle: 6.2.3
       moddle-xml: 10.1.0
+
+  bpmn-moddle@9.0.2:
+    dependencies:
+      min-dash: 4.2.3
+      moddle: 7.2.0
+      moddle-xml: 11.0.0(moddle@7.2.0)
+
+  bpmnlint-utils@1.1.1: {}
+
+  bpmnlint@10.3.1:
+    dependencies:
+      '@bpmn-io/moddle-utils': 0.2.1
+      ansi-colors: 4.1.3
+      bpmn-moddle: 8.1.0
+      bpmnlint-utils: 1.1.1
+      cli-table: 0.3.11
+      color-support: 1.1.3
+      min-dash: 4.2.3
+      mri: 1.2.0
+      pluralize: 7.0.0
+      tiny-glob: 0.2.9
 
   brace-expansion@1.1.11:
     dependencies:
@@ -14425,6 +14522,10 @@ snapshots:
 
   cli-spinners@2.9.2: {}
 
+  cli-table@0.3.11:
+    dependencies:
+      colors: 1.0.3
+
   cli-truncate@4.0.0:
     dependencies:
       slice-ansi: 5.0.0
@@ -14470,11 +14571,15 @@ snapshots:
 
   color-name@1.1.4: {}
 
+  color-support@1.1.3: {}
+
   colord@2.9.3: {}
 
   colorette@1.4.0: {}
 
   colorette@2.0.20: {}
+
+  colors@1.0.3: {}
 
   combined-stream@1.0.8:
     dependencies:
@@ -16029,6 +16134,8 @@ snapshots:
       define-properties: 1.2.1
       gopd: 1.2.0
 
+  globalyzer@0.1.0: {}
+
   globby@11.1.0:
     dependencies:
       array-union: 2.1.0
@@ -16048,6 +16155,8 @@ snapshots:
       unicorn-magic: 0.3.0
 
   globjoin@0.1.4: {}
+
+  globrex@0.1.2: {}
 
   good-listener@1.2.2:
     dependencies:
@@ -16676,23 +16785,20 @@ snapshots:
 
   kolorist@1.8.0: {}
 
-  kthirty-bpmn-vue@1.0.0(@types/node@22.13.11)(less@4.2.2)(sass@1.86.0)(terser@5.39.0)(typescript@5.8.2):
+  kthirty-bpmn-vue3@0.0.3(diagram-js@14.11.3)(typescript@5.8.2):
     dependencies:
-      '@vue/runtime-core': 3.5.13
       ant-design-vue: 4.2.6(vue@3.5.13(typescript@5.8.2))
       bpmn-js: 17.11.1
-      vite: 5.4.14(@types/node@22.13.11)(less@4.2.2)(sass@1.86.0)(terser@5.39.0)
+      bpmn-js-bpmnlint: 0.22.3(bpmn-js@17.11.1)(bpmnlint@10.3.1)(diagram-js@14.11.3)
+      bpmn-js-color-picker: 0.7.1(bpmn-js@17.11.1)
+      bpmn-js-create-append-anything: 0.5.2(bpmn-js@17.11.1)(diagram-js@14.11.3)
+      bpmn-moddle: 9.0.2
+      bpmnlint: 10.3.1
+      core-js: 3.41.0
+      lucide-vue-next: 0.424.0(vue@3.5.13(typescript@5.8.2))
       vue: 3.5.13(typescript@5.8.2)
-      vue-i18n: 9.14.4(vue@3.5.13(typescript@5.8.2))
     transitivePeerDependencies:
-      - '@types/node'
-      - less
-      - lightningcss
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - terser
+      - diagram-js
       - typescript
 
   ky@1.7.5: {}
@@ -16887,6 +16993,10 @@ snapshots:
   lru-cache@6.0.0:
     dependencies:
       yallist: 4.0.0
+
+  lucide-vue-next@0.424.0(vue@3.5.13(typescript@5.8.2)):
+    dependencies:
+      vue: 3.5.13(typescript@5.8.2)
 
   lucide-vue-next@0.469.0(vue@3.5.13(typescript@5.8.2)):
     dependencies:
@@ -17133,7 +17243,17 @@ snapshots:
       moddle: 6.2.3
       saxen: 8.1.2
 
+  moddle-xml@11.0.0(moddle@7.2.0):
+    dependencies:
+      min-dash: 4.2.3
+      moddle: 7.2.0
+      saxen: 10.0.0
+
   moddle@6.2.3:
+    dependencies:
+      min-dash: 4.2.3
+
+  moddle@7.2.0:
     dependencies:
       min-dash: 4.2.3
 
@@ -17696,6 +17816,8 @@ snapshots:
   please-upgrade-node@3.2.0:
     dependencies:
       semver-compare: 1.0.0
+
+  pluralize@7.0.0: {}
 
   pluralize@8.0.0: {}
 
@@ -18580,6 +18702,8 @@ snapshots:
   sax@1.4.1:
     optional: true
 
+  saxen@10.0.0: {}
+
   saxen@8.1.2: {}
 
   scroll-into-view-if-needed@2.2.31:
@@ -19256,6 +19380,11 @@ snapshots:
   through@2.3.8: {}
 
   tiny-emitter@2.1.0: {}
+
+  tiny-glob@0.2.9:
+    dependencies:
+      globalyzer: 0.1.0
+      globrex: 0.1.2
 
   tiny-svg@3.1.3: {}
 
@@ -19937,13 +20066,6 @@ snapshots:
     dependencies:
       '@intlify/core-base': 11.1.2
       '@intlify/shared': 11.1.2
-      '@vue/devtools-api': 6.6.4
-      vue: 3.5.13(typescript@5.8.2)
-
-  vue-i18n@9.14.4(vue@3.5.13(typescript@5.8.2)):
-    dependencies:
-      '@intlify/core-base': 9.14.4
-      '@intlify/shared': 9.14.4
       '@vue/devtools-api': 6.6.4
       vue: 3.5.13(typescript@5.8.2)
 

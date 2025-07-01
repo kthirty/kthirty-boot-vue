@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { FlwModelApi } from './api';
+
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { Page, useVbenModal } from '@vben/common-ui';
@@ -7,13 +9,21 @@ import { Plus } from '@vben/icons';
 import { Button, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { $t } from '#/locales';
 
 import { deleteModel, getModelList } from './api';
-import { useColumns } from './data';
+import { useColumns, useSearchSchema } from './data';
 import Form from './modules/form.vue';
+import Preview from './modules/preview.vue';
 
 const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
+  destroyOnClose: true,
+  fullscreen: true,
+});
+
+const [PreviewModal, previewModalApi] = useVbenModal({
+  connectedComponent: Preview,
   destroyOnClose: true,
   fullscreen: true,
 });
@@ -32,6 +42,11 @@ function onEdit(row: any) {
 function onCreate() {
   formModalApi.setData(null).open();
 }
+function onPreview(row: any) {
+  previewModalApi.setData(row).open();
+}
+// function onDeploy(_row: FlwModelApi.Model) {
+// }
 
 /**
  * 删除模型
@@ -39,14 +54,14 @@ function onCreate() {
  */
 function onDelete(row: any) {
   const hideLoading = message.loading({
-    content: `正在删除【${row.name}】...`,
+    content: $t('ui.actionMessage.deleting', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
   deleteModel(row.id)
     .then(() => {
       message.success({
-        content: `删除【${row.name}】成功`,
+        content: $t('ui.actionMessage.deleteSuccess', [row.name]),
         key: 'action_process_msg',
       });
       refreshGrid();
@@ -59,20 +74,39 @@ function onDelete(row: any) {
 /**
  * 表格操作按钮的回调函数
  */
-function onActionClick({ code, row }: { code: string; row: any }) {
+function onActionClick({
+  code,
+  row,
+}: {
+  code: string;
+  row: FlwModelApi.Model;
+}) {
   switch (code) {
     case 'delete': {
       onDelete(row);
+      break;
+    }
+    case 'deploy': {
+      // onDeploy(row);
       break;
     }
     case 'edit': {
       onEdit(row);
       break;
     }
+    case 'preview': {
+      onPreview(row);
+      break;
+    }
   }
 }
 
 const [Grid, gridApi] = useVbenVxeGrid({
+  formOptions: {
+    showCollapseButton: false,
+    schema: useSearchSchema(),
+    submitOnEnter: true,
+  },
   gridOptions: {
     columns: useColumns(onActionClick),
     height: 'auto',
@@ -110,11 +144,12 @@ async function refreshGrid() {
 <template>
   <Page auto-content-height>
     <FormModal @success="refreshGrid" />
-    <Grid table-title="模型列表">
+    <PreviewModal />
+    <Grid :table-title="$t('flowable.model.title')">
       <template #toolbar-tools>
         <Button type="primary" @click="onCreate">
           <Plus class="size-5" />
-          新建模型
+          {{ $t('ui.actionTitle.create', [$t('flowable.model.title')]) }}
         </Button>
       </template>
     </Grid>

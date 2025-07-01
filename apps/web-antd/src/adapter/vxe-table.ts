@@ -236,7 +236,7 @@ setupVbenVxeTable({
           );
         }
 
-        function renderConfirm(opt: Recordable<any>) {
+        function renderDelete(opt: Recordable<any>) {
           return h(
             Popconfirm,
             {
@@ -269,9 +269,42 @@ setupVbenVxeTable({
           );
         }
 
-        const btns = operations.map((opt) =>
-          opt.code === 'delete' ? renderConfirm(opt) : renderBtn(opt),
-        );
+        function renderConfirm(opt: Recordable<any>) {
+          return h(
+            Popconfirm,
+            {
+              getPopupContainer(el) {
+                return el.closest('tbody') || document.body;
+              },
+              placement: 'topLeft',
+              title: opt.title,
+              ...props,
+              ...opt,
+              icon: undefined,
+              onConfirm: () => {
+                attrs?.onClick?.({
+                  code: opt.code,
+                  row,
+                });
+              },
+            },
+            {
+              default: () => renderBtn({ ...opt }, false),
+              description: () =>
+                h('div', { class: 'truncate' }, opt.titleConfirm),
+            },
+          );
+        }
+
+        const btns = operations.map((opt) => {
+          if (opt.code === 'delete') {
+            return renderDelete(opt);
+          } else if (opt.title && opt.titleConfirm) {
+            return renderConfirm(opt);
+          } else {
+            return renderBtn(opt);
+          }
+        });
         return h(
           'div',
           {

@@ -7,6 +7,12 @@
     "name": "模型名称",
     "seq": "序号",
     "revision": "版本",
-    "lastUpdateTime": "最后更新时间"
+    "lastUpdateTime": "最后更新时间",
+    "deployed": "是否已部署",
+    "button": {
+      "preview": "预览",
+      "deploy": "部署",
+      "deployConfirmTitle": "确认部署流程模型吗？"
+    }
   }
 }
