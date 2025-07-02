@@ -14,6 +14,12 @@ export function useColumns<T = FlwModelApi.Model>(
 ): VxeTableGridOptions['columns'] {
   return [
     {
+      type: 'checkbox',
+      width: 40,
+      fixed: 'left',
+      align: 'center',
+    },
+    {
       type: 'seq',
       width: 60,
       title: $t('flowable.model.seq'),

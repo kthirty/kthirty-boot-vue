@@ -57,3 +57,21 @@ export async function deleteModel(id: string) {
 export async function deployModel(id: string) {
   return requestClient.put(`/flw/model/deploy?modelId=${id}`);
 }
+/** 导出模型 */
+export async function exportZip(modelIds: string) {
+  return requestClient.download<Blob>(
+    `/flw/model/exportZip?modelIds=${modelIds}`,
+  );
+}
+
+/**
+ * 导入模型
+ * @param formData 包含文件的FormData对象
+ */
+export async function importModel(formData: FormData) {
+  return requestClient.post('/flw/model/import', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+}

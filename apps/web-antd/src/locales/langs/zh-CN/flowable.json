@@ -9,11 +9,20 @@
     "revision": "版本",
     "lastUpdateTime": "最后更新时间",
     "deployed": "是否已部署",
-
     "button": {
+      "import": "导入",
+      "export": "导出",
       "preview": "预览",
       "deploy": "部署",
       "deployConfirmTitle": "确认部署流程模型吗？"
+    },
+    "export": {
+      "noSelect": "请选择要导出的数据"
+    },
+    "import": {
+      "noSelect": "未选择文件！",
+      "success": "导入成功",
+      "fail": "导入失败"
     },
     "action": {
       "deploying": "正在部署{0}中...",

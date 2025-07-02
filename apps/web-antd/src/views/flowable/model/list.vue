@@ -5,13 +5,20 @@ import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { Page, useVbenModal } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
+import { downloadFileFromBlob } from '@vben/utils';
 
-import { Button, message } from 'ant-design-vue';
+import { Button, message, Upload } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { $t } from '#/locales';
 
-import { deleteModel, deployModel, getModelList } from './api';
+import {
+  deleteModel,
+  deployModel,
+  exportZip,
+  getModelList,
+  importModel,
+} from './api';
 import { useColumns, useSearchSchema } from './data';
 import Form from './modules/form.vue';
 import Preview from './modules/preview.vue';
@@ -156,6 +163,51 @@ const [Grid, gridApi] = useVbenVxeGrid({
 async function refreshGrid() {
   await gridApi.query();
 }
+
+/**
+ * 导出选中数据
+ */
+function onExportSelected() {
+  const checkedModelIds = gridApi.grid
+    ?.getCheckboxRecords(true)
+    .map((it) => it.id)
+    .join(',');
+  if (!checkedModelIds) {
+    message.warning($t('flowable.model.export.noSelect'));
+    return;
+  }
+  exportZip(checkedModelIds).then((res) => {
+    downloadFileFromBlob({
+      fileName: 'model.zip',
+      source: res,
+    });
+  });
+}
+
+/**
+ * 导入数据
+ */
+function onImportChange(info: any) {
+  // 获取上传的文件对象
+  const { file } = info;
+  if (!file) {
+    message.warning($t('flowable.model.import.noSelect'));
+    return;
+  }
+
+  // 构造 FormData，将文件作为参数传递
+  const formData = new FormData();
+  formData.append('file', file);
+
+  importModel(formData)
+    .then(() => {
+      message.success($t('flowable.model.import.success'));
+      refreshGrid();
+    })
+    .catch(() => {
+      message.error($t('flowable.model.import.fail'));
+    });
+}
 </script>
 <template>
   <Page auto-content-height>
@@ -166,6 +218,19 @@ async function refreshGrid() {
         <Button type="primary" @click="onCreate">
           <Plus class="size-5" />
           {{ $t('ui.actionTitle.create', [$t('flowable.model.title')]) }}
+        </Button>
+        <Upload
+          :show-upload-list="false"
+          :before-upload="() => false"
+          @change="onImportChange"
+          accept=".zip"
+        >
+          <Button class="ml-2" type="default">
+            {{ $t('flowable.model.button.import') }}
+          </Button>
+        </Upload>
+        <Button class="ml-2" type="default" @click="onExportSelected">
+          {{ $t('flowable.model.button.export') }}
         </Button>
       </template>
     </Grid>

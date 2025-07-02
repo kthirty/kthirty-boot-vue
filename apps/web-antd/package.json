@@ -44,7 +44,7 @@
     "@vueuse/core": "catalog:",
     "ant-design-vue": "catalog:",
     "dayjs": "catalog:",
-    "kthirty-bpmn-vue3": "^0.0.3",
+    "kthirty-bpmn-vue3": "^0.0.4",
     "pinia": "catalog:",
     "vue": "catalog:",
     "vue-router": "catalog:"
