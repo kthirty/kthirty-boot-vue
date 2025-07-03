@@ -39,12 +39,6 @@ export function useColumns<T = FlwProcdefApi.Procdef>(
       align: 'left',
     },
     {
-      field: 'category',
-      title: $t('flowable.procdef.category'),
-      minWidth: 100,
-      align: 'center',
-    },
-    {
       field: 'version',
       title: $t('flowable.procdef.version'),
       minWidth: 80,

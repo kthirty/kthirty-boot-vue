@@ -500,16 +500,17 @@ async function onSubmit() {
       await (formData.value?.id
         ? updateMenu(formData.value.id, data)
         : createMenu(data));
+      loading.value = false;
       drawerApi.close();
       emit('success');
     } finally {
-      loading.value = false;
       drawerApi.setState({
         closeOnClickModal: true,
         closeOnPressEscape: true,
         confirmLoading: false,
         loading: false,
       });
+      loading.value = false;
     }
   }
 }

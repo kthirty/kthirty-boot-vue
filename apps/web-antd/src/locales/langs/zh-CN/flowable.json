@@ -56,5 +56,32 @@
       "activating": "正在激活{0}中...",
       "activateSuccess": "激活{0}成功"
     }
+  },
+  "instance": {
+    "operation": "操作",
+    "title": "流程实例",
+    "seq": "序号",
+    "name": "实例名称",
+    "processDefinitionName": "流程定义名称",
+    "startUserId": "发起人",
+    "startTime": "开始时间",
+    "endTime": "结束时间",
+    "suspended": "是否挂起",
+    "button": {
+      "hisTask": "历史任务",
+      "hisDiagram": "历史流程图",
+      "suspend": "挂起",
+      "activate": "激活",
+      "delete": "删除",
+      "suspendConfirmTitle": "确认挂起该流程实例吗？",
+      "activateConfirmTitle": "确认激活该流程实例吗？",
+      "deleteConfirmTitle": "确认删除该流程实例吗？"
+    },
+    "action": {
+      "suspending": "正在挂起{0}中...",
+      "suspendSuccess": "挂起{0}成功",
+      "activating": "正在激活{0}中...",
+      "activateSuccess": "激活{0}成功"
+    }
   }
 }
