@@ -28,5 +28,33 @@
       "deploying": "正在部署{0}中...",
       "deploySuccess": "部署{0}成功"
     }
+  },
+  "procdef": {
+    "operation": "操作",
+    "title": "流程定义",
+    "category": "流程分类",
+    "key": "流程标识",
+    "name": "流程名称",
+    "seq": "序号",
+    "version": "版本",
+    "suspended": "是否挂起",
+    "preview": {
+      "diagram": "流程图",
+      "xml": "流程XML"
+    },
+    "button": {
+      "preview": "预览",
+      "suspend": "挂起",
+      "activate": "激活",
+      "suspendConfirmTitle": "确认挂起该流程定义吗？",
+      "activateConfirmTitle": "确认激活该流程定义吗？"
+    },
+    "noDiagram": "暂无流程图",
+    "action": {
+      "suspending": "正在挂起{0}中...",
+      "suspendSuccess": "挂起{0}成功",
+      "activating": "正在激活{0}中...",
+      "activateSuccess": "激活{0}成功"
+    }
   }
 }
