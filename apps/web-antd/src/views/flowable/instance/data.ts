@@ -18,9 +18,27 @@ export function useColumns<T = FlwInstanceApi.Instance>(
       align: 'center',
     },
     {
+      field: 'id',
+      title: $t('flowable.instance.id'),
+      minWidth: 160,
+      align: 'left',
+    },
+    {
       field: 'name',
       title: $t('flowable.instance.name'),
       minWidth: 160,
+      align: 'left',
+    },
+    {
+      field: 'businessKey',
+      title: $t('flowable.instance.businessKey'),
+      minWidth: 160,
+      align: 'left',
+    },
+    {
+      field: 'businessStatus',
+      title: $t('flowable.instance.businessStatus'),
+      minWidth: 120,
       align: 'left',
     },
     {
@@ -28,6 +46,18 @@ export function useColumns<T = FlwInstanceApi.Instance>(
       title: $t('flowable.instance.processDefinitionName'),
       minWidth: 160,
       align: 'left',
+    },
+    {
+      field: 'processDefinitionKey',
+      title: $t('flowable.instance.processDefinitionKey'),
+      minWidth: 120,
+      align: 'left',
+    },
+    {
+      field: 'processDefinitionVersion',
+      title: $t('flowable.instance.processDefinitionVersion'),
+      minWidth: 100,
+      align: 'center',
     },
     {
       field: 'startUserId',
@@ -50,6 +80,24 @@ export function useColumns<T = FlwInstanceApi.Instance>(
       formatter: 'formatDateTime',
     },
     {
+      field: 'durationInMillis',
+      title: $t('flowable.instance.durationInMillis'),
+      minWidth: 120,
+      align: 'center',
+    },
+    {
+      field: 'deleteReason',
+      title: $t('flowable.instance.deleteReason'),
+      minWidth: 120,
+      align: 'left',
+    },
+    {
+      field: 'description',
+      title: $t('flowable.instance.description'),
+      minWidth: 120,
+      align: 'left',
+    },
+    {
       field: 'suspended',
       title: $t('flowable.instance.suspended'),
       minWidth: 100,
@@ -66,15 +114,12 @@ export function useColumns<T = FlwInstanceApi.Instance>(
           onClick: onActionClick,
         },
         options: [
-          { code: 'hisTask', text: $t('flowable.instance.button.hisTask') },
-          {
-            code: 'hisDiagram',
-            text: $t('flowable.instance.button.hisDiagram'),
-          },
+          { code: 'history', text: $t('flowable.instance.button.history') },
           {
             code: 'suspend',
             text: $t('flowable.instance.button.suspend'),
-            show: (row: FlwInstanceApi.Instance) => !row.suspended,
+            show: (row: FlwInstanceApi.Instance) =>
+              !row.suspended && !row.endTime,
             title: $t('flowable.instance.button.suspendConfirmTitle'),
           },
           {
@@ -87,6 +132,8 @@ export function useColumns<T = FlwInstanceApi.Instance>(
             code: 'delete',
             text: $t('flowable.instance.button.delete'),
             title: $t('flowable.instance.button.deleteConfirmTitle'),
+            show: (row: FlwInstanceApi.Instance) =>
+              !row.isDeleted && !row.suspended && !row.endTime,
           },
         ],
         name: 'CellOperation',
@@ -112,13 +159,31 @@ export function useSearchSchema(): VbenFormSchema[] {
       component: 'Input',
     },
     {
+      fieldName: 'processDefinitionKey',
+      label: $t('flowable.instance.processDefinitionKey'),
+      component: 'Input',
+    },
+    {
       fieldName: 'startUserId',
       label: $t('flowable.instance.startUserId'),
       component: 'Input',
     },
     {
-      fieldName: 'suspended',
-      label: $t('flowable.instance.suspended'),
+      fieldName: 'finished',
+      label: $t('flowable.instance.finished'),
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: [
+          { label: $t('common.yes'), value: 'true' },
+          { label: $t('common.no'), value: 'false' },
+        ],
+        optionType: 'button',
+      },
+    },
+    {
+      fieldName: 'deleted',
+      label: $t('flowable.instance.deleted'),
       component: 'Select',
       componentProps: {
         allowClear: true,

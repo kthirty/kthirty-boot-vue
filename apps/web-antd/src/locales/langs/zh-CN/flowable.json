@@ -1,87 +1,100 @@
 {
-  "model": {
-    "operation": "操作",
-    "title": "流程模型",
-    "category": "模型分类",
-    "key": "模型标识",
-    "name": "模型名称",
-    "seq": "序号",
-    "revision": "版本",
-    "lastUpdateTime": "最后更新时间",
-    "deployed": "是否已部署",
-    "button": {
-      "import": "导入",
-      "export": "导出",
-      "preview": "预览",
-      "deploy": "部署",
-      "deployConfirmTitle": "确认部署流程模型吗？"
+  "instance": {
+    "action": {
+      "activateSuccess": "激活{0}成功",
+      "activating": "正在激活{0}中...",
+      "suspendSuccess": "挂起{0}成功",
+      "suspending": "正在挂起{0}中..."
     },
+    "button": {
+      "activate": "激活",
+      "activateConfirmTitle": "确认激活该流程实例吗？",
+      "delete": "删除",
+      "deleteConfirmTitle": "确认删除该流程实例吗？",
+      "hisDiagram": "历史流程图",
+      "hisTask": "历史任务",
+      "history": "流程历史",
+      "suspend": "挂起",
+      "suspendConfirmTitle": "确认挂起该流程实例吗？"
+    },
+    "id": "流程实例ID",
+    "endTime": "结束时间",
+    "finished": "是否已完成",
+    "deleted": "是否已删除",
+    "name": "实例名称",
+    "operation": "操作",
+    "processDefinitionName": "流程定义名称",
+    "processDefinitionKey": "流程定义KEY",
+    "processDefinitionCategory": "流程定义分类",
+    "seq": "序号",
+    "startTime": "开始时间",
+    "startUserId": "发起人",
+    "suspended": "是否挂起",
+    "title": "流程实例",
+    "businessKey": "业务主键",
+    "businessStatus": "业务状态",
+    "processDefinitionVersion": "流程定义版本",
+    "durationInMillis": "持续时长(毫秒)",
+    "deleteReason": "删除原因",
+    "description": "描述"
+  },
+  "model": {
+    "action": {
+      "deploySuccess": "部署{0}成功",
+      "deploying": "正在部署{0}中..."
+    },
+    "button": {
+      "deploy": "部署",
+      "deployConfirmTitle": "确认部署流程模型吗？",
+      "export": "导出",
+      "import": "导入",
+      "preview": "预览"
+    },
+    "category": "模型分类",
+    "deployed": "是否已部署",
     "export": {
       "noSelect": "请选择要导出的数据"
     },
     "import": {
+      "fail": "导入失败",
       "noSelect": "未选择文件！",
-      "success": "导入成功",
-      "fail": "导入失败"
+      "success": "导入成功"
     },
-    "action": {
-      "deploying": "正在部署{0}中...",
-      "deploySuccess": "部署{0}成功"
-    }
+    "key": "模型标识",
+    "lastUpdateTime": "最后更新时间",
+    "name": "模型名称",
+    "operation": "操作",
+    "revision": "版本",
+    "seq": "序号",
+    "title": "流程模型"
   },
   "procdef": {
-    "operation": "操作",
-    "title": "流程定义",
+    "action": {
+      "activateSuccess": "激活{0}成功",
+      "activating": "正在激活{0}中...",
+      "suspendSuccess": "挂起{0}成功",
+      "suspending": "正在挂起{0}中..."
+    },
+    "button": {
+      "activate": "激活",
+      "activateConfirmTitle": "确认激活该流程定义吗？",
+      "preview": "预览",
+      "suspend": "挂起",
+      "suspendConfirmTitle": "确认挂起该流程定义吗？"
+    },
     "category": "流程分类",
     "key": "流程标识",
     "name": "流程名称",
-    "seq": "序号",
-    "version": "版本",
-    "suspended": "是否挂起",
+    "noDiagram": "暂无流程图",
+    "operation": "操作",
     "preview": {
       "diagram": "流程图",
       "xml": "流程XML"
     },
-    "button": {
-      "preview": "预览",
-      "suspend": "挂起",
-      "activate": "激活",
-      "suspendConfirmTitle": "确认挂起该流程定义吗？",
-      "activateConfirmTitle": "确认激活该流程定义吗？"
-    },
-    "noDiagram": "暂无流程图",
-    "action": {
-      "suspending": "正在挂起{0}中...",
-      "suspendSuccess": "挂起{0}成功",
-      "activating": "正在激活{0}中...",
-      "activateSuccess": "激活{0}成功"
-    }
-  },
-  "instance": {
-    "operation": "操作",
-    "title": "流程实例",
     "seq": "序号",
-    "name": "实例名称",
-    "processDefinitionName": "流程定义名称",
-    "startUserId": "发起人",
-    "startTime": "开始时间",
-    "endTime": "结束时间",
+    "showHistory": "显示历史版本",
     "suspended": "是否挂起",
-    "button": {
-      "hisTask": "历史任务",
-      "hisDiagram": "历史流程图",
-      "suspend": "挂起",
-      "activate": "激活",
-      "delete": "删除",
-      "suspendConfirmTitle": "确认挂起该流程实例吗？",
-      "activateConfirmTitle": "确认激活该流程实例吗？",
-      "deleteConfirmTitle": "确认删除该流程实例吗？"
-    },
-    "action": {
-      "suspending": "正在挂起{0}中...",
-      "suspendSuccess": "挂起{0}成功",
-      "activating": "正在激活{0}中...",
-      "activateSuccess": "激活{0}成功"
-    }
+    "title": "流程定义",
+    "version": "版本"
   }
 }

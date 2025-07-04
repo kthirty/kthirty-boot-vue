@@ -75,6 +75,10 @@ export const useDictStore = defineStore(
         loading.value = false;
       }
     }
+    function $reset() {
+      dictData.value = {};
+      loading.value = false;
+    }
 
     return {
       dictData,
@@ -84,6 +88,7 @@ export const useDictStore = defineStore(
       removeDict,
       clearAll,
       loadAllDict,
+      $reset,
     };
   },
   {

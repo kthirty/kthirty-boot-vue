@@ -1,0 +1,98 @@
+{
+  "instance": {
+    "action": {
+      "activateSuccess": "Activated {0} successfully",
+      "activating": "Activating {0}...",
+      "suspendSuccess": "Suspended {0} successfully",
+      "suspending": "Suspending {0}..."
+    },
+    "button": {
+      "activate": "Activate",
+      "activateConfirmTitle": "Are you sure you want to activate this process instance?",
+      "delete": "Delete",
+      "deleteConfirmTitle": "Are you sure you want to delete this process instance?",
+      "hisDiagram": "Historical Diagram",
+      "hisTask": "Historical Task",
+      "suspend": "Suspend",
+      "suspendConfirmTitle": "Are you sure you want to suspend this process instance?"
+    },
+    "endTime": "End Time",
+    "finished": "Finished",
+    "deleted": "Deleted",
+    "name": "Instance Name",
+    "operation": "Operation",
+    "processDefinitionName": "Process Definition Name",
+    "processDefinitionKey": "Process Definition Key",
+    "processDefinitionCategory": "Process Definition Category",
+    "seq": "No.",
+    "startTime": "Start Time",
+    "startUserId": "Initiator",
+    "suspended": "Suspended",
+    "title": "Process Instance",
+    "businessKey": "Business Key",
+    "businessStatus": "Business Status",
+    "processDefinitionVersion": "Process Definition Version",
+    "durationInMillis": "Duration (ms)",
+    "deleteReason": "Delete Reason",
+    "description": "Description"
+  },
+  "model": {
+    "action": {
+      "deploySuccess": "Deployed {0} successfully",
+      "deploying": "Deploying {0}..."
+    },
+    "button": {
+      "deploy": "Deploy",
+      "deployConfirmTitle": "Are you sure you want to deploy this process model?",
+      "export": "Export",
+      "import": "Import",
+      "preview": "Preview"
+    },
+    "category": "Model Category",
+    "deployed": "Deployed",
+    "export": {
+      "noSelect": "Please select the data to export"
+    },
+    "import": {
+      "fail": "Import failed",
+      "noSelect": "No file selected!",
+      "success": "Import successful"
+    },
+    "key": "Model Key",
+    "lastUpdateTime": "Last Update Time",
+    "name": "Model Name",
+    "operation": "Operation",
+    "revision": "Version",
+    "seq": "No.",
+    "title": "Process Model"
+  },
+  "procdef": {
+    "action": {
+      "activateSuccess": "Activated {0} successfully",
+      "activating": "Activating {0}...",
+      "suspendSuccess": "Suspended {0} successfully",
+      "suspending": "Suspending {0}..."
+    },
+    "button": {
+      "activate": "Activate",
+      "activateConfirmTitle": "Are you sure you want to activate this process definition?",
+      "preview": "Preview",
+      "suspend": "Suspend",
+      "suspendConfirmTitle": "Are you sure you want to suspend this process definition?"
+    },
+    "category": "Process Category",
+    "key": "Process Key",
+    "name": "Process Name",
+    "noDiagram": "No process diagram available",
+    "operation": "Operation",
+    "preview": {
+      "diagram": "Diagram",
+      "xml": "Process XML"
+    },
+    "seq": "No.",
+    "showHistory": "Show Historical Versions",
+    "suspended": "Suspended",
+    "title": "Process Definition",
+    "version": "Version"
+  }
+}

@@ -113,5 +113,13 @@ export function useSearchSchema(): VbenFormSchema[] {
         optionType: 'button',
       },
     },
+    {
+      fieldName: 'showHistory',
+      label: $t('flowable.procdef.showHistory'),
+      component: 'Switch',
+      componentProps: {
+        class: 'w-auto',
+      },
+    },
   ];
 }

@@ -11,6 +11,7 @@ export namespace FlwInstanceApi {
     startTime?: string;
     endTime?: string;
     suspended?: boolean;
+    isDeleted?: boolean;
     [key: string]: any;
   }
 }
@@ -48,17 +49,17 @@ export async function activateInstance(id: string) {
 /**
  * 查看历史任务
  */
-export async function getHisTaskList(instanceId: string) {
+export async function getHisTaskList(procInstId: string) {
   return requestClient.get(
-    `/flw/process/instance/hisTask?instanceId=${instanceId}`,
+    `/flw/process/instance/hisTask?procInstId=${procInstId}`,
   );
 }
 
 /**
  * 查看历史流程图，返回base64图片
  */
-export async function getHisDiagram(instanceId: string) {
+export async function getHisDiagram(procInstId: string) {
   return requestClient.get(
-    `/flw/process/instance/hisDiagram?procInstId=${instanceId}`,
+    `/flw/process/instance/hisDiagram?procInstId=${procInstId}`,
   );
 }

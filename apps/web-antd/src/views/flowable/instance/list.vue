@@ -15,35 +15,26 @@ import { $t } from '#/locales';
 import {
   activateInstance,
   deleteInstance,
-  getHisTaskList,
   getInstanceList,
   suspendInstance,
 } from './api';
 import { useColumns, useSearchSchema } from './data';
+import Preview from './modules/preview.vue';
 
-const [HisTaskModal, hisTaskModalApi] = useVbenModal({
+const [HistoryModal, historyModalApi] = useVbenModal({
   destroyOnClose: true,
   fullscreen: true,
-});
-const [HisDiagramModal, hisDiagramModalApi] = useVbenModal({
-  destroyOnClose: true,
-  fullscreen: true,
+  connectedComponent: Preview,
 });
 
 const deleteReason = ref('');
-const showDeleteModal = ref(false);
+const showDeleteModal = ref<boolean>(false);
 const deleteRow = ref<FlwInstanceApi.Instance | null>(null);
 
-function onHisTask(row: FlwInstanceApi.Instance) {
-  getHisTaskList(row.id!).then((res) => {
-    hisTaskModalApi.setData(res).open();
-  });
+function onHistory(row: FlwInstanceApi.Instance) {
+  historyModalApi.setData(row).open();
 }
-function onHisDiagram(row: FlwInstanceApi.Instance) {
-  getHisDiagram(row.id!).then((res) => {
-    hisDiagramModalApi.setData({ base64: res }).open();
-  });
-}
+
 function onSuspend(row: FlwInstanceApi.Instance) {
   const hideLoading = message.loading({
     content: $t('flowable.instance.action.suspending', [row.name]),
@@ -121,12 +112,8 @@ function onActionClick({
       onDelete(row);
       break;
     }
-    case 'hisDiagram': {
-      onHisDiagram(row);
-      break;
-    }
-    case 'hisTask': {
-      onHisTask(row);
+    case 'history': {
+      onHistory(row);
       break;
     }
     case 'suspend': {
@@ -173,26 +160,17 @@ async function refreshGrid() {
 </script>
 <template>
   <Page auto-content-height>
-    <HisTaskModal />
-    <HisDiagramModal v-slot="{ data }">
-      <div v-if="data && data.base64">
-        <img
-          :src="`data:image/png;base64,${data.base64}`"
-          style="max-width: 100%; max-height: 80vh"
-        />
-      </div>
-    </HisDiagramModal>
+    <HistoryModal />
     <Grid :table-title="$t('flowable.instance.title')" />
     <Modal
       v-model:open="showDeleteModal"
       title="$t('flowable.instance.button.delete')"
       @ok="handleDeleteConfirm"
-      @cancel="() => (showDeleteModal.value = false)"
+      @cancel="() => (showDeleteModal = false)"
     >
       <Input.TextArea
         v-model:value="deleteReason"
         :placeholder="$t('flowable.instance.button.deleteConfirmTitle')"
-        rows="3"
       />
     </Modal>
   </Page>
