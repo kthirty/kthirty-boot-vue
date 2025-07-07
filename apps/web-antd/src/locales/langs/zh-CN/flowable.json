@@ -10,7 +10,7 @@
       "activate": "激活",
       "activateConfirmTitle": "确认激活该流程实例吗？",
       "delete": "删除",
-      "deleteConfirmTitle": "确认删除该流程实例吗？",
+      "deleteConfirmTitle": "请输入删除原因",
       "hisDiagram": "历史流程图",
       "hisTask": "历史任务",
       "history": "流程历史",

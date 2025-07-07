@@ -164,7 +164,7 @@ async function refreshGrid() {
     <Grid :table-title="$t('flowable.instance.title')" />
     <Modal
       v-model:open="showDeleteModal"
-      title="$t('flowable.instance.button.delete')"
+      :title="$t('flowable.instance.button.delete')"
       @ok="handleDeleteConfirm"
       @cancel="() => (showDeleteModal = false)"
     >

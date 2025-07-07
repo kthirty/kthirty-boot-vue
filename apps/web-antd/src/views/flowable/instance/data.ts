@@ -240,28 +240,16 @@ export function useHisTaskColumns<T = FlwInstanceApi.Instance>(
       formatter: 'formatDateTime',
     },
     {
-      field: 'duration',
+      field: 'durationInMillis',
       title: $t('flowable.instance.duration'),
       minWidth: 120,
       align: 'center',
-    },
-    {
-      field: 'deleteReason',
-      title: $t('flowable.instance.deleteReason'),
-      minWidth: 120,
-      align: 'left',
     },
     {
       field: 'comment',
       title: $t('flowable.instance.comment'),
       minWidth: 160,
       align: 'left',
-    },
-    {
-      field: 'status',
-      title: $t('flowable.instance.status'),
-      minWidth: 140,
-      align: 'center',
     },
   ];
 }
