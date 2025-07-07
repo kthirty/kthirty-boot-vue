@@ -36,7 +36,11 @@
     "processDefinitionVersion": "流程定义版本",
     "durationInMillis": "持续时长(毫秒)",
     "deleteReason": "删除原因",
-    "description": "描述"
+    "description": "描述",
+    "assignee": "处理人",
+    "duration": "耗时",
+    "comment": "批注",
+    "status": "状态"
   },
   "model": {
     "action": {

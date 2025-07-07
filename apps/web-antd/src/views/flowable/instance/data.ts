@@ -196,3 +196,72 @@ export function useSearchSchema(): VbenFormSchema[] {
     },
   ];
 }
+
+export function useHisTaskColumns<T = FlwInstanceApi.Instance>(
+  _onActionClick: OnActionClickFn<T>,
+): VxeTableGridOptions['columns'] {
+  return [
+    {
+      type: 'seq',
+      width: 60,
+      title: $t('flowable.instance.seq'),
+      align: 'center',
+    },
+    {
+      field: 'id',
+      title: $t('flowable.instance.id'),
+      minWidth: 160,
+      align: 'left',
+    },
+    {
+      field: 'name',
+      title: $t('flowable.instance.name'),
+      minWidth: 160,
+      align: 'left',
+    },
+    {
+      field: 'assignee',
+      title: $t('flowable.instance.assignee'),
+      minWidth: 120,
+      align: 'left',
+    },
+    {
+      field: 'startTime',
+      title: $t('flowable.instance.startTime'),
+      minWidth: 160,
+      align: 'center',
+      formatter: 'formatDateTime',
+    },
+    {
+      field: 'endTime',
+      title: $t('flowable.instance.endTime'),
+      minWidth: 160,
+      align: 'center',
+      formatter: 'formatDateTime',
+    },
+    {
+      field: 'duration',
+      title: $t('flowable.instance.duration'),
+      minWidth: 120,
+      align: 'center',
+    },
+    {
+      field: 'deleteReason',
+      title: $t('flowable.instance.deleteReason'),
+      minWidth: 120,
+      align: 'left',
+    },
+    {
+      field: 'comment',
+      title: $t('flowable.instance.comment'),
+      minWidth: 160,
+      align: 'left',
+    },
+    {
+      field: 'status',
+      title: $t('flowable.instance.status'),
+      minWidth: 140,
+      align: 'center',
+    },
+  ];
+}
