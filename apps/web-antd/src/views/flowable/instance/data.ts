@@ -250,6 +250,9 @@ export function useHisTaskColumns<T = FlwInstanceApi.Instance>(
       title: $t('flowable.instance.comment'),
       minWidth: 160,
       align: 'left',
+      cellRender: {
+        name: 'Timeline',
+      },
     },
   ];
 }

@@ -19,12 +19,12 @@ import {
   suspendInstance,
 } from './api';
 import { useColumns, useSearchSchema } from './data';
-import Preview from './modules/preview.vue';
+import History from './modules/history.vue';
 
 const [HistoryModal, historyModalApi] = useVbenModal({
   destroyOnClose: true,
   fullscreen: true,
-  connectedComponent: Preview,
+  connectedComponent: History,
 });
 
 const deleteReason = ref('');

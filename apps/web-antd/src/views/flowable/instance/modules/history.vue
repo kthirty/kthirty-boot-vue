@@ -7,7 +7,7 @@ import { ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 
-import { TabPane, Tabs } from 'ant-design-vue';
+import { Image, TabPane, Tabs } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 
@@ -57,26 +57,24 @@ const [Modal, modalApi] = useVbenModal({
 
 <template>
   <Modal
-    title="模型预览"
+    :title="$t('flowable.instance.title')"
     :confirm-loading="previewLoading"
     :show-cancel-button="false"
     :show-confirm-button="false"
   >
     <Tabs v-if="!previewLoading" default-active-key="history">
-      <TabPane key="history" tab="历史流转">
+      <TabPane key="history" :tab="$t('flowable.instance.button.hisTask')">
         <Grid />
       </TabPane>
-      <TabPane key="diagram" tab="流程图">
+      <TabPane key="diagram" :tab="$t('flowable.instance.button.hisDiagram')">
         <div style="text-align: center">
-          <img
-            v-if="previewData.thumbnail"
-            :src="`${previewData.thumbnail}`"
+          <Image
+            :preview="false"
+            :src="previewData.thumbnail"
             style="max-width: 100%; max-height: 90vh"
           />
-          <div v-else>暂无缩略图</div>
         </div>
       </TabPane>
     </Tabs>
-    <div v-else style="text-align: center">加载中...</div>
   </Modal>
 </template>
