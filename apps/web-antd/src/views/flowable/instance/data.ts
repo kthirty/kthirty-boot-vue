@@ -3,6 +3,8 @@ import type { FlwInstanceApi } from './api';
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 
+import { h } from 'vue';
+
 import { $t } from '#/locales';
 
 export function useColumns<T = FlwInstanceApi.Instance>(
@@ -250,8 +252,8 @@ export function useHisTaskColumns<T = FlwInstanceApi.Instance>(
       title: $t('flowable.instance.comment'),
       minWidth: 160,
       align: 'left',
-      cellRender: {
-        name: 'Timeline',
+      slots: {
+        default: () => h('h1', 'Test'),
       },
     },
   ];

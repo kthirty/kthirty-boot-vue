@@ -15,7 +15,6 @@ import {
   Select,
   Switch,
   Tag,
-  Timeline,
   TreeSelect,
 } from 'ant-design-vue';
 
@@ -100,41 +99,6 @@ setupVbenVxeTable({
           Button,
           { size: 'small', type: 'link' },
           { default: () => props?.text },
-        );
-      },
-    });
-    // 拓展 cellRender: Timeline 渲染器
-    vxeUI.renderer.add('Timeline', {
-      renderTableDefault(renderOpts, params) {
-        const { props, attrs } = renderOpts;
-        const { row, column } = params;
-        // 取出当前单元格的值
-        const items = Array.isArray(row[column.field])
-          ? row[column.field]
-          : [row[column.field]];
-        // Timeline 组件的渲染
-        return h(
-          Timeline,
-          {
-            ...props,
-            ...attrs,
-          },
-          {
-            default: () =>
-              items.map((item: any, index: number) => {
-                // 如果 item 是字符串，直接作为内容；否则按对象处理
-                if (typeof item === 'string') {
-                  return h(Timeline.Item, { key: index }, item);
-                } else {
-                  const { color, ...rest } = item;
-                  return h(Timeline.Item, {
-                    key: index,
-                    color: color || 'blue',
-                    ...rest,
-                  });
-                }
-              }),
-          },
         );
       },
     });
