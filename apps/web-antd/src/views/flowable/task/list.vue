@@ -1,24 +1,27 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-
-import { Page } from '@vben/common-ui';
+import { Page, useVbenModal } from '@vben/common-ui';
 
 import { TabPane, Tabs } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 
 import { getDoneList, getTodoList } from './api';
-import { useTaskColumns, useTaskSearchSchema } from './data';
-import HandleModal from './handle.vue';
+import {
+  useTaskColumns,
+  useTaskSearchSchema,
+  useTodoTaskColumns,
+} from './data';
+import Handle from './handle.vue';
 
-const activeTab = ref<'done' | 'todo'>('todo');
-const handleOpen = ref(false);
-const handleTaskId = ref<string | undefined>(undefined);
+const [HandleModal, handleModalApi] = useVbenModal({
+  connectedComponent: Handle,
+  destroyOnClose: true,
+  fullscreen: true,
+});
 
 function onActionClick({ code, row }: { code: string; row: any }) {
   if (code === 'handle') {
-    handleTaskId.value = row.id;
-    handleOpen.value = true;
+    handleModalApi.setData(row).open();
   }
 }
 
@@ -30,17 +33,18 @@ const [TodoGrid, todoGridApi] = useVbenVxeGrid({
   },
   gridOptions: {
     height: 'auto',
-    columns: useTaskColumns(onActionClick),
+    columns: useTodoTaskColumns(onActionClick),
     keepSource: true,
     pagerConfig: { enabled: true },
     proxyConfig: {
       ajax: {
         query: async ({ page }, formValues) => {
-          return await getTodoList({
+          const res = await getTodoList({
             pageNumber: page.currentPage,
             pageSize: page.pageSize,
             ...formValues,
           });
+          return res;
         },
       },
     },
@@ -89,7 +93,6 @@ function refreshDone() {
   doneGridApi.query();
 }
 function onHandleSuccess() {
-  handleOpen.value = false;
   refreshTodo();
   refreshDone();
 }
@@ -97,19 +100,15 @@ function onHandleSuccess() {
 <template>
   <Page auto-content-height>
     <div class="flex h-full flex-col">
-      <Tabs v-model:active-key="activeTab" class="flex-1">
+      <Tabs default-active-key="todo" class="flex-1">
         <TabPane :tab="$t('flowable.task.tab.todo')" key="todo">
-          <TodoGrid :table-title="$t('flowable.task.tab.todo')" />
+          <TodoGrid />
         </TabPane>
         <TabPane :tab="$t('flowable.task.tab.done')" key="done">
-          <DoneGrid :table-title="$t('flowable.task.tab.done')" />
+          <DoneGrid />
         </TabPane>
       </Tabs>
-      <HandleModal
-        v-model:open="handleOpen"
-        :task-id="handleTaskId"
-        @success="onHandleSuccess"
-      />
+      <HandleModal @success="onHandleSuccess" />
     </div>
   </Page>
 </template>

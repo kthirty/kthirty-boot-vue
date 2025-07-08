@@ -5,6 +5,71 @@ import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { $t } from '#/locales';
 
+export function useTodoTaskColumns<T = FlwTaskApi.Task>(
+  onActionClick: OnActionClickFn<T>,
+): VxeTableGridOptions['columns'] {
+  return [
+    {
+      type: 'seq',
+      width: 60,
+      title: $t('flowable.task.table.seq'),
+      align: 'center',
+    },
+    {
+      field: 'processInstanceName',
+      title: $t('flowable.task.table.processInstanceName'),
+      minWidth: 160,
+      align: 'center',
+    },
+    {
+      field: 'processDefinitionName',
+      title: $t('flowable.task.table.processDefinitionName'),
+      minWidth: 160,
+      align: 'center',
+    },
+    {
+      field: 'name',
+      title: $t('flowable.task.table.name'),
+      minWidth: 160,
+      align: 'left',
+    },
+    {
+      field: 'assignee',
+      title: $t('flowable.task.table.assignee'),
+      minWidth: 120,
+      align: 'center',
+    },
+    {
+      field: 'createTime',
+      title: $t('flowable.task.table.createTime'),
+      minWidth: 180,
+      align: 'center',
+      formatter: 'formatDateTime',
+    },
+    {
+      align: 'center',
+      cellRender: {
+        attrs: {
+          nameField: 'name',
+          nameTitle: $t('flowable.task.table.name'),
+          onClick: onActionClick,
+        },
+        options: [
+          {
+            code: 'handle',
+            text: $t('flowable.task.button.handle'),
+          },
+        ],
+        name: 'CellOperation',
+      },
+      field: 'operation',
+      fixed: 'right',
+      title: $t('flowable.task.table.action'),
+      width: 120,
+    },
+  ];
+}
+
 export function useTaskColumns<T = FlwTaskApi.Task>(
   onActionClick: OnActionClickFn<T>,
 ): VxeTableGridOptions['columns'] {

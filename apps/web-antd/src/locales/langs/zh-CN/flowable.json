@@ -127,8 +127,20 @@
       "submit": "提交",
       "cancel": "取消",
       "success": "办理成功",
-      "loading": "加载中...",
-      "commentPlaceholder": "请输入办理意见"
+      "tab": {
+        "form": "业务表单",
+        "history": "处理历史",
+        "diagram": "流程图"
+      },
+      "noForm": "暂无业务表单",
+      "historyPlaceholder": "暂无处理历史",
+      "diagramPlaceholder": "暂无流程图",
+      "button": {
+        "success": "同意",
+        "reject": "驳回",
+        "transfer": "转办",
+        "delegate": "委派"
+      }
     }
   }
 }

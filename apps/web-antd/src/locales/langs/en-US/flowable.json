@@ -94,5 +94,26 @@
     "suspended": "Suspended",
     "title": "Process Definition",
     "version": "Version"
+  },
+  "handle": {
+    "title": "Task Handling",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "success": "Handled successfully",
+    "tab": {
+      "form": "Business Form",
+      "history": "History",
+      "diagram": "Diagram"
+    },
+    "noForm": "No business form available",
+    "formPlaceholder": "Please fill in the business form here...",
+    "historyPlaceholder": "No history available",
+    "diagramPlaceholder": "No diagram available",
+    "button": {
+      "success": "Approve",
+      "reject": "Reject",
+      "transfer": "Transfer",
+      "delegate": "Delegate"
+    }
   }
 }
