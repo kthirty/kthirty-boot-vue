@@ -100,5 +100,35 @@
     "suspended": "是否挂起",
     "title": "流程定义",
     "version": "版本"
+  },
+  "task": {
+    "title": "任务中心",
+    "tab": {
+      "todo": "代办任务",
+      "done": "已办任务"
+    },
+    "table": {
+      "seq": "序号",
+      "name": "任务名称",
+      "assignee": "处理人",
+      "owner": "任务归属",
+      "processInstanceName": "流程实例",
+      "processDefinitionName": "流程定义",
+      "createTime": "创建时间",
+      "endTime": "完成时间",
+      "state": "状态",
+      "action": "操作"
+    },
+    "button": {
+      "handle": "办理"
+    },
+    "handle": {
+      "title": "任务办理",
+      "submit": "提交",
+      "cancel": "取消",
+      "success": "办理成功",
+      "loading": "加载中...",
+      "commentPlaceholder": "请输入办理意见"
+    }
   }
 }

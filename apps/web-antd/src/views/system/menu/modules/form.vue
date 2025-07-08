@@ -267,7 +267,7 @@ const schema: VbenFormSchema[] = [
       ],
       optionType: 'button',
     },
-    defaultValue: '0',
+    defaultValue: '1',
     fieldName: 'status',
     label: $t('system.menu.status'),
   },

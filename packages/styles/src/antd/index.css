@@ -73,3 +73,12 @@
 .ant-app .form-valid-error .ant-picker-focused {
   box-shadow: 0 0 0 2px rgb(255 38 5 / 6%);
 }
+
+/* 解决tabs-content 确实100%导致的h-full无法填满 */
+.h-full {
+  .ant-tabs-content,
+  .ant-tabs-content-holder,
+  .ant-tabs {
+    height: 100%;
+  }
+}
