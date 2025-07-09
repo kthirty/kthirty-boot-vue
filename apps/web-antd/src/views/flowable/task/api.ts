@@ -7,6 +7,7 @@ export namespace FlwTaskApi {
     assignee?: string;
     owner?: string;
     processInstanceName?: string;
+    processInstanceId?: string;
     processDefinitionName?: string;
     createTime?: string;
     endTime?: string;

@@ -117,12 +117,15 @@
       "createTime": "创建时间",
       "endTime": "完成时间",
       "state": "状态",
+      "processInstanceStartedBy": "流程发起人",
+      "processInstanceStartTime": "流程发起时间",
       "action": "操作"
     },
     "button": {
       "handle": "办理"
     },
     "handle": {
+      "commentRequired": "请输入办理意见",
       "title": "任务办理",
       "submit": "提交",
       "cancel": "取消",
@@ -135,6 +138,7 @@
       "noForm": "暂无业务表单",
       "historyPlaceholder": "暂无处理历史",
       "diagramPlaceholder": "暂无流程图",
+      "commentPlaceholder": "请输入办理意见",
       "button": {
         "success": "同意",
         "reject": "驳回",

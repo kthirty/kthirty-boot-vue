@@ -82,4 +82,4 @@ function normalizeViewPath(path: string): string {
   // 这里耦合了vben-admin的目录结构
   return viewPath.replace(/^\/views/, '');
 }
-export { generateRoutesByBackend };
+export { generateRoutesByBackend, normalizeViewPath };

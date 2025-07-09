@@ -47,6 +47,19 @@ export function useTodoTaskColumns<T = FlwTaskApi.Task>(
       formatter: 'formatDateTime',
     },
     {
+      field: 'processInstanceStartedBy',
+      title: $t('flowable.task.table.processInstanceStartedBy'),
+      minWidth: 180,
+      align: 'center',
+    },
+    {
+      field: 'processInstanceStartTime',
+      title: $t('flowable.task.table.processInstanceStartTime'),
+      minWidth: 180,
+      align: 'center',
+      formatter: 'formatDateTime',
+    },
+    {
       align: 'center',
       cellRender: {
         attrs: {

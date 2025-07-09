@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+
+import { ref } from 'vue';
+
 import { Page, useVbenModal } from '@vben/common-ui';
 
 import { TabPane, Tabs } from 'ant-design-vue';
@@ -17,6 +21,8 @@ const [HandleModal, handleModalApi] = useVbenModal({
   connectedComponent: Handle,
   destroyOnClose: true,
   fullscreen: true,
+  showCancelButton: false,
+  showConfirmButton: false,
 });
 
 function onActionClick({ code, row }: { code: string; row: any }) {
@@ -24,7 +30,7 @@ function onActionClick({ code, row }: { code: string; row: any }) {
     handleModalApi.setData(row).open();
   }
 }
-
+const doneGrid = ref();
 const [TodoGrid, todoGridApi] = useVbenVxeGrid({
   formOptions: {
     showCollapseButton: false,
@@ -39,12 +45,11 @@ const [TodoGrid, todoGridApi] = useVbenVxeGrid({
     proxyConfig: {
       ajax: {
         query: async ({ page }, formValues) => {
-          const res = await getTodoList({
+          return await getTodoList({
             pageNumber: page.currentPage,
             pageSize: page.pageSize,
             ...formValues,
           });
-          return res;
         },
       },
     },
@@ -54,7 +59,7 @@ const [TodoGrid, todoGridApi] = useVbenVxeGrid({
       refresh: { code: 'query' },
       zoom: true,
     },
-  },
+  } as VxeTableGridOptions,
 });
 const [DoneGrid, doneGridApi] = useVbenVxeGrid({
   formOptions: {
@@ -84,17 +89,19 @@ const [DoneGrid, doneGridApi] = useVbenVxeGrid({
       refresh: { code: 'query' },
       zoom: true,
     },
-  },
+  } as VxeTableGridOptions,
 });
-function refreshTodo() {
-  todoGridApi.query();
+async function refreshTodo() {
+  await todoGridApi.query();
 }
-function refreshDone() {
-  doneGridApi.query();
+async function refreshDone() {
+  if (doneGrid.value) {
+    await doneGridApi.query();
+  }
 }
-function onHandleSuccess() {
-  refreshTodo();
-  refreshDone();
+async function onHandleSuccess() {
+  await refreshTodo();
+  await refreshDone();
 }
 </script>
 <template>
@@ -105,7 +112,7 @@ function onHandleSuccess() {
           <TodoGrid />
         </TabPane>
         <TabPane :tab="$t('flowable.task.tab.done')" key="done">
-          <DoneGrid />
+          <DoneGrid ref="doneGrid" />
         </TabPane>
       </Tabs>
       <HandleModal @success="onHandleSuccess" />

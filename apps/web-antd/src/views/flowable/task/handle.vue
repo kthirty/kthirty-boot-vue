@@ -1,96 +1,189 @@
 <script lang="ts" setup>
-import { defineEmits, defineProps, ref, watch } from 'vue';
+import type { ComponentRecordType } from '@vben/types';
+
+import type { FlwTaskApi } from './api';
+
+import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+
+import { defineAsyncComponent, defineEmits, ref, shallowRef } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { normalizeViewPath } from '@vben/utils';
 
-import { message, TabPane, Tabs } from 'ant-design-vue';
+import {
+  Button,
+  Card,
+  Empty,
+  Image,
+  message,
+  TabPane,
+  Tabs,
+  Textarea,
+  Tooltip,
+} from 'ant-design-vue';
 
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { $t } from '#/locales';
 
-import { completeTask, getCompletePre } from './api';
+import { getHisDiagram, getHisTaskList } from '../instance/api';
+import { useHisTaskColumns } from '../instance/data';
+import { getCompletePre } from './api';
 
-const props = defineProps<{ open: boolean; taskId: string | undefined }>();
-const emits = defineEmits(['update:open', 'success']);
+const emit = defineEmits(['success', 'close']);
 
-const loading = ref(false);
-const formKey = ref('');
-const handleButtons = ref<string[]>([]);
-const formModel = ref<Record<string, any>>({});
-
-const [Modal, modalApi] = useVbenModal({
-  async onOpenChange(isOpen) {
-    if (isOpen) {
-      const data = modalApi.getData<any>();
-      console.warn('data', data);
+interface HandleButton {
+  code: string;
+  commentRequired: boolean;
+  description: string;
+  name: string;
+  resultCode: string;
+  descColor?: string;
+}
+function onHandleButtonClick(btn: HandleButton) {
+  loading.value = true;
+  try {
+    if (btn.commentRequired && !comment.value) {
+      message.error($t('flowable.task.handle.commentRequired'));
+      return;
     }
-  },
+    console.warn('btn', btn);
+    message.success($t('flowable.task.handle.success'));
+    modalApi.close();
+    emit('success');
+  } finally {
+    loading.value = false;
+  }
+}
+const pageMap: ComponentRecordType = import.meta.glob('../views/**/*.vue');
+function pathToComponent(component: string = '') {
+  if (component) {
+    const normalizePath = normalizeViewPath(component);
+    const pageKey = normalizePath.endsWith('.vue')
+      ? normalizePath
+      : `${normalizePath}.vue`;
+    if (pageMap[pageKey]) {
+      return defineAsyncComponent(pageMap[pageKey]);
+    }
+  }
+  console.warn(`component is invalid: ${component}`);
+  return null;
+}
+const formComponent = shallowRef(null);
+const formRef = ref();
+const loading = ref(false);
+const taskData = ref<FlwTaskApi.Task>({});
+const comment = ref('');
+const handleButtons = ref<HandleButton[]>([]);
+
+// 流程历史
+const thumbnail = ref('');
+
+const [TaskHisGrid] = useVbenVxeGrid({
+  gridOptions: {
+    border: 'none',
+    columns: useHisTaskColumns(() => {}),
+    height: 'auto',
+    keepSource: false,
+    stripe: false,
+    pagerConfig: {
+      enabled: false,
+    },
+    proxyConfig: {
+      ajax: {
+        query: async () => {
+          return await getHisTaskList(taskData.value.processInstanceId!);
+        },
+      },
+    },
+  } as VxeTableGridOptions,
 });
 
-watch(
-  () => props.open,
-  async (val) => {
-    if (val && props.taskId) {
+const [Modal, modalApi] = useVbenModal({
+  onCancel() {
+    emit('close');
+    modalApi.close();
+  },
+  async onOpenChange(isOpen) {
+    if (isOpen) {
       loading.value = true;
+      const data = modalApi.getData<FlwTaskApi.Task>();
+      taskData.value = data;
       try {
-        const res = await getCompletePre(props.taskId);
-        formKey.value = res.formKey || '';
+        // 获取按钮和界面信息
+        const res = await getCompletePre(data.id!);
+        pathToComponent(res.formKey);
         handleButtons.value = res.handleButtons || [];
-        // TODO: 根据 formKey 获取表单 schema 或自定义表单
-        console.warn('formKey', formKey);
-        console.warn('handleButtons', handleButtons);
-        formModel.value = {};
+        // 获取流程历史处理图
+        thumbnail.value = await getHisDiagram(
+          taskData.value.processInstanceId!,
+        );
       } finally {
         loading.value = false;
       }
     }
   },
-  { immediate: true },
-);
-
-async function onSubmit() {
-  if (!props.taskId) return;
-  loading.value = true;
-  try {
-    await completeTask({ taskId: props.taskId, variables: formModel.value });
-    message.success($t('flowable.task.handle.success'));
-    emits('success');
-    emits('update:open', false);
-  } finally {
-    loading.value = false;
-  }
-}
+});
 </script>
 <template>
-  <Modal
-    :title="$t('flowable.task.handle.title')"
-    :confirm-loading="loading"
-    @ok="onSubmit"
-  >
-    <div class="flex flex-col">
-      <Tabs class="flex-1">
-        <TabPane key="form" :tab="$t('flowable.task.handle.tab.form')">
-          <!-- 业务表单内容区域 -->
-          <div class="p-4">
-            <span v-if="!formKey">{{ $t('flowable.task.handle.noForm') }}</span>
-            <span v-else>
-              <!-- TODO  -->
-            </span>
+  <Modal :title="$t('flowable.task.handle.title')" :confirm-loading="loading">
+    <div class="flex h-full flex-col">
+      <div class="h-2/3">
+        <Tabs class="flex-1">
+          <TabPane key="form" :tab="$t('flowable.task.handle.tab.form')">
+            <!-- 业务表单内容区域 -->
+            <div class="h-full p-4">
+              <component
+                :is="formComponent"
+                ref="formRef"
+                v-if="formComponent"
+              />
+              <Empty v-else :description="$t('flowable.task.handle.noForm')" />
+            </div>
+          </TabPane>
+          <TabPane key="history" :tab="$t('flowable.task.handle.tab.history')">
+            <div class="h-full p-4">
+              <TaskHisGrid />
+            </div>
+          </TabPane>
+          <TabPane key="diagram" :tab="$t('flowable.task.handle.tab.diagram')">
+            <div class="h-full p-4">
+              <Image
+                :preview="false"
+                :src="thumbnail"
+                style="max-width: 100%; max-height: 90vh"
+              />
+            </div>
+          </TabPane>
+        </Tabs>
+      </div>
+      <div class="w-full">
+        <Card :title="$t('flowable.task.handle.title')" :bordered="false">
+          <Textarea
+            v-model:value="comment"
+            :rows="3"
+            class="ml-20 w-3/4"
+            :placeholder="$t('flowable.task.handle.commentPlaceholder')"
+          />
+          <div class="ml-20">
+            <template v-for="(btn, _) in handleButtons" :key="_">
+              <div class="ml-4 mt-4 inline-block">
+                <Tooltip
+                  v-if="btn.description"
+                  :title="btn.description"
+                  :color="btn.descColor ?? 'cyan'"
+                >
+                  <Button @click="onHandleButtonClick(btn)" type="primary">
+                    {{ btn.name }}
+                  </Button>
+                </Tooltip>
+                <Button v-else @click="onHandleButtonClick(btn)" type="primary">
+                  {{ btn.name }}
+                </Button>
+              </div>
+            </template>
           </div>
-        </TabPane>
-        <TabPane key="history" :tab="$t('flowable.task.handle.tab.history')">
-          <!-- 处理历史内容区域 -->
-          <div class="p-4">
-            <span>{{ $t('flowable.task.handle.historyPlaceholder') }}</span>
-          </div>
-        </TabPane>
-        <TabPane key="diagram" :tab="$t('flowable.task.handle.tab.diagram')">
-          <!-- 流程历史图内容区域 -->
-          <div class="p-4">
-            <span>{{ $t('flowable.task.handle.diagramPlaceholder') }}</span>
-          </div>
-        </TabPane>
-      </Tabs>
-      <div class="mt-4 flex w-full justify-end gap-2 bg-blue-50"></div>
+        </Card>
+      </div>
     </div>
   </Modal>
 </template>
