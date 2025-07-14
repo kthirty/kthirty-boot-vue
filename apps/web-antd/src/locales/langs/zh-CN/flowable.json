@@ -122,7 +122,8 @@
       "action": "操作"
     },
     "button": {
-      "handle": "办理"
+      "handle": "办理",
+      "view": "查看"
     },
     "handle": {
       "commentRequired": "请输入办理意见",
@@ -130,6 +131,7 @@
       "submit": "提交",
       "cancel": "取消",
       "success": "办理成功",
+      "error": "办理失败{0}",
       "tab": {
         "form": "业务表单",
         "history": "处理历史",

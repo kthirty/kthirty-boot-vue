@@ -30,8 +30,9 @@ export namespace FlwTaskApi {
   }
   export interface CompleteReq {
     taskId: string;
-    variables?: Record<string, any>;
+    extraParams?: Record<string, any>;
     comment?: string;
+    result?: string;
     [key: string]: any;
   }
   export interface CompletePre {

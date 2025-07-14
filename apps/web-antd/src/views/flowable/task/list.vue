@@ -11,7 +11,7 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 
 import { getDoneList, getTodoList } from './api';
 import {
-  useTaskColumns,
+  useDoneTaskColumns,
   useTaskSearchSchema,
   useTodoTaskColumns,
 } from './data';
@@ -69,7 +69,7 @@ const [DoneGrid, doneGridApi] = useVbenVxeGrid({
   },
   gridOptions: {
     height: 'auto',
-    columns: useTaskColumns(() => {}),
+    columns: useDoneTaskColumns(() => {}),
     keepSource: true,
     pagerConfig: { enabled: true },
     proxyConfig: {

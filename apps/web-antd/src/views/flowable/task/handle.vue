@@ -27,7 +27,7 @@ import { $t } from '#/locales';
 
 import { getHisDiagram, getHisTaskList } from '../instance/api';
 import { useHisTaskColumns } from '../instance/data';
-import { getCompletePre } from './api';
+import { completeTask, getCompletePre } from './api';
 
 const emit = defineEmits(['success', 'close']);
 
@@ -38,15 +38,33 @@ interface HandleButton {
   name: string;
   resultCode: string;
   descColor?: string;
+  type?: string;
+  danger?: boolean;
 }
-function onHandleButtonClick(btn: HandleButton) {
+async function onHandleButtonClick(btn: HandleButton) {
   loading.value = true;
   try {
     if (btn.commentRequired && !comment.value) {
       message.error($t('flowable.task.handle.commentRequired'));
       return;
     }
-    console.warn('btn', btn);
+    // 子form中验证
+    if (typeof formRef.value?.beforeSubmit === 'function') {
+      const pass = formRef.value?.beforeSubmit(btn);
+      if (!pass) return;
+    }
+    // 组装提交信息
+    const submitInfo: FlwTaskApi.CompleteReq = {
+      taskId: taskData.value.id!,
+      comment: comment.value,
+      result: btn.resultCode,
+      extraParams: {},
+    };
+    if (typeof formRef.value?.extraArgs === 'function') {
+      const args = formRef.value?.extraArgs(btn);
+      submitInfo.extraParams = args;
+    }
+    await completeTask(submitInfo);
     message.success($t('flowable.task.handle.success'));
     modalApi.close();
     emit('success');
@@ -64,8 +82,8 @@ function pathToComponent(component: string = '') {
     if (pageMap[pageKey]) {
       return defineAsyncComponent(pageMap[pageKey]);
     }
+    console.warn(`component is invalid: ${component}`);
   }
-  console.warn(`component is invalid: ${component}`);
   return null;
 }
 const formComponent = shallowRef(null);
@@ -125,7 +143,7 @@ const [Modal, modalApi] = useVbenModal({
 });
 </script>
 <template>
-  <Modal :title="$t('flowable.task.handle.title')" :confirm-loading="loading">
+  <Modal :title="$t('flowable.task.handle.title')" :loading="loading">
     <div class="flex h-full flex-col">
       <div class="h-2/3">
         <Tabs class="flex-1">
@@ -172,7 +190,11 @@ const [Modal, modalApi] = useVbenModal({
                   :title="btn.description"
                   :color="btn.descColor ?? 'cyan'"
                 >
-                  <Button @click="onHandleButtonClick(btn)" type="primary">
+                  <Button
+                    @click="onHandleButtonClick(btn)"
+                    :type="btn.type ?? 'primary'"
+                    :danger="btn.danger ?? false"
+                  >
                     {{ btn.name }}
                   </Button>
                 </Tooltip>

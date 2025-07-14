@@ -83,7 +83,7 @@ export function useTodoTaskColumns<T = FlwTaskApi.Task>(
   ];
 }
 
-export function useTaskColumns<T = FlwTaskApi.Task>(
+export function useDoneTaskColumns<T = FlwTaskApi.Task>(
   onActionClick: OnActionClickFn<T>,
 ): VxeTableGridOptions['columns'] {
   return [
@@ -102,12 +102,6 @@ export function useTaskColumns<T = FlwTaskApi.Task>(
     {
       field: 'assignee',
       title: $t('flowable.task.table.assignee'),
-      minWidth: 120,
-      align: 'center',
-    },
-    {
-      field: 'owner',
-      title: $t('flowable.task.table.owner'),
       minWidth: 120,
       align: 'center',
     },
@@ -153,8 +147,8 @@ export function useTaskColumns<T = FlwTaskApi.Task>(
         },
         options: [
           {
-            code: 'handle',
-            text: $t('flowable.task.button.handle'),
+            code: 'view',
+            text: $t('flowable.task.button.view'),
           },
         ],
         name: 'CellOperation',

@@ -2,13 +2,16 @@ import dayjs from 'dayjs';
 
 export function formatDate(time: number | string, format = 'YYYY-MM-DD') {
   try {
+    if (!time) {
+      return '';
+    }
     const date = dayjs(time);
     if (!date.isValid()) {
       throw new Error('Invalid date');
     }
     return date.format(format);
   } catch (error) {
-    console.error(`Error formatting date: ${error}`);
+    console.error(`Error formatting date: ${time} ${error}`);
     return time;
   }
 }

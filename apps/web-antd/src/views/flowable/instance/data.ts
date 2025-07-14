@@ -151,6 +151,11 @@ export function useColumns<T = FlwInstanceApi.Instance>(
 export function useSearchSchema(): VbenFormSchema[] {
   return [
     {
+      fieldName: 'id',
+      label: $t('flowable.instance.id'),
+      component: 'Input',
+    },
+    {
       fieldName: 'name',
       label: $t('flowable.instance.name'),
       component: 'Input',
@@ -253,7 +258,24 @@ export function useHisTaskColumns<T = FlwInstanceApi.Instance>(
       minWidth: 160,
       align: 'left',
       slots: {
-        default: () => h('h1', 'Test'),
+        default: ({ row }) => {
+          return h(
+            'span',
+            {},
+            row.comments.map((item: any) => item.fullMessage).join(''),
+          );
+          /* return h(Timeline, {}, () =>
+            row.comments.map((item: any, idx: number) =>
+              h(Timeline.Item, { key: idx }, () => [
+                h('div', {}, [
+                  h('span', {}, item.userId),
+                  h('span', {}, formatDateTime(item.time)),
+                  h('span', {}, item.fullMessage),
+                ]),
+              ]),
+            ),
+          ); */
+        },
       },
     },
   ];
