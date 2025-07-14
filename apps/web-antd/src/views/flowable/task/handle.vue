@@ -115,6 +115,9 @@ const [TaskHisGrid] = useVbenVxeGrid({
     },
   } as VxeTableGridOptions,
 });
+function isHandle() {
+  return taskData.value._handle;
+}
 
 const [Modal, modalApi] = useVbenModal({
   onCancel() {
@@ -127,10 +130,12 @@ const [Modal, modalApi] = useVbenModal({
       const data = modalApi.getData<FlwTaskApi.Task>();
       taskData.value = data;
       try {
-        // 获取按钮和界面信息
-        const res = await getCompletePre(data.id!);
-        pathToComponent(res.formKey);
-        handleButtons.value = res.handleButtons || [];
+        if (isHandle()) {
+          // 获取按钮和界面信息
+          const res = await getCompletePre(data.id!);
+          pathToComponent(res.formKey);
+          handleButtons.value = res.handleButtons || [];
+        }
         // 获取流程历史处理图
         thumbnail.value = await getHisDiagram(
           taskData.value.processInstanceId!,
@@ -153,6 +158,7 @@ const [Modal, modalApi] = useVbenModal({
               <component
                 :is="formComponent"
                 ref="formRef"
+                :is-handle="isHandle()"
                 v-if="formComponent"
               />
               <Empty v-else :description="$t('flowable.task.handle.noForm')" />
@@ -174,7 +180,7 @@ const [Modal, modalApi] = useVbenModal({
           </TabPane>
         </Tabs>
       </div>
-      <div class="w-full">
+      <div class="w-full" v-if="isHandle()">
         <Card :title="$t('flowable.task.handle.title')" :bordered="false">
           <Textarea
             v-model:value="comment"
@@ -198,7 +204,12 @@ const [Modal, modalApi] = useVbenModal({
                     {{ btn.name }}
                   </Button>
                 </Tooltip>
-                <Button v-else @click="onHandleButtonClick(btn)" type="primary">
+                <Button
+                  v-else
+                  @click="onHandleButtonClick(btn)"
+                  type="primary"
+                  :disable="!isHandle()"
+                >
                   {{ btn.name }}
                 </Button>
               </div>

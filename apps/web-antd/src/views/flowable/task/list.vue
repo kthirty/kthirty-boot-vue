@@ -27,7 +27,10 @@ const [HandleModal, handleModalApi] = useVbenModal({
 
 function onActionClick({ code, row }: { code: string; row: any }) {
   if (code === 'handle') {
-    handleModalApi.setData(row).open();
+    handleModalApi.setData({ _handle: true, ...row }).open();
+  }
+  if (code === 'view') {
+    handleModalApi.setData({ _handle: false, ...row }).open();
   }
 }
 const doneGrid = ref();
@@ -69,7 +72,7 @@ const [DoneGrid, doneGridApi] = useVbenVxeGrid({
   },
   gridOptions: {
     height: 'auto',
-    columns: useDoneTaskColumns(() => {}),
+    columns: useDoneTaskColumns(onActionClick),
     keepSource: true,
     pagerConfig: { enabled: true },
     proxyConfig: {
