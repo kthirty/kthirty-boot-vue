@@ -1,0 +1,28 @@
+{
+  "formitem": {
+    "title": "表单字段",
+    "columnName": "字段名",
+    "columnType": "字段类型",
+    "columnLength": "长度",
+    "columnDefaultVal": "默认值",
+    "formComponent": "表单组件",
+    "formRequired": "必填",
+    "isShowList": "列表显示",
+    "isShowForm": "表单显示",
+    "isReadonly": "只读",
+    "columnRemarks": "备注",
+    "operation": "操作",
+    "editTitle": "编辑字段",
+    "deleteConfirmTitle": "确定要删除该字段吗？"
+  },
+  "form": {
+    "title": "表单管理",
+    "tableName": "表名",
+    "tableType": "表类型",
+    "listType": "列表类型",
+    "isDbSync": "已同步数据库",
+    "remarks": "备注",
+    "editTitle": "编辑表单",
+    "deleteConfirmTitle": "确定要删除该表单吗？"
+  }
+}
