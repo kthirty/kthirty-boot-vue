@@ -12,7 +12,7 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { $t } from '#/locales';
 
 import { getFormList } from './api';
-import { useFormColumns } from './data';
+import { useFormColumns, useSearchSchema } from './data';
 import Form from './modules/form.vue';
 
 const [EditModalComp, editModalApi] = useVbenModal({
@@ -42,6 +42,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
     showCollapseButton: false,
     submitOnEnter: true,
+    schema: useSearchSchema(),
   },
   gridOptions: {
     columns: useFormColumns(onActionClick),
@@ -92,7 +93,7 @@ async function refreshGrid() {
 </script>
 <template>
   <Page auto-content-height>
-    <EditModalComp @refresh="refreshGrid" />
+    <EditModalComp @success="refreshGrid" />
     <Grid :table-title="$t('develop.form.title')">
       <template #toolbar-tools>
         <Button type="primary" @click="onEdit({})">

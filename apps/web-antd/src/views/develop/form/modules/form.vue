@@ -70,6 +70,10 @@ const items = ref<DevFormItemApi.Item[]>([]);
 </script>
 <template>
   <Modal :title="$t('develop.form.editTitle')" :loading="loading">
-    <Form class="mx-4" />
+    <Form class="mx-4">
+      <template #field="{ row }">
+        <div>Test {{ row.id }}</div>
+      </template>
+    </Form>
   </Modal>
 </template>

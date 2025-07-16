@@ -1,12 +1,115 @@
-import type { DevFormItemApi } from './api';
-
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 
-export function useColumns<T = DevFormItemApi.Item>(
+export function useSearchSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'tableName',
+      label: $t('develop.form.tableName'),
+      component: 'Input',
+    },
+  ];
+}
+
+export function useFormColumns(
+  onActionClick: OnActionClickFn<any>,
+): VxeTableGridOptions['columns'] {
+  return [
+    {
+      field: 'tableName',
+      title: $t('develop.form.tableName'),
+      minWidth: 120,
+      align: 'left',
+    },
+    {
+      field: 'tableTypeLabel',
+      title: $t('develop.form.tableType'),
+      minWidth: 100,
+      align: 'left',
+    },
+    {
+      field: 'listTypeLabel',
+      title: $t('develop.form.listType'),
+      minWidth: 100,
+      align: 'left',
+    },
+    {
+      field: 'isDbSyncLabel',
+      title: $t('develop.form.isDbSync'),
+      minWidth: 100,
+      align: 'center',
+    },
+    {
+      field: 'remarks',
+      title: $t('develop.form.remarks'),
+      minWidth: 120,
+      align: 'left',
+    },
+    {
+      align: 'center',
+      cellRender: {
+        attrs: {
+          nameField: 'tableName',
+          nameTitle: $t('develop.form.title'),
+          onClick: onActionClick,
+        },
+        options: [
+          { code: 'edit', text: $t('common.edit') },
+          { code: 'delete', text: $t('common.delete') },
+        ],
+        name: 'CellOperation',
+      },
+      field: 'operation',
+      fixed: 'right',
+      title: $t('common.operation'),
+      width: 160,
+    },
+  ];
+}
+const dictStore = useDictStore();
+
+export function useFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      fieldName: 'tableName',
+      label: $t('develop.form.tableName'),
+      component: 'Input',
+      rules: 'required',
+    },
+    {
+      fieldName: 'tableType',
+      label: $t('develop.form.tableType'),
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: dictStore.getDict('dev_table_type'),
+      },
+    },
+    {
+      fieldName: 'listType',
+      label: $t('develop.form.listType'),
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: dictStore.getDict('dev_list_type'),
+      },
+    },
+    {
+      fieldName: 'remarks',
+      label: $t('develop.form.remarks'),
+      component: 'Textarea',
+    },
+    {
+      fieldName: 'field',
+      component: 'Input',
+    },
+  ];
+}
+
+function _useItemColumns<T = DevFormItemApi.Item>(
   onActionClick: OnActionClickFn<T>,
 ): VxeTableGridOptions['columns'] {
   return [
@@ -100,8 +203,7 @@ export function useColumns<T = DevFormItemApi.Item>(
     },
   ];
 }
-
-export function useSearchSchema(): VbenFormSchema[] {
+function _useEditSchema(): VbenFormSchema[] {
   return [
     {
       fieldName: 'columnName',
@@ -112,28 +214,6 @@ export function useSearchSchema(): VbenFormSchema[] {
       fieldName: 'columnType',
       label: $t('develop.formitem.columnType'),
       component: 'Input',
-    },
-    {
-      fieldName: 'formComponent',
-      label: $t('develop.formitem.formComponent'),
-      component: 'Input',
-    },
-  ];
-}
-
-export function useEditSchema(): VbenFormSchema[] {
-  return [
-    {
-      fieldName: 'columnName',
-      label: $t('develop.formitem.columnName'),
-      component: 'Input',
-      required: true,
-    },
-    {
-      fieldName: 'columnType',
-      label: $t('develop.formitem.columnType'),
-      component: 'Input',
-      required: true,
     },
     {
       fieldName: 'columnLength',
@@ -174,97 +254,6 @@ export function useEditSchema(): VbenFormSchema[] {
       fieldName: 'columnRemarks',
       label: $t('develop.formitem.columnRemarks'),
       component: 'Input',
-    },
-  ];
-}
-
-export function useFormColumns(
-  onActionClick: OnActionClickFn<any>,
-): VxeTableGridOptions['columns'] {
-  return [
-    {
-      field: 'tableName',
-      title: $t('develop.form.tableName'),
-      minWidth: 120,
-      align: 'left',
-    },
-    {
-      field: 'tableTypeLabel',
-      title: $t('develop.form.tableType'),
-      minWidth: 100,
-      align: 'left',
-    },
-    {
-      field: 'listTypeLabel',
-      title: $t('develop.form.listType'),
-      minWidth: 100,
-      align: 'left',
-    },
-    {
-      field: 'isDbSyncLabel',
-      title: $t('develop.form.isDbSync'),
-      minWidth: 100,
-      align: 'center',
-    },
-    {
-      field: 'remarks',
-      title: $t('develop.form.remarks'),
-      minWidth: 120,
-      align: 'left',
-    },
-    {
-      align: 'center',
-      cellRender: {
-        attrs: {
-          nameField: 'tableName',
-          nameTitle: $t('develop.form.title'),
-          onClick: onActionClick,
-        },
-        options: [
-          { code: 'edit', text: $t('common.edit') },
-          { code: 'delete', text: $t('common.delete') },
-        ],
-        name: 'CellOperation',
-      },
-      field: 'operation',
-      fixed: 'right',
-      title: $t('common.operation'),
-      width: 160,
-    },
-  ];
-}
-const dictStore = useDictStore();
-
-export function useFormSchema(): VbenFormSchema[] {
-  return [
-    {
-      fieldName: 'tableName',
-      label: $t('develop.form.tableName'),
-      component: 'Input',
-      rules: 'required',
-    },
-    {
-      fieldName: 'tableType',
-      label: $t('develop.form.tableType'),
-      component: 'Select',
-      componentProps: {
-        allowClear: true,
-        options: dictStore.getDict('dev_table_type'),
-      },
-    },
-    {
-      fieldName: 'listType',
-      label: $t('develop.form.listType'),
-      component: 'Select',
-      componentProps: {
-        allowClear: true,
-        options: dictStore.getDict('dev_list_type'),
-      },
-    },
-    {
-      fieldName: 'remarks',
-      label: $t('develop.form.remarks'),
-      component: 'Textarea',
     },
   ];
 }
