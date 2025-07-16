@@ -13,12 +13,12 @@ import { $t } from '#/locales';
 
 import { getFormList } from './api';
 import { useFormColumns } from './data';
-import EditModal from './modules/EditModal.vue';
+import Form from './modules/form.vue';
 
 const [EditModalComp, editModalApi] = useVbenModal({
   destroyOnClose: true,
   fullscreen: true,
-  connectedComponent: EditModal,
+  connectedComponent: Form,
 });
 
 function onEdit(row: DevFormApi.Form) {

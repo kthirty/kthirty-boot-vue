@@ -53,7 +53,6 @@ const [Modal, modalApi] = useVbenModal({
 
 <template>
   <Modal title="模型编辑" :confirm-loading="formLoading">
-    <Form class="mx-4" />
     <BpmnDesigner v-if="!formLoading" :xml="formData.xml" />
   </Modal>
 </template>

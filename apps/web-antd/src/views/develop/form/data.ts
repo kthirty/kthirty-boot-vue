@@ -4,6 +4,7 @@ import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { $t } from '#/locales';
+import { useDictStore } from '#/store';
 
 export function useColumns<T = DevFormItemApi.Item>(
   onActionClick: OnActionClickFn<T>,
@@ -13,7 +14,6 @@ export function useColumns<T = DevFormItemApi.Item>(
     {
       type: 'seq',
       width: 60,
-      title: $t('common.seq'),
       fixed: 'left',
       align: 'center',
     },
@@ -183,39 +183,32 @@ export function useFormColumns(
 ): VxeTableGridOptions['columns'] {
   return [
     {
-      type: 'seq',
-      width: 60,
-      title: $t('common.seq'),
-      fixed: 'left',
-      align: 'center',
-    },
-    {
       field: 'tableName',
-      title: $t('devform.tableName'),
+      title: $t('develop.form.tableName'),
       minWidth: 120,
       align: 'left',
     },
     {
-      field: 'tableType',
-      title: $t('devform.tableType'),
+      field: 'tableTypeLabel',
+      title: $t('develop.form.tableType'),
       minWidth: 100,
       align: 'left',
     },
     {
-      field: 'listType',
-      title: $t('devform.listType'),
+      field: 'listTypeLabel',
+      title: $t('develop.form.listType'),
       minWidth: 100,
       align: 'left',
     },
     {
-      field: 'isDbSync',
-      title: $t('devform.isDbSync'),
+      field: 'isDbSyncLabel',
+      title: $t('develop.form.isDbSync'),
       minWidth: 100,
       align: 'center',
     },
     {
       field: 'remarks',
-      title: $t('devform.remarks'),
+      title: $t('develop.form.remarks'),
       minWidth: 120,
       align: 'left',
     },
@@ -224,7 +217,7 @@ export function useFormColumns(
       cellRender: {
         attrs: {
           nameField: 'tableName',
-          nameTitle: $t('devform.title'),
+          nameTitle: $t('develop.form.title'),
           onClick: onActionClick,
         },
         options: [
@@ -240,30 +233,38 @@ export function useFormColumns(
     },
   ];
 }
+const dictStore = useDictStore();
 
 export function useFormSchema(): VbenFormSchema[] {
   return [
     {
       fieldName: 'tableName',
-      label: $t('devform.tableName'),
+      label: $t('develop.form.tableName'),
       component: 'Input',
-      required: true,
+      rules: 'required',
     },
     {
       fieldName: 'tableType',
-      label: $t('devform.tableType'),
-      component: 'Input',
+      label: $t('develop.form.tableType'),
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: dictStore.getDict('dev_table_type'),
+      },
     },
     {
       fieldName: 'listType',
-      label: $t('devform.listType'),
-      component: 'Input',
+      label: $t('develop.form.listType'),
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: dictStore.getDict('dev_list_type'),
+      },
     },
     {
-      fieldName: 'isDbSync',
-      label: $t('devform.isDbSync'),
-      component: 'Input',
+      fieldName: 'remarks',
+      label: $t('develop.form.remarks'),
+      component: 'Textarea',
     },
-    { fieldName: 'remarks', label: $t('devform.remarks'), component: 'Input' },
   ];
 }
