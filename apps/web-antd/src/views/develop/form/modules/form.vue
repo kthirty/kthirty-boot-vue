@@ -1,16 +1,17 @@
 <script lang="ts" setup>
 import type { DevFormApi, DevFormItemApi } from '../api';
 
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 
-import { message } from 'ant-design-vue';
+import { message, Table, TabPane, Tabs } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
+import { $t } from '#/locales';
 
 import { getFormInfo, saveForm, updateForm } from '../api';
-import { useFormSchema } from '../data';
+import { useDatabaseColumns, useFormSchema } from '../data';
 
 const emit = defineEmits(['success']);
 
@@ -43,8 +44,13 @@ const [Modal, modalApi] = useVbenModal({
         const data = modalApi.getData<DevFormApi.Form>();
         formApi.resetForm();
         if (data && data.id) {
-          formApi.setValues(await getFormInfo(data.id));
+          const formInfo = await getFormInfo(data.id);
+          formApi.setValues(formInfo);
           id.value = data.id;
+          items.value = formInfo.items;
+          indexes.value = formInfo.indexes;
+          console.warn('items', items.value);
+          console.warn('indexes', indexes.value);
         }
       } finally {
         loading.value = false;
@@ -67,13 +73,36 @@ const [Form, formApi] = useVbenForm({
 const loading = ref(false);
 const id = ref<string>();
 const items = ref<DevFormItemApi.Item[]>([]);
+const indexes = ref<DevFormItemApi.Index[]>([]);
+watch(
+  items,
+  (newVal) => {
+    console.warn('items', newVal);
+  },
+  { deep: true, immediate: true },
+);
 </script>
 <template>
   <Modal :title="$t('develop.form.editTitle')" :loading="loading">
-    <Form class="mx-4">
-      <template #field="{ row }">
-        <div>Test {{ row.id }}</div>
-      </template>
-    </Form>
+    <Form class="mx-4" />
+    <div class="flex w-full flex-col gap-4 pl-4">
+      <Tabs>
+        <TabPane key="database" :tab="$t('develop.form.tabs.database')">
+          <Table
+            :data-source="items"
+            :pagination="false"
+            :columns="useDatabaseColumns()"
+            bordered
+            :row-key="(record) => record.id"
+            size="middle"
+          />
+        </TabPane>
+        <TabPane key="entity" :tab="$t('develop.form.tabs.entity')" />
+        <TabPane key="page" :tab="$t('develop.form.tabs.page')" />
+        <TabPane key="extra" :tab="$t('develop.form.tabs.extra')" />
+        <TabPane key="foreignKey" :tab="$t('develop.form.tabs.foreignKey')" />
+        <TabPane key="index" :tab="$t('develop.form.tabs.index')" />
+      </Tabs>
+    </div>
   </Modal>
 </template>

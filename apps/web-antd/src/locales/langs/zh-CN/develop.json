@@ -24,6 +24,27 @@
     "remarks": "备注",
     "field": "字段",
     "editTitle": "编辑表单",
-    "deleteConfirmTitle": "确定要删除该表单吗？"
+    "deleteConfirmTitle": "确定要删除该表单吗？",
+    "tabs": {
+      "database": "数据库",
+      "entity": "实体",
+      "extra": "额外",
+      "page": "页面",
+      "foreignKey": "外键",
+      "index": "索引"
+    },
+    "fields": {
+      "columnName": "字段名",
+      "columnType": "字段类型",
+      "columnLength": "长度",
+      "columnPointLength": "小数长度",
+      "columnDefaultVal": "默认值",
+      "formComponent": "表单组件",
+      "formRequired": "必填",
+      "isShowList": "列表显示",
+      "isShowForm": "表单显示",
+      "isReadonly": "只读",
+      "columnRemarks": "备注"
+    }
   }
 }

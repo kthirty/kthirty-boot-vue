@@ -1,6 +1,13 @@
 import { requestClient } from '#/api/request';
 
 export namespace DevFormItemApi {
+  export interface Index {
+    id?: string;
+    formId?: string;
+    indexType?: string;
+    columnNames?: string;
+    indexName?: string;
+  }
   export interface Item {
     id?: string;
     formId?: string;

@@ -1,5 +1,13 @@
+import type { ColumnType } from 'ant-design-vue/es/table';
+
+import type { DevFormItemApi } from './api';
+
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
+
+import { h } from 'vue';
+
+import { Input } from 'ant-design-vue';
 
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
@@ -102,158 +110,32 @@ export function useFormSchema(): VbenFormSchema[] {
       label: $t('develop.form.remarks'),
       component: 'Textarea',
     },
-    {
-      fieldName: 'field',
-      component: 'Input',
-    },
   ];
 }
 
-function _useItemColumns<T = DevFormItemApi.Item>(
-  onActionClick: OnActionClickFn<T>,
-): VxeTableGridOptions['columns'] {
-  return [
-    { type: 'checkbox', width: 40, fixed: 'left', align: 'center' },
-    {
-      type: 'seq',
-      width: 60,
-      fixed: 'left',
-      align: 'center',
-    },
-    {
-      field: 'columnName',
-      title: $t('develop.formitem.columnName'),
-      minWidth: 120,
-      align: 'left',
-    },
-    {
-      field: 'columnType',
-      title: $t('develop.formitem.columnType'),
-      minWidth: 100,
-      align: 'left',
-    },
-    {
-      field: 'columnLength',
-      title: $t('develop.formitem.columnLength'),
-      minWidth: 80,
-      align: 'center',
-    },
-    {
-      field: 'columnDefaultVal',
-      title: $t('develop.formitem.columnDefaultVal'),
-      minWidth: 100,
-      align: 'left',
-    },
-    {
-      field: 'formComponent',
-      title: $t('develop.formitem.formComponent'),
-      minWidth: 120,
-      align: 'left',
-    },
-    {
-      field: 'formRequired',
-      title: $t('develop.formitem.formRequired'),
-      minWidth: 80,
-      align: 'center',
-      formatter: ({ cellValue }) =>
-        cellValue ? $t('common.yes') : $t('common.no'),
-    },
-    {
-      field: 'isShowList',
-      title: $t('develop.formitem.isShowList'),
-      minWidth: 80,
-      align: 'center',
-      formatter: ({ cellValue }) =>
-        cellValue ? $t('common.yes') : $t('common.no'),
-    },
-    {
-      field: 'isShowForm',
-      title: $t('develop.formitem.isShowForm'),
-      minWidth: 80,
-      align: 'center',
-      formatter: ({ cellValue }) =>
-        cellValue ? $t('common.yes') : $t('common.no'),
-    },
-    {
-      field: 'isReadonly',
-      title: $t('develop.formitem.isReadonly'),
-      minWidth: 80,
-      align: 'center',
-      formatter: ({ cellValue }) =>
-        cellValue ? $t('common.yes') : $t('common.no'),
-    },
-    {
-      align: 'center',
-      cellRender: {
-        attrs: {
-          nameField: 'columnName',
-          nameTitle: $t('develop.formitem.title'),
-          onClick: onActionClick,
+function getInputColumn(name: string) {
+  return {
+    title: $t(`develop.form.fields.${name}`),
+    dataIndex: `${name}`,
+    key: `${name}`,
+    customRender: (opt: { record: DevFormItemApi.Item }) => {
+      return h(Input, {
+        value: opt.record[name],
+        onChange: (e: any) => {
+          opt.record[name] = e.target.value;
         },
-        options: [
-          { code: 'edit', text: $t('common.edit') },
-          { code: 'delete', text: $t('common.delete') },
-        ],
-        name: 'CellOperation',
-      },
-      field: 'operation',
-      fixed: 'right',
-      title: $t('common.operation'),
-      width: 160,
+      });
     },
-  ];
+  };
 }
-function _useEditSchema(): VbenFormSchema[] {
+
+export function useDatabaseColumns(): ColumnType<DevFormItemApi.Item>[] {
   return [
-    {
-      fieldName: 'columnName',
-      label: $t('develop.formitem.columnName'),
-      component: 'Input',
-    },
-    {
-      fieldName: 'columnType',
-      label: $t('develop.formitem.columnType'),
-      component: 'Input',
-    },
-    {
-      fieldName: 'columnLength',
-      label: $t('develop.formitem.columnLength'),
-      component: 'InputNumber',
-    },
-    {
-      fieldName: 'columnDefaultVal',
-      label: $t('develop.formitem.columnDefaultVal'),
-      component: 'Input',
-    },
-    {
-      fieldName: 'formComponent',
-      label: $t('develop.formitem.formComponent'),
-      component: 'Input',
-    },
-    {
-      fieldName: 'formRequired',
-      label: $t('develop.formitem.formRequired'),
-      component: 'Switch',
-    },
-    {
-      fieldName: 'isShowList',
-      label: $t('develop.formitem.isShowList'),
-      component: 'Switch',
-    },
-    {
-      fieldName: 'isShowForm',
-      label: $t('develop.formitem.isShowForm'),
-      component: 'Switch',
-    },
-    {
-      fieldName: 'isReadonly',
-      label: $t('develop.formitem.isReadonly'),
-      component: 'Switch',
-    },
-    {
-      fieldName: 'columnRemarks',
-      label: $t('develop.formitem.columnRemarks'),
-      component: 'Input',
-    },
+    getInputColumn('columnName'),
+    getInputColumn('columnType'),
+    getInputColumn('columnLength'),
+    getInputColumn('columnPointLength'),
+    getInputColumn('columnDefaultVal'),
+    getInputColumn('columnRemarks'),
   ];
 }
