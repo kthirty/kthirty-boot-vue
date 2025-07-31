@@ -10,8 +10,11 @@ import { h } from 'vue';
 
 import { Input, Select, Switch } from 'ant-design-vue';
 
+import { z } from '#/adapter/form';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
+
+import { isTableNameExists } from './api';
 
 export function useSearchSchema(): VbenFormSchema[] {
   return [
@@ -94,13 +97,31 @@ export const formComponentOptions = [
   { label: 'Switch', value: 'Switch' },
 ];
 
-export function useFormSchema(): VbenFormSchema[] {
+export function useFormSchema(id: any): VbenFormSchema[] {
   return [
     {
       fieldName: 'tableName',
       label: $t('develop.form.tableName'),
       component: 'Input',
-      rules: 'required',
+      rules: z
+        .string()
+        .min(2, { message: '表名长度需在2-64个字符之间' })
+        .max(64, { message: '表名长度需在2-64个字符之间' })
+        .regex(/^[a-z_]\w*$/i, {
+          message: '表名只能包含字母、数字和下划线，且不能以数字开头',
+        })
+        .nonempty({ message: `${$t('develop.form.tableName')}为必填项` })
+        .refine(
+          async (value: string) => {
+            return !(await isTableNameExists(value, id.value));
+          },
+          (value) => ({
+            message: $t('ui.formRules.alreadyExists', [
+              $t('develop.form.tableName'),
+              value,
+            ]),
+          }),
+        ),
     },
     {
       fieldName: 'tableType',
@@ -172,7 +193,7 @@ function getSelectColumn(name: string, options: DefaultOptionType[]) {
         value: opt.record[name],
         class: 'w-full',
         onChange: (e: any) => {
-          opt.record[name] = e.target.value;
+          opt.record[name] = e;
         },
         options,
       });
@@ -248,7 +269,6 @@ export function useInitItems(): DevFormItemApi.Item[] {
       columnLength: 32,
       fieldType: 'String',
       fieldAttribute: '2',
-      disabled: true,
     },
     {
       id: `${id}_create_by`,
@@ -257,7 +277,6 @@ export function useInitItems(): DevFormItemApi.Item[] {
       columnLength: 32,
       fieldType: 'String',
       fieldAttribute: '1',
-      disabled: true,
     },
     {
       id: `${id}_update_by`,
@@ -266,7 +285,6 @@ export function useInitItems(): DevFormItemApi.Item[] {
       columnLength: 32,
       fieldType: 'String',
       fieldAttribute: '1',
-      disabled: true,
     },
     {
       id: `${id}_create_date`,
@@ -274,7 +292,6 @@ export function useInitItems(): DevFormItemApi.Item[] {
       columnType: 'Date',
       fieldType: 'Date',
       fieldAttribute: '1',
-      disabled: true,
     },
     {
       id: `${id}_update_date`,
@@ -282,7 +299,6 @@ export function useInitItems(): DevFormItemApi.Item[] {
       columnType: 'Date',
       fieldType: 'Date',
       fieldAttribute: '1',
-      disabled: true,
     },
   ];
 }

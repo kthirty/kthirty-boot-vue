@@ -74,9 +74,13 @@ const [Modal, modalApi] = useVbenModal({
     }
   },
 });
+const loading = ref(false);
+const id = ref<string>();
+const items = ref<DevFormItemApi.Item[]>([]);
+const indexes = ref<DevFormItemApi.Index[]>([]);
 
 const [Form, formApi] = useVbenForm({
-  schema: useFormSchema(),
+  schema: useFormSchema(id),
   showDefaultActions: false,
   wrapperClass: 'grid-cols-1 md:grid-cols-4',
   commonConfig: {
@@ -86,10 +90,6 @@ const [Form, formApi] = useVbenForm({
   },
 });
 
-const loading = ref(false);
-const id = ref<string>();
-const items = ref<DevFormItemApi.Item[]>([]);
-const indexes = ref<DevFormItemApi.Index[]>([]);
 function addItem() {
   items.value.push({
     id: Date.now(),
@@ -127,7 +127,7 @@ const rowSelection = reactive({
             <Button type="primary" @click="addItem">
               {{ $t('develop.form.addItem') }}
             </Button>
-            <Button type="danger" @click="deleteItem">
+            <Button type="primary" danger @click="deleteItem">
               {{ $t('develop.form.deleteItem') }}
             </Button>
           </Space>
