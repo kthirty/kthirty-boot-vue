@@ -1,11 +1,23 @@
 <script lang="ts" setup>
-import type { DevFormApi, DevFormItemApi } from '../api';
+import type { TableRowSelection } from 'ant-design-vue/es/table/interface';
+
+import type { DevFormApi } from '../api';
 
 import { reactive, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 
-import { Button, message, Space, Table, TabPane, Tabs } from 'ant-design-vue';
+import {
+  Button,
+  Form,
+  FormItem,
+  Input,
+  message,
+  Space,
+  Table,
+  TabPane,
+  Tabs,
+} from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import { $t } from '#/locales';
@@ -35,8 +47,8 @@ const [Modal, modalApi] = useVbenModal({
       const submitData = {
         id: id.value,
         ...values,
-        items: items.value,
-        indexes: indexes.value,
+        items: form.value.items,
+        indexes: form.value.indexes,
       } as DevFormApi.Form;
       if (submitData.id) {
         await updateForm(submitData);
@@ -61,12 +73,9 @@ const [Modal, modalApi] = useVbenModal({
           const formInfo = await getFormInfo(data.id);
           formApi.setValues(formInfo);
           id.value = data.id;
-          items.value = formInfo.items;
-          indexes.value = formInfo.indexes;
-          console.warn('items', items.value);
-          console.warn('indexes', indexes.value);
+          form.value = formInfo;
         } else {
-          items.value = useInitItems();
+          form.value.items = useInitItems();
         }
       } finally {
         loading.value = false;
@@ -76,10 +85,9 @@ const [Modal, modalApi] = useVbenModal({
 });
 const loading = ref(false);
 const id = ref<string>();
-const items = ref<DevFormItemApi.Item[]>([]);
-const indexes = ref<DevFormItemApi.Index[]>([]);
+const form = ref<DevFormApi.Form>({ items: [] });
 
-const [Form, formApi] = useVbenForm({
+const [MainForm, formApi] = useVbenForm({
   schema: useFormSchema(id),
   showDefaultActions: false,
   wrapperClass: 'grid-cols-1 md:grid-cols-4',
@@ -91,8 +99,8 @@ const [Form, formApi] = useVbenForm({
 });
 
 function addItem() {
-  items.value.push({
-    id: Date.now(),
+  form.value.items!.push({
+    id: Date.now().toString(),
     columnNullable: true,
     formRequired: false,
     weight: 0,
@@ -104,94 +112,100 @@ function addItem() {
   });
 }
 function deleteItem() {
-  items.value = items.value.filter(
-    (item) => !rowSelection.selectedRowKeys.includes(item.id),
+  form.value.items = form.value.items.filter(
+    (item) => !rowSelection.selectedRowKeys?.includes(item.id!),
   );
 }
 
 const rowSelection = reactive({
   type: 'checkbox',
   selectedRowKeys: [],
-  onChange: (selectedKeys: (number | string)[]) => {
+  onChange: (selectedKeys: string[]) => {
     rowSelection.selectedRowKeys = selectedKeys;
   },
-});
+} as TableRowSelection);
 </script>
 <template>
   <Modal :title="$t('develop.form.editTitle')" :loading="loading">
-    <Form class="mx-4" />
+    <MainForm class="mx-4" />
     <div class="flex w-full flex-col gap-4 pl-4">
-      <Tabs>
-        <TabPane key="database" :tab="$t('develop.form.tabs.database')">
-          <Space class="mb-4">
-            <Button type="primary" @click="addItem">
-              {{ $t('develop.form.addItem') }}
-            </Button>
-            <Button type="primary" danger @click="deleteItem">
-              {{ $t('develop.form.deleteItem') }}
-            </Button>
-          </Space>
-          <Table
-            :data-source="items"
-            :row-selection="rowSelection"
-            :pagination="false"
-            :columns="useDatabaseColumns()"
-            bordered
-            :row-key="(record) => record.id"
-            size="middle"
-          />
-        </TabPane>
-        <TabPane key="entity" :tab="$t('develop.form.tabs.entity')">
-          <Table
-            :data-source="items"
-            :pagination="false"
-            :columns="useEntityColumns()"
-            bordered
-            :row-key="(record) => record.id"
-            size="middle"
-          />
-        </TabPane>
-        <TabPane key="page" :tab="$t('develop.form.tabs.page')">
-          <Table
-            :data-source="items"
-            :pagination="false"
-            :columns="usePageColumns()"
-            bordered
-            :row-key="(record) => record.id"
-            size="middle"
-          />
-        </TabPane>
-        <TabPane key="extra" :tab="$t('develop.form.tabs.extra')">
-          <Table
-            :data-source="items"
-            :pagination="false"
-            :columns="useExtraColumns()"
-            bordered
-            :row-key="(record) => record.id"
-            size="middle"
-          />
-        </TabPane>
-        <TabPane key="foreignKey" :tab="$t('develop.form.tabs.foreignKey')">
-          <Table
-            :data-source="items"
-            :pagination="false"
-            :columns="useForeignKeyColumns()"
-            bordered
-            :row-key="(record) => record.id"
-            size="middle"
-          />
-        </TabPane>
-        <TabPane key="index" :tab="$t('develop.form.tabs.index')">
-          <Table
-            :data-source="indexes"
-            :pagination="false"
-            :columns="useIndexColumns()"
-            bordered
-            :row-key="(record) => record.id"
-            size="middle"
-          />
-        </TabPane>
-      </Tabs>
+      <Form :model="form" layout="inline" autocomplete="off">
+        <FormItem :label="false" name="username" required>
+          <Input v-model:value="form.username" />
+        </FormItem>
+
+        <Tabs>
+          <TabPane key="database" :tab="$t('develop.form.tabs.database')">
+            <Space class="mb-4">
+              <Button type="primary" @click="addItem">
+                {{ $t('develop.form.addItem') }}
+              </Button>
+              <Button type="primary" danger @click="deleteItem">
+                {{ $t('develop.form.deleteItem') }}
+              </Button>
+            </Space>
+            <Table
+              :data-source="form.items"
+              :row-selection="rowSelection"
+              :pagination="false"
+              :columns="useDatabaseColumns()"
+              bordered
+              :row-key="(record) => record.id"
+              size="middle"
+            />
+          </TabPane>
+          <TabPane key="entity" :tab="$t('develop.form.tabs.entity')">
+            <Table
+              :data-source="form.items"
+              :pagination="false"
+              :columns="useEntityColumns()"
+              bordered
+              :row-key="(record) => record.id"
+              size="middle"
+            />
+          </TabPane>
+          <TabPane key="page" :tab="$t('develop.form.tabs.page')">
+            <Table
+              :data-source="form.items"
+              :pagination="false"
+              :columns="usePageColumns()"
+              bordered
+              :row-key="(record) => record.id"
+              size="middle"
+            />
+          </TabPane>
+          <TabPane key="extra" :tab="$t('develop.form.tabs.extra')">
+            <Table
+              :data-source="form.items"
+              :pagination="false"
+              :columns="useExtraColumns()"
+              bordered
+              :row-key="(record) => record.id"
+              size="middle"
+            />
+          </TabPane>
+          <TabPane key="foreignKey" :tab="$t('develop.form.tabs.foreignKey')">
+            <Table
+              :data-source="form.items"
+              :pagination="false"
+              :columns="useForeignKeyColumns()"
+              bordered
+              :row-key="(record) => record.id"
+              size="middle"
+            />
+          </TabPane>
+          <TabPane key="index" :tab="$t('develop.form.tabs.index')">
+            <Table
+              :data-source="form.indexes"
+              :pagination="false"
+              :columns="useIndexColumns()"
+              bordered
+              :row-key="(record) => record.id"
+              size="middle"
+            />
+          </TabPane>
+        </Tabs>
+      </Form>
     </div>
   </Modal>
 </template>

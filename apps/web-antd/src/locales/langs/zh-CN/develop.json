@@ -57,7 +57,8 @@
       "queryComponent": "查询组件",
       "isAllowSort": "允许排序",
       "foreignKeyMainTable": "外键主表名",
-      "foreignKeyMainColumn": "外键主表字段"
+      "foreignKeyMainColumn": "外键主表字段",
+      "type": "类型"
     }
   }
 }

@@ -8,13 +8,22 @@ import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { h } from 'vue';
 
-import { Input, Select, Switch } from 'ant-design-vue';
+import { FormItem, Input, Select, Switch } from 'ant-design-vue';
 
 import { z } from '#/adapter/form';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
 
 import { isTableNameExists } from './api';
+import {
+  dbTypeToComponent,
+  dbTypeToFieldType,
+  fieldAttributeOptions,
+  fieldTypeOptions,
+  formComponentOptions,
+  useDbTypeOptions,
+  usePreSetTypeOptions,
+} from './options';
 
 export function useSearchSchema(): VbenFormSchema[] {
   return [
@@ -83,20 +92,6 @@ export function useFormColumns(
 }
 const dictStore = useDictStore();
 
-export const formComponentOptions = [
-  { label: 'Input', value: 'Input' },
-  { label: 'Textarea', value: 'Textarea' },
-  { label: 'Select', value: 'Select' },
-  { label: 'Radio', value: 'Radio' },
-  { label: 'Checkbox', value: 'Checkbox' },
-  { label: 'DatePicker', value: 'DatePicker' },
-  { label: 'TimePicker', value: 'TimePicker' },
-  { label: 'Upload', value: 'Upload' },
-  { label: 'Slider', value: 'Slider' },
-  { label: 'Rate', value: 'Rate' },
-  { label: 'Switch', value: 'Switch' },
-];
-
 export function useFormSchema(id: any): VbenFormSchema[] {
   return [
     {
@@ -154,14 +149,18 @@ function getInputColumn(name: string) {
     title: $t(`develop.form.fields.${name}`),
     dataIndex: `${name}`,
     key: `${name}`,
-    customRender: (opt: { record: DevFormItemApi.Item }) => {
-      return h(Input, {
-        disabled: opt.record.disabled,
-        value: opt.record[name],
-        onChange: (e: any) => {
-          opt.record[name] = e.target.value;
-        },
-      });
+    customRender: (opt: { index: number; record: DevFormItemApi.Item }) => {
+      return h(
+        FormItem,
+        { name: `items[${opt.index}].${name}`, required: true },
+        h(Input, {
+          disabled: opt.record.disabled,
+          value: opt.record[name],
+          onChange: (e: any) => {
+            opt.record[name] = e.target.value;
+          },
+        }),
+      );
     },
   };
 }
@@ -171,7 +170,6 @@ function getSwitchColumn(name: string) {
     dataIndex: `${name}`,
     key: `${name}`,
     customRender: (opt: { record: DevFormItemApi.Item }) => {
-      console.warn('opt.record[name]', opt.record[name]);
       return h(Switch, {
         disabled: opt.record.disabled,
         checked: opt.record[name],
@@ -200,11 +198,59 @@ function getSelectColumn(name: string, options: DefaultOptionType[]) {
     },
   };
 }
+const itemTypeOptions: DefaultOptionType[] = await usePreSetTypeOptions();
+const dbTypeOptions: DefaultOptionType[] = await useDbTypeOptions();
+// 根据数据库字段类型，推断实体类型与界面显示组件
+export function inferFieldTypeAndComponent(record: DevFormItemApi.Item) {
+  const dbType = (record.columnType || '').toLowerCase();
+  if (!record.fieldType || record.fieldType === '') {
+    record.fieldType = dbTypeToFieldType[dbType] || 'String';
+  }
+  if (!record.formComponent || record.formComponent === '') {
+    record.formComponent = dbTypeToComponent[dbType] || 'Input';
+  }
+  if (!record.queryComponent || record.queryComponent === '') {
+    record.queryComponent = dbTypeToComponent[dbType] || 'Input';
+  }
+}
 
 export function useDatabaseColumns(): ColumnType<DevFormItemApi.Item>[] {
   return [
+    {
+      title: $t('develop.form.fields.type'),
+      dataIndex: 'type',
+      key: 'type',
+      customRender: (opt: { record: DevFormItemApi.Item }) => {
+        const key = JSON.stringify({
+          type: opt.record.columnType,
+          length: +(opt.record.columnLength || -1),
+          decimalLength: +(opt.record.columnPointLength || -1),
+        });
+
+        return h(Select, {
+          value: itemTypeOptions.some((it) => it.value === key) ? key : '',
+          class: 'w-full',
+          showSearch: true,
+          filterOption: (input, option) => {
+            return (
+              option?.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            );
+          },
+          onChange: (e: any) => {
+            opt.record.type = e;
+            const obj = JSON.parse(e);
+            opt.record.columnType = obj.type;
+            opt.record.columnLength = obj.length === -1 ? '' : obj.length;
+            opt.record.columnPointLength =
+              obj.decimalLength === -1 ? '' : obj.decimalLength;
+            inferFieldTypeAndComponent(opt.record);
+          },
+          options: itemTypeOptions,
+        });
+      },
+    },
     getInputColumn('columnName'),
-    getInputColumn('columnType'),
+    getSelectColumn('columnType', dbTypeOptions),
     getInputColumn('columnLength'),
     getInputColumn('columnPointLength'),
     getInputColumn('columnDefaultVal'),
@@ -213,20 +259,8 @@ export function useDatabaseColumns(): ColumnType<DevFormItemApi.Item>[] {
 }
 export function useEntityColumns(): ColumnType<DevFormItemApi.Item>[] {
   return [
-    getSelectColumn('fieldType', [
-      { label: 'String', value: 'String' },
-      { label: 'Integer', value: 'Integer' },
-      { label: 'Long', value: 'Long' },
-      { label: 'BigDecimal', value: 'BigDecimal' },
-      { label: 'Boolean', value: 'Boolean' },
-      { label: 'Date', value: 'Date' },
-    ]),
-    getSelectColumn('fieldAttribute', [
-      { label: '普通字段', value: '1' },
-      { label: '主键', value: '2' },
-      { label: '删除标记', value: '3' },
-      { label: '非数据库字段', value: '4' },
-    ]),
+    getSelectColumn('fieldType', fieldTypeOptions),
+    getSelectColumn('fieldAttribute', fieldAttributeOptions),
     getInputColumn('dictCode'),
   ];
 }
@@ -261,44 +295,60 @@ export function useIndexColumns(): ColumnType<DevFormItemApi.Item>[] {
 
 export function useInitItems(): DevFormItemApi.Item[] {
   const id = Date.now().toString();
-  return [
+  const res: DevFormItemApi.Item[] = [
     {
       id: `${id}_id`,
       columnName: 'id',
-      columnType: 'String',
+      columnType: 'varchar',
       columnLength: 32,
       fieldType: 'String',
       fieldAttribute: '2',
+      columnNullable: true,
+      weight: 0,
     },
     {
       id: `${id}_create_by`,
       columnName: 'create_by',
-      columnType: 'String',
+      columnType: 'varchar',
       columnLength: 32,
       fieldType: 'String',
       fieldAttribute: '1',
+      columnNullable: true,
+      weight: 0,
     },
     {
       id: `${id}_update_by`,
       columnName: 'update_by',
-      columnType: 'String',
+      columnType: 'varchar',
       columnLength: 32,
       fieldType: 'String',
       fieldAttribute: '1',
+      columnNullable: true,
+      weight: 0,
     },
     {
       id: `${id}_create_date`,
       columnName: 'create_date',
-      columnType: 'Date',
+      columnType: 'timestamp',
+      columnLength: 3,
       fieldType: 'Date',
       fieldAttribute: '1',
+      columnNullable: true,
+      weight: 0,
     },
     {
       id: `${id}_update_date`,
       columnName: 'update_date',
-      columnType: 'Date',
+      columnType: 'timestamp',
+      columnLength: 3,
       fieldType: 'Date',
       fieldAttribute: '1',
+      columnNullable: true,
+      weight: 0,
     },
   ];
+  res.forEach((item) => {
+    inferFieldTypeAndComponent(item);
+  });
+  return res;
 }

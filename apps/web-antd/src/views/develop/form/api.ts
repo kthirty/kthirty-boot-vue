@@ -80,7 +80,7 @@ export namespace DevFormApi {
     tableType?: string;
     listType?: string;
     isDbSync?: string;
-    items?: DevFormItemApi.Item[];
+    items: DevFormItemApi.Item[];
     [key: string]: any;
   }
 }
@@ -124,4 +124,12 @@ export async function isTableNameExists(tableName: string, id?: string) {
   return requestClient.get(`/dev/form/tableNameExists`, {
     params: { tableName, id },
   });
+}
+// 字段类型预设
+export async function itemPresetTypes() {
+  return requestClient.get(`/dev/form/itemPresetTypes`);
+}
+// 数据库字段类型
+export async function dbTypes() {
+  return requestClient.get(`/dev/form/dbTypes`);
 }
