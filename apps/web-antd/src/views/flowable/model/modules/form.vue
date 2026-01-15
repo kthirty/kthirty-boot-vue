@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { FlwModelApi } from '../api';
 
-import { defineEmits, ref, watch } from 'vue';
+import { defineEmits, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 

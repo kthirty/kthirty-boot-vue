@@ -24,6 +24,7 @@ const [EditModalComp, editModalApi] = useVbenModal({
 function onEdit(row: DevFormApi.Form) {
   editModalApi.setData(row).open();
 }
+function onSyncDb(_: DevFormApi.Form) {}
 
 function onActionClick({ code, row }: { code: string; row: DevFormApi.Form }) {
   switch (code) {
@@ -33,6 +34,10 @@ function onActionClick({ code, row }: { code: string; row: DevFormApi.Form }) {
     }
     case 'edit': {
       onEdit(row);
+      break;
+    }
+    case 'syncDb': {
+      onSyncDb(row);
       break;
     }
   }

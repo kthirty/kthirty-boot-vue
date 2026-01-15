@@ -1,7 +1,8 @@
+import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
 import type { Recordable } from '@vben/types';
 
 import { h } from 'vue';
-import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
+
 import { IconifyIcon } from '@vben/icons';
 import { $te } from '@vben/locales';
 import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
@@ -10,7 +11,9 @@ import { get, isFunction, isString } from '@vben/utils';
 import { objectOmit } from '@vueuse/core';
 import {
   Button,
+  Dropdown,
   Image,
+  Menu,
   Popconfirm,
   Select,
   Switch,
@@ -206,6 +209,62 @@ setupVbenVxeTable({
           })
           .filter((opt) => opt.show !== false);
 
+        function renderMore(opt: Recordable<any>) {
+          const { children, ...rest } = opt;
+          const menuItems = children?.map((item: any) =>
+            h(
+              Menu.Item,
+              {
+                key: item.code,
+                onClick: () => attrs?.onClick?.({ code: item.code, row }),
+                disabled: item.disabled ? item.disabled(row) : false,
+                show: item.show ? item.show(row) : true,
+              },
+              {
+                default: () => [
+                  item.icon
+                    ? h(IconifyIcon, { class: 'size-5 mr-2', icon: item.icon })
+                    : null,
+                  item.text,
+                ],
+              },
+            ),
+          );
+          const menu = h(Menu, null, { default: () => menuItems });
+          opt.children = undefined;
+
+          return h(
+            Dropdown,
+            {
+              placement: 'bottom',
+              trigger: ['click'],
+              overlay: menuItems.length > 0 ? menu : undefined,
+            },
+            {
+              default: () => {
+                return h(
+                  Button,
+                  {
+                    ...props,
+                    ...rest,
+                  },
+                  {
+                    default: () => {
+                      return [
+                        '更多',
+                        h(IconifyIcon, {
+                          class: 'size-5',
+                          icon: 'cuida:caret-down-outline',
+                        }),
+                      ];
+                    },
+                  },
+                );
+              },
+            },
+          );
+        }
+
         function renderBtn(opt: Recordable<any>, listen = true) {
           return h(
             Button,
@@ -301,6 +360,8 @@ setupVbenVxeTable({
             return renderDelete(opt);
           } else if (opt.title && opt.titleConfirm) {
             return renderConfirm(opt);
+          } else if (opt.code === 'more') {
+            return renderMore(opt);
           } else {
             return renderBtn(opt);
           }

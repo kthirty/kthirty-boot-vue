@@ -10,8 +10,6 @@ import { useVbenModal } from '@vben/common-ui';
 import {
   Button,
   Form,
-  FormItem,
-  Input,
   message,
   Space,
   Table,
@@ -130,10 +128,6 @@ const rowSelection = reactive({
     <MainForm class="mx-4" />
     <div class="flex w-full flex-col gap-4 pl-4">
       <Form :model="form" layout="inline" autocomplete="off">
-        <FormItem :label="false" name="username" required>
-          <Input v-model:value="form.username" />
-        </FormItem>
-
         <Tabs>
           <TabPane key="database" :tab="$t('develop.form.tabs.database')">
             <Space class="mb-4">

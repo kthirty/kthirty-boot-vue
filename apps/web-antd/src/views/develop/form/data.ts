@@ -80,6 +80,17 @@ export function useFormColumns(
         options: [
           { code: 'edit', text: $t('common.edit') },
           { code: 'delete', text: $t('common.delete') },
+          {
+            code: 'more',
+            children: [{ code: 'syncDb', text: $t('develop.option.syncDb') }],
+          },
+          /* {
+            code: 'syncDb',
+            text: $t('develop.option.syncDb'),
+            disabled: (row: DevFormApi.Form) => {
+              return row.isDbSync !== '0';
+            },
+          },*/
         ],
         name: 'CellOperation',
       },

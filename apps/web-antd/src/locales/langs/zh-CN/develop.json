@@ -1,4 +1,7 @@
 {
+  "option": {
+    "syncDb": "同步数据库"
+  },
   "formitem": {
     "title": "表单字段",
     "columnName": "字段名",
