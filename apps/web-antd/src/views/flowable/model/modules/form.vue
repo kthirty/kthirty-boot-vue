@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { FlwModelApi } from '../api';
 
-import { defineEmits, ref } from 'vue';
+import { defineEmits, ref, watch } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 
@@ -52,7 +52,15 @@ const [Modal, modalApi] = useVbenModal({
 </script>
 
 <template>
-  <Modal title="模型编辑" :confirm-loading="formLoading">
-    <BpmnDesigner v-if="!formLoading" :xml="formData.xml" />
+  <Modal title="模型编辑">
+    <BpmnDesigner
+      v-model:xml="formData.xml"
+      v-if="!formLoading"
+      :option="{
+        panel: {
+          processEngine: 'flowable',
+        },
+      }"
+    />
   </Modal>
 </template>
