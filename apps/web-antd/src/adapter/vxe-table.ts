@@ -1,7 +1,7 @@
 import type { Recordable } from '@vben/types';
 
 import { h } from 'vue';
-
+import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
 import { IconifyIcon } from '@vben/icons';
 import { $te } from '@vben/locales';
 import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
@@ -50,7 +50,7 @@ setupVbenVxeTable({
         round: true,
         showOverflow: true,
         size: 'small',
-      },
+      } as VxeTableGridOptions,
     });
 
     /**

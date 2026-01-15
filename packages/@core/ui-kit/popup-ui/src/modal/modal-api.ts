@@ -44,6 +44,7 @@ export class ModalApi {
       confirmDisabled: false,
       confirmLoading: false,
       contentClass: '',
+      destroyOnClose: true,
       draggable: false,
       footer: true,
       footerClass: '',
@@ -58,6 +59,7 @@ export class ModalApi {
       showCancelButton: true,
       showConfirmButton: true,
       title: '',
+      animationType: 'slide',
     };
 
     this.store = new Store<ModalState>(

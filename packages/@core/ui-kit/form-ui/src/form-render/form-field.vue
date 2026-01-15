@@ -5,6 +5,7 @@ import type { FormSchema, MaybeComponentProps } from '../types';
 
 import { computed, nextTick, onUnmounted, useTemplateRef, watch } from 'vue';
 
+import { CircleAlert } from '@vben-core/icons';
 import {
   FormControl,
   FormDescription,
@@ -12,6 +13,7 @@ import {
   FormItem,
   FormMessage,
   VbenRenderContent,
+  VbenTooltip,
 } from '@vben-core/shadcn-ui';
 import { cn, isFunction, isObject, isString } from '@vben-core/shared/utils';
 
@@ -293,7 +295,7 @@ onUnmounted(() => {
         'form-is-required': shouldRequired,
         'flex-col': isVertical,
         'flex-row items-center': !isVertical,
-        'pb-6': !compact,
+        'pb-4': !compact,
         'pb-2': compact,
       }"
       class="relative flex"
@@ -354,6 +356,24 @@ onUnmounted(() => {
                 </template>
                 <!-- <slot></slot> -->
               </component>
+              <VbenTooltip
+                v-if="compact && isInValid"
+                :delay-duration="300"
+                side="left"
+              >
+                <template #trigger>
+                  <slot name="trigger">
+                    <CircleAlert
+                      :class="
+                        cn(
+                          'text-foreground/80 hover:text-foreground inline-flex size-5 cursor-pointer',
+                        )
+                      "
+                    />
+                  </slot>
+                </template>
+                <FormMessage />
+              </VbenTooltip>
             </slot>
           </FormControl>
           <!-- 自定义后缀 -->
@@ -365,8 +385,8 @@ onUnmounted(() => {
           </FormDescription>
         </div>
 
-        <Transition name="slide-up">
-          <FormMessage class="absolute bottom-1" />
+        <Transition name="slide-up" v-if="!compact">
+          <FormMessage class="absolute" />
         </Transition>
       </div>
     </FormItem>

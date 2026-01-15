@@ -243,6 +243,28 @@ const routes: RouteRecordRaw[] = [
               title: 'Tanstack Query',
             },
           },
+          {
+            name: 'RequestParamsSerializerDemo',
+            path: '/demos/features/request-params-serializer',
+            component: () =>
+              import(
+                '#/views/demos/features/request-params-serializer/index.vue'
+              ),
+            meta: {
+              icon: 'lucide:git-pull-request-arrow',
+              title: $t('demos.features.requestParamsSerializer'),
+            },
+          },
+          {
+            name: 'BigIntDemo',
+            path: '/demos/features/json-bigint',
+            component: () =>
+              import('#/views/demos/features/json-bigint/index.vue'),
+            meta: {
+              icon: 'lucide:grape',
+              title: 'JSON BigInt',
+            },
+          },
         ],
       },
       // 面包屑导航
