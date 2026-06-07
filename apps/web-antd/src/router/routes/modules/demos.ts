@@ -21,6 +21,14 @@ const routes: RouteRecordRaw[] = [
         path: '/demos/ant-design',
         component: () => import('#/views/demos/antd/index.vue'),
       },
+      {
+        meta: {
+          title: $t('demos.subTable.title'),
+        },
+        name: 'SubTableDemo',
+        path: '/demos/sub-table',
+        component: () => import('#/views/demos/sub-table/index.vue'),
+      },
     ],
   },
 ];

@@ -38,6 +38,8 @@ import {
   Upload,
 } from 'ant-design-vue';
 
+import { SubTable } from './sub-table';
+
 const withDefaultPlaceholder = <T extends Component>(
   component: T,
   type: 'input' | 'select',
@@ -90,6 +92,7 @@ export type ComponentType =
   | 'Rate'
   | 'Select'
   | 'Space'
+  | 'SubTable'
   | 'Switch'
   | 'Textarea'
   | 'TimePicker'
@@ -170,6 +173,7 @@ async function initComponentAdapter() {
     Rate,
     Select: withDefaultPlaceholder(Select, 'select'),
     Space,
+    SubTable,
     Switch,
     Textarea: withDefaultPlaceholder(Textarea, 'input'),
     TimePicker,
@@ -194,3 +198,4 @@ async function initComponentAdapter() {
 }
 
 export { initComponentAdapter };
+export type { SubTableColumnSchema, SubTableProps } from './sub-table';

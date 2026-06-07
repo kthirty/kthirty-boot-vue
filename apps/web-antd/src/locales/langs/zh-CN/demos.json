@@ -1,6 +1,18 @@
 {
   "title": "演示",
   "antd": "Ant Design Vue",
+  "subTable": {
+    "title": "子表示例",
+    "description": "演示 SubTable 在表单中的行内编辑、弹框编辑及 modelProp 绑定",
+    "formTitle": "订单表单（含子表）",
+    "resultTitle": "提交结果",
+    "resultEmpty": "点击「确认」提交表单后，将在此展示 JSON 数据",
+    "featureTitle": "功能说明",
+    "featureInline": "支持行内直接编辑：Input、Select、InputNumber、Switch 等",
+    "featureModal": "支持点击「修改」按钮弹框编辑完整行数据",
+    "featureModelProp": "组件绑定与表单一致：value / checked / fileList",
+    "featureRemark": "备注、附件列设置 editable: false，仅可通过弹框编辑"
+  },
   "vben": {
     "title": "项目",
     "about": "关于",

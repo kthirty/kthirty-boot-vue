@@ -1,6 +1,18 @@
 {
   "title": "Demos",
   "antd": "Ant Design Vue",
+  "subTable": {
+    "title": "SubTable Demo",
+    "description": "Demonstrates inline edit, modal edit, and modelProp binding for SubTable in forms",
+    "formTitle": "Order Form (with SubTable)",
+    "resultTitle": "Submit Result",
+    "resultEmpty": "Submit the form to see JSON output here",
+    "featureTitle": "Features",
+    "featureInline": "Inline editing: Input, Select, InputNumber, Switch, etc.",
+    "featureModal": "Modal editing via the Edit button on each row",
+    "featureModelProp": "Same bindings as form fields: value / checked / fileList",
+    "featureRemark": "Remark and attachment columns use editable: false (modal only)"
+  },
   "vben": {
     "title": "Project",
     "about": "About",
