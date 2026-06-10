@@ -29,6 +29,22 @@ const routes: RouteRecordRaw[] = [
         path: '/demos/sub-table',
         component: () => import('#/views/demos/sub-table/index.vue'),
       },
+      {
+        meta: {
+          title: $t('demos.subTable.title'),
+        },
+        name: 'FormDemo',
+        path: '/demos/form-components',
+        component: () => import('#/views/demos/form-components/index.vue'),
+      },
+      {
+        meta: {
+          title: $t('demos.fileUpload.title'),
+        },
+        name: 'FileUploadDemo',
+        path: '/demos/file-upload',
+        component: () => import('#/views/demos/file-upload/index.vue'),
+      },
     ],
   },
 ];

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { UploadFile } from 'ant-design-vue';
 
-import type { OosFileApi } from '#/api/core/file';
+import { type OosFileApi } from '#/api/core/file';
 
 import { computed } from 'vue';
 
@@ -12,7 +12,7 @@ import {
   downloadOosFile,
   getOosFileFromUploadItem,
   mapOosFileToUploadItem,
-} from '#/adapter/upload';
+} from './upload';
 import { $t } from '#/locales';
 
 defineOptions({ name: 'OosFile', inheritAttrs: false });
@@ -91,11 +91,7 @@ async function handleViewDownload(file: OosFileApi.OosFileVO) {
       </span>
     </template>
 
-    <Upload
-      v-else
-      v-model:file-list="uploadFileList"
-      v-bind="uploadProps"
-    >
+    <Upload v-else v-model:file-list="uploadFileList" v-bind="uploadProps">
       <slot>
         <Button type="primary">{{ $t('ui.upload.select') }}</Button>
       </slot>

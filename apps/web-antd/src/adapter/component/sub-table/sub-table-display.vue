@@ -5,7 +5,7 @@ import type { SubTableColumnSchema } from './types';
 
 import { computed } from 'vue';
 
-import { normalizeOosFiles } from '#/adapter/upload';
+import { normalizeOosFiles } from '#/adapter/component/oos-file/upload';
 
 const props = defineProps<{
   column: SubTableColumnSchema;

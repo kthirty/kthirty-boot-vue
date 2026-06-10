@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { SubTableColumnSchema } from '#/adapter/component';
+import { SUB_TABLE_DEFAULT_ROW_FLAG } from '#/adapter/component';
 
 import { ref } from 'vue';
 
@@ -14,19 +15,18 @@ const submitResult = ref('');
 
 const subTableColumns: SubTableColumnSchema[] = [
   {
-    field: 'name',
-    title: '商品名称',
+    fieldName: 'name',
+    label: '商品名称',
     component: 'Input',
     rules: 'required',
-    width: 160,
     componentProps: {
       allowClear: true,
       placeholder: '请输入商品名称',
     },
   },
   {
-    field: 'category',
-    title: '分类',
+    fieldName: 'category',
+    label: '分类',
     component: 'Select',
     rules: 'selectRequired',
     width: 130,
@@ -41,10 +41,9 @@ const subTableColumns: SubTableColumnSchema[] = [
     },
   },
   {
-    field: 'quantity',
-    title: '数量',
+    fieldName: 'quantity',
+    label: '数量',
     component: 'InputNumber',
-    defaultValue: 1,
     width: 100,
     componentProps: {
       class: 'w-full',
@@ -52,10 +51,9 @@ const subTableColumns: SubTableColumnSchema[] = [
     },
   },
   {
-    field: 'price',
-    title: '单价',
+    fieldName: 'price',
+    label: '单价',
     component: 'InputNumber',
-    defaultValue: 0,
     width: 120,
     componentProps: {
       class: 'w-full',
@@ -65,30 +63,29 @@ const subTableColumns: SubTableColumnSchema[] = [
     },
   },
   {
-    field: 'enabled',
-    title: '启用',
+    fieldName: 'enabled',
+    label: '启用',
     component: 'Switch',
-    defaultValue: true,
     width: 80,
   },
   {
-    field: 'remark',
-    title: '备注',
+    fieldName: 'remark',
+    label: '备注',
     component: 'Textarea',
-    editable: false,
+    editable: true,
     componentProps: {
       autoSize: { minRows: 2, maxRows: 4 },
-      placeholder: '仅支持弹框编辑',
+      placeholder: '请输入备注',
     },
   },
   {
-    field: 'attachment',
-    title: '附件',
-    component: 'Upload',
-    editable: false,
+    fieldName: 'attachments',
+    label: '附件',
+    component: 'OosFile',
+    editable: true,
     componentProps: {
-      listType: 'text',
-      maxCount: 1,
+      maxCount: 3,
+      multiple: true,
     },
   },
 ];
@@ -114,6 +111,12 @@ const [Form, formApi] = useVbenForm({
       label: '订单明细（子表）',
       defaultValue: [
         {
+          [SUB_TABLE_DEFAULT_ROW_FLAG]: true,
+          quantity: 1,
+          enabled: true,
+          attachments: [],
+        },
+        {
           _subTableRowKey: 'demo-row-1',
           name: '无线鼠标',
           category: 'electronics',
@@ -121,6 +124,7 @@ const [Form, formApi] = useVbenForm({
           price: 89.9,
           enabled: true,
           remark: '黑色款',
+          attachments: [],
         },
         {
           _subTableRowKey: 'demo-row-2',
@@ -129,10 +133,13 @@ const [Form, formApi] = useVbenForm({
           quantity: 5,
           price: 12.5,
           enabled: false,
+          attachments: [],
         },
       ],
       componentProps: {
         columns: subTableColumns,
+        inlineEdit: true,
+        modalEdit: true,
         maxHeight: 360,
         modalTitle: '编辑明细',
       },
@@ -188,6 +195,10 @@ function handleReset() {
         <li>{{ $t('demos.subTable.featureModal') }}</li>
         <li>{{ $t('demos.subTable.featureModelProp') }}</li>
         <li>{{ $t('demos.subTable.featureRemark') }}</li>
+        <li>{{ $t('demos.subTable.featureDefaultRow') }}</li>
+        <li>{{ $t('demos.subTable.featureToolbar') }}</li>
+        <li>{{ $t('demos.subTable.featureBatch') }}</li>
+        <li>{{ $t('demos.subTable.featureOosFile') }}</li>
       </ul>
     </Card>
   </Page>

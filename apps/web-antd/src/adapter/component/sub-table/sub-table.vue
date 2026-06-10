@@ -18,15 +18,22 @@ import { Button, Popconfirm, Table } from 'ant-design-vue';
 import { $t } from '#/locales';
 
 import SubTableCell from './sub-table-cell.vue';
+import SubTableDisplay from './sub-table-display.vue';
+import {
+  extractRowDefaultsFromRows,
+  filterDataRows,
+} from './use-sub-table-form-defaults';
 
 defineOptions({ name: 'SubTable', inheritAttrs: false });
 
 const props = withDefaults(defineProps<SubTableProps>(), {
   columns: () => [],
   disabled: false,
-  inlineEdit: true,
-  modalEdit: true,
+  rowSelection: true,
   showAdd: true,
+  inlineEdit: false,
+  modalEdit: true,
+  showEdit: true,
   showDelete: true,
   rowKey: '_subTableRowKey',
 });
@@ -39,17 +46,51 @@ const modelValue = defineModel<Recordable<any>[]>('value', {
   default: () => [],
 });
 
+/** 从表单 fieldName 绑定的 defaultValue 中缓存的新增行默认值 */
+const rowDefaults = ref<Recordable<any>>({});
+
 const modalRef =
   useTemplateRef<InstanceType<typeof SubTableRowModal>>('modalRef');
-const editingRowIndex = ref(-1);
+const selectedRowKeys = ref<string[]>([]);
+/** 弹框确认时写入的行索引（与表格勾选无关） */
+const modalEditingIndexes = ref<number[]>([]);
 
 let rowKeySeed = 0;
 
 const columnMap = computed(() => {
   const map = new Map<string, SubTableColumnSchema>();
-  props.columns.forEach((col) => map.set(col.field, col));
+  props.columns.forEach((col) => map.set(col.fieldName, col));
   return map;
 });
+
+const tableColumns = computed(() =>
+  props.columns.map((col) => ({
+    dataIndex: col.fieldName,
+    key: col.fieldName,
+    title: typeof col.label === 'string' ? col.label : '',
+    width: col.width,
+  })),
+);
+
+const canBatchOperate = computed(
+  () => !props.disabled && selectedRowKeys.value.length > 0,
+);
+
+const rowSelectionConfig = computed(() => {
+  if (!props.rowSelection) {
+    return undefined;
+  }
+  return {
+    selectedRowKeys: selectedRowKeys.value,
+    onChange: (keys: string[]) => {
+      selectedRowKeys.value = keys;
+    },
+  };
+});
+
+const scrollConfig = computed(() =>
+  props.maxHeight ? { y: props.maxHeight } : undefined,
+);
 
 function ensureRowKey(row: Recordable<any>) {
   if (!row[props.rowKey]) {
@@ -72,10 +113,21 @@ watch(
     if (!rows?.length) {
       return;
     }
-    const normalized = normalizeRows(rows);
-    const changed = normalized.some(
-      (row, index) => row[props.rowKey] !== rows[index]?.[props.rowKey],
-    );
+
+    // 从表单 defaultValue 解析 __defaultRow 配置行
+    const defaults = extractRowDefaultsFromRows(rows, props.columns);
+    if (Object.keys(defaults).length) {
+      rowDefaults.value = defaults;
+    }
+
+    // 剔除默认配置行，仅展示业务数据
+    const dataRows = filterDataRows(rows);
+    const normalized = normalizeRows(dataRows);
+    const changed =
+      dataRows.length !== rows.length ||
+      normalized.some(
+        (row, index) => row[props.rowKey] !== dataRows[index]?.[props.rowKey],
+      );
     if (changed) {
       modelValue.value = normalized;
     }
@@ -83,142 +135,156 @@ watch(
   { deep: true, immediate: true },
 );
 
+/** 新增行：默认值来自父表单 fieldName 对应的 defaultValue */
 function createEmptyRow() {
-  const row: Recordable<any> = {};
-  props.columns.forEach((col) => {
-    row[col.field] = col.defaultValue ?? undefined;
-  });
+  const row: Recordable<any> = { ...rowDefaults.value };
   ensureRowKey(row);
   return row;
-}
-
-function updateRowField(index: number, field: string, value: any) {
-  const list = [...(modelValue.value ?? [])];
-  const row = { ...list[index], [field]: value };
-  list[index] = row;
-  modelValue.value = list;
 }
 
 function addRow() {
   modelValue.value = [...(modelValue.value ?? []), createEmptyRow()];
 }
 
-function deleteRow(index: number) {
-  const list = [...(modelValue.value ?? [])];
-  list.splice(index, 1);
-  modelValue.value = list;
+function getSelectedIndexes() {
+  const selectedKeys = new Set(selectedRowKeys.value);
+  return (modelValue.value ?? [])
+    .map((row, index) => (selectedKeys.has(row[props.rowKey]) ? index : -1))
+    .filter((index) => index >= 0);
+}
+
+function deleteSelectedRows() {
+  const selectedKeys = new Set(selectedRowKeys.value);
+  modelValue.value = (modelValue.value ?? []).filter(
+    (row) => !selectedKeys.has(row[props.rowKey]),
+  );
+  selectedRowKeys.value = [];
+}
+
+function clearModalEditingIndexes() {
+  modalEditingIndexes.value = [];
 }
 
 function onModalConfirm(values: Recordable<any>) {
-  if (editingRowIndex.value < 0) {
+  const indexes = modalEditingIndexes.value;
+  if (indexes.length === 0) {
     return;
   }
   const list = [...(modelValue.value ?? [])];
-  const originKey = list[editingRowIndex.value]?.[props.rowKey];
-  list[editingRowIndex.value] = {
-    ...list[editingRowIndex.value],
-    ...values,
-    [props.rowKey]: originKey,
-  };
-  modelValue.value = list;
-  editingRowIndex.value = -1;
-}
-
-function handleModalOpen(row: Recordable<any>, index: number) {
-  editingRowIndex.value = index;
-  modalRef.value?.open(row, index);
-}
-
-function isColumnEditable(col?: SubTableColumnSchema) {
-  return col && col.editable !== false && props.inlineEdit && !!col.component;
-}
-
-const tableColumns = computed(() => {
-  const cols = props.columns.map((col) => ({
-    dataIndex: col.field,
-    key: col.field,
-    title: col.title,
-    width: col.width,
-  }));
-
-  if (props.modalEdit || props.showDelete) {
-    cols.push({
-      dataIndex: 'action',
-      key: 'action',
-      title: $t('system.role.operation'),
-      width: props.modalEdit && props.showDelete ? 140 : 100,
+  const isBatch = indexes.length > 1;
+  indexes.forEach((index) => {
+    const originKey = list[index]?.[props.rowKey];
+    const merged = { ...list[index] };
+    Object.entries(values).forEach(([key, value]) => {
+      if (!isBatch) {
+        merged[key] = value;
+        return;
+      }
+      // 批量编辑：留空字段不覆盖
+      if (value !== undefined && value !== null && value !== '') {
+        merged[key] = value;
+      }
     });
-  }
+    merged[props.rowKey] = originKey;
+    list[index] = merged;
+  });
+  modelValue.value = list;
+  clearModalEditingIndexes();
+}
 
-  return cols;
-});
-
-const scrollConfig = computed(() => {
-  if (!props.maxHeight) {
-    return undefined;
+function handleBatchEdit() {
+  if (!props.modalEdit || props.disabled) {
+    return;
   }
-  return { y: props.maxHeight };
-});
+  const indexes = getSelectedIndexes();
+  if (indexes.length === 0) {
+    return;
+  }
+  const firstIndex = indexes[0]!;
+  modalEditingIndexes.value = indexes;
+  modalRef.value?.open(modelValue.value![firstIndex]!, indexes);
+}
+
+function onCellChange(index: number, field: string, value: any) {
+  const list = [...(modelValue.value ?? [])];
+  const originKey = list[index]?.[props.rowKey];
+  list[index] = { ...list[index], [field]: value, [props.rowKey]: originKey };
+  modelValue.value = list;
+}
+
+function isColumnInlineEditable(col: SubTableColumnSchema) {
+  return props.inlineEdit && !props.disabled && col.editable !== false;
+}
 </script>
 
 <template>
   <div class="sub-table w-full">
-    <div v-if="showAdd && !disabled" class="mb-2 flex justify-end">
-      <Button size="small" type="primary" @click="addRow">
-        <IconifyIcon class="mr-1 size-4" icon="lucide:plus" />
-        {{ $t('ui.actionTitle.create', ['']) }}
-      </Button>
+    <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+      <span v-if="rowSelection" class="text-muted-foreground text-sm">
+        {{ $t('ui.subTable.selectedCount', [selectedRowKeys.length]) }}
+      </span>
+      <div class="flex flex-wrap items-center gap-2">
+        <Button v-if="showAdd && !disabled" type="primary" @click="addRow">
+          <IconifyIcon class="mr-1 size-4" icon="lucide:plus" />
+          {{ $t('ui.actionTitle.create', ['']) }}
+        </Button>
+        <Button
+          v-if="modalEdit && showEdit"
+          :disabled="!canBatchOperate"
+          @click="handleBatchEdit"
+        >
+          <IconifyIcon class="mr-1 size-4" icon="lucide:pencil" />
+          {{ $t('common.edit') }}
+        </Button>
+        <Popconfirm
+          v-if="showDelete"
+          :disabled="!canBatchOperate"
+          :title="$t('ui.actionMessage.deleteConfirm', [''])"
+          @confirm="deleteSelectedRows"
+        >
+          <Button :disabled="!canBatchOperate" danger>
+            <IconifyIcon class="mr-1 size-4" icon="lucide:trash-2" />
+            {{ $t('common.delete') }}
+          </Button>
+        </Popconfirm>
+      </div>
     </div>
+
     <Table
       :columns="tableColumns"
       :data-source="modelValue"
       :pagination="false"
       :row-key="rowKey"
+      :row-selection="rowSelectionConfig"
       :scroll="scrollConfig"
       bordered
       size="small"
     >
       <template #bodyCell="{ column, record, index }">
-        <template v-if="column.key === 'action'">
-          <div class="flex items-center gap-1">
-            <Button
-              v-if="modalEdit"
-              :disabled="disabled"
-              size="small"
-              type="link"
-              @click="handleModalOpen(record, index)"
-            >
-              {{ $t('common.edit') }}
-            </Button>
-            <Popconfirm
-              v-if="showDelete"
-              :disabled="disabled"
-              :title="$t('ui.actionMessage.deleteConfirm', [''])"
-              @confirm="deleteRow(index)"
-            >
-              <Button :disabled="disabled" danger size="small" type="link">
-                {{ $t('common.delete') }}
-              </Button>
-            </Popconfirm>
-          </div>
-        </template>
-        <template v-else>
+        <template v-if="columnMap.get(String(column.key))">
           <SubTableCell
-            v-if="isColumnEditable(columnMap.get(String(column.key)))"
+            v-if="isColumnInlineEditable(columnMap.get(String(column.key))!)"
             :column="columnMap.get(String(column.key))!"
             :disabled="disabled"
             :index="index"
             :row="record"
-            @change="(field, value) => updateRowField(index, field, value)"
+            @change="(field, value) => onCellChange(index, field, value)"
           />
-          <span v-else>{{ record[column.dataIndex as string] ?? '' }}</span>
+          <SubTableDisplay
+            v-else
+            :column="columnMap.get(String(column.key))!"
+            :row="record"
+          />
         </template>
       </template>
     </Table>
+
     <SubTableRowModal
+      v-if="modalEdit"
       ref="modalRef"
       :columns="columns"
       :modal-title="modalTitle"
+      @close="clearModalEditingIndexes"
       @confirm="onModalConfirm"
     />
   </div>

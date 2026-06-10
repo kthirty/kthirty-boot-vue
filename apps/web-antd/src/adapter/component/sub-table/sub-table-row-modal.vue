@@ -5,7 +5,7 @@ import type { SubTableColumnSchema } from './types';
 
 import type { VbenFormSchema } from '#/adapter/form';
 
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { isFunction } from '@vben/utils';
@@ -19,10 +19,11 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  close: [];
   confirm: [values: Recordable<any>];
 }>();
 
-const editIndex = ref(-1);
+const editingIndexes = ref<number[]>([]);
 
 const [Form, formApi] = useVbenForm({
   commonConfig: {
@@ -46,45 +47,46 @@ const [Modal, modalApi] = useVbenModal({
   },
   onOpenChange(isOpen) {
     if (!isOpen) {
-      editIndex.value = -1;
+      editingIndexes.value = [];
+      emit('close');
     }
   },
 });
 
+/** 列配置即 FormSchema；默认值由 setValues 传入的行数据决定 */
 function buildSchema(row: Recordable<any>, index: number): VbenFormSchema[] {
   return props.columns
     .filter((col) => col.component)
     .map((col) => {
-      const componentProps = isFunction(col.componentProps)
-        ? col.componentProps(row, index)
-        : col.componentProps;
+      const { componentProps, width, ...schema } = col;
+      const resolvedProps = isFunction(componentProps)
+        ? componentProps(row, index)
+        : componentProps;
       return {
-        component: col.component!,
-        componentProps,
-        fieldName: col.field,
-        label: col.title,
-        modelPropName: col.modelPropName,
-        rules: col.rules,
+        ...schema,
+        componentProps: resolvedProps,
       } as VbenFormSchema;
     });
 }
 
-function open(row: Recordable<any>, index: number) {
-  editIndex.value = index;
-  formApi.setState({ schema: buildSchema(row, index) });
+function open(row: Recordable<any>, indexes: number[]) {
+  editingIndexes.value = indexes;
+  const firstIndex = indexes[0] ?? 0;
+  formApi.setState({ schema: buildSchema(row, firstIndex) });
   formApi.resetForm();
   formApi.setValues({ ...row });
   modalApi.open();
 }
 
-function getTitle() {
+const modalTitleText = computed(() => {
   if (props.modalTitle) {
     return props.modalTitle;
   }
-  return editIndex.value >= 0
-    ? $t('ui.actionTitle.edit', [''])
-    : $t('ui.actionTitle.create', ['']);
-}
+  if (editingIndexes.value.length > 1) {
+    return $t('ui.subTable.batchEditTitle', [editingIndexes.value.length]);
+  }
+  return $t('ui.actionTitle.edit', ['']);
+});
 
 defineExpose({
   open,
@@ -92,7 +94,7 @@ defineExpose({
 </script>
 
 <template>
-  <Modal :title="getTitle()">
+  <Modal :title="modalTitleText">
     <Form />
   </Modal>
 </template>

@@ -38,6 +38,7 @@ import {
   Upload,
 } from 'ant-design-vue';
 
+import { OosFile } from './oos-file';
 import { SubTable } from './sub-table';
 
 const withDefaultPlaceholder = <T extends Component>(
@@ -85,6 +86,7 @@ export type ComponentType =
   | 'InputNumber'
   | 'InputPassword'
   | 'Mentions'
+  | 'OosFile'
   | 'PrimaryButton'
   | 'Radio'
   | 'RadioGroup'
@@ -163,6 +165,7 @@ async function initComponentAdapter() {
     InputNumber: withDefaultPlaceholder(InputNumber, 'input'),
     InputPassword: withDefaultPlaceholder(InputPassword, 'input'),
     Mentions: withDefaultPlaceholder(Mentions, 'input'),
+    OosFile,
     // 自定义主要按钮
     PrimaryButton: (props, { attrs, slots }) => {
       return h(Button, { ...props, attrs, type: 'primary' }, slots);
@@ -199,3 +202,5 @@ async function initComponentAdapter() {
 
 export { initComponentAdapter };
 export type { SubTableColumnSchema, SubTableProps } from './sub-table';
+export { SUB_TABLE_DEFAULT_ROW_FLAG } from './sub-table';
+export { OosFile } from './oos-file';

@@ -47,14 +47,14 @@ const resolvedComponentProps = computed(() => {
   return componentProps ?? {};
 });
 
+// 字段值来自表单 v-model 绑定的行数据
 const bindProps = computed(() => {
-  const field = props.column.field;
+  const field = props.column.fieldName;
   const value = props.row[field];
   return createModelBind(
     componentName.value,
     value,
     (val) => emit('change', field, val),
-    props.column.modelPropName,
   );
 });
 </script>
@@ -66,5 +66,5 @@ const bindProps = computed(() => {
     v-bind="{ ...resolvedComponentProps, ...bindProps, disabled }"
     class="w-full"
   />
-  <span v-else>{{ row[column.field] ?? '' }}</span>
+  <span v-else>{{ row[column.fieldName] ?? '' }}</span>
 </template>
