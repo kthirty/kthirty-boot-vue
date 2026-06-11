@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { FlwModelApi } from '../api';
-
-import { defineEmits, ref } from 'vue';
+import {ref} from 'vue'
 
 import { useVbenModal } from '@vben/common-ui';
 
@@ -24,6 +23,7 @@ const [Modal, modalApi] = useVbenModal({
   modal: false,
   async onConfirm() {
     try {
+      formLoading.value = true;
       await saveModel({ ...formData.value });
       message.success('编辑成功');
       modalApi.close();
@@ -38,9 +38,14 @@ const [Modal, modalApi] = useVbenModal({
       formData.value = data ? { ...data } : {};
       if (formData.value.id) {
         formLoading.value = true;
-        const res = await getModel(formData.value.id);
-        formData.value = res;
-        formLoading.value = false;
+        try {
+          const res = await getModel(formData.value.id);
+          formData.value = res;
+        } finally {
+          formLoading.value = false;
+        }
+      } else {
+        formData.value.xml = ''
       }
     }
   },
@@ -54,6 +59,6 @@ const [Modal, modalApi] = useVbenModal({
 <template>
   <Modal title="模型编辑" :confirm-loading="formLoading">
     <Form class="mx-4" />
-    <BpmnDesigner v-if="!formLoading" :xml="formData.xml" />
+    <BpmnDesigner v-if="!formLoading" v-model:xml="formData.xml" />
   </Modal>
 </template>

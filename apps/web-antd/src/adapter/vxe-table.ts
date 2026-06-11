@@ -221,17 +221,17 @@ setupVbenVxeTable({
                     })
                 : undefined,
             },
-            {
-              default: () => {
-                const content = [];
-                if (opt.icon) {
-                  content.push(
-                    h(IconifyIcon, { class: 'size-5', icon: opt.icon }),
-                  );
-                }
+            () => {
+              const content: Array<any> = [];
+              if (opt.icon) {
+                content.push(
+                  h(IconifyIcon, { class: 'size-5', icon: opt.icon }),
+                );
+              }
+              if (opt.text) {
                 content.push(opt.text);
-                return content;
-              },
+              }
+              return content;
             },
           );
         }

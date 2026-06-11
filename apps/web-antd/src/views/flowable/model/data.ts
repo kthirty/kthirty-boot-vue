@@ -51,7 +51,7 @@ export function useColumns<T = FlwModelApi.Model>(
       align: 'left',
       formatter: 'formatDateTime',
     },
-    {
+     {
       align: 'center',
       cellRender: {
         attrs: {

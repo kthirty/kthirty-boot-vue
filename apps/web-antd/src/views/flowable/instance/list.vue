@@ -1,27 +1,24 @@
 <script lang="ts" setup>
-import type { FlwModelApi } from './api';
+import type { FlwProcInstApi } from './api';
 
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { Page, useVbenModal } from '@vben/common-ui';
-import { Plus } from '@vben/icons';
 
-import { Button, message } from 'ant-design-vue';
+import { message } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { $t } from '#/locales';
-import { onMounted } from 'vue';
 
-import { deleteModel, deployModel, getModelList } from './api';
+import {
+  activateProcInst,
+  deleteProcInst,
+  getProcInstList,
+  suspendProcInst,
+  upgradeProcInst,
+} from './api';
 import { useColumns, useSearchSchema } from './data';
-import Form from './modules/form.vue';
 import Preview from './modules/preview.vue';
-
-const [FormModal, formModalApi] = useVbenModal({
-  connectedComponent: Form,
-  destroyOnClose: true,
-  fullscreen: true,
-});
 
 const [PreviewModal, previewModalApi] = useVbenModal({
   connectedComponent: Preview,
@@ -29,33 +26,20 @@ const [PreviewModal, previewModalApi] = useVbenModal({
   fullscreen: true,
 });
 
-/**
- * 编辑模型
- * @param row
- */
-function onEdit(row: any) {
-  formModalApi.setData(row).open();
-}
-
-/**
- * 创建新模型
- */
-function onCreate() {
-  formModalApi.setData(null).open();
-}
-function onPreview(row: any) {
+function onPreview(row: FlwProcInstApi.ProcInst) {
   previewModalApi.setData(row).open();
 }
-function onDeploy(row: FlwModelApi.Model) {
+
+function onActivate(row: FlwProcInstApi.ProcInst) {
   const hideLoading = message.loading({
-    content: $t('flowable.model.action.deploying', [row.name]),
+    content: $t('flowable.procinst.action.activating', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
-  deployModel(row.id!)
+  activateProcInst(row.id!)
     .then(() => {
       message.success({
-        content: $t('flowable.model.action.deploySuccess', [row.name]),
+        content: $t('flowable.procinst.action.activateSuccess', [row.name]),
         key: 'action_process_msg',
       });
       refreshGrid();
@@ -65,17 +49,51 @@ function onDeploy(row: FlwModelApi.Model) {
     });
 }
 
-/**
- * 删除模型
- * @param row
- */
-function onDelete(row: any) {
+function onSuspend(row: FlwProcInstApi.ProcInst) {
+  const hideLoading = message.loading({
+    content: $t('flowable.procinst.action.suspending', [row.name]),
+    duration: 0,
+    key: 'action_process_msg',
+  });
+  suspendProcInst(row.id!)
+    .then(() => {
+      message.success({
+        content: $t('flowable.procinst.action.suspendSuccess', [row.name]),
+        key: 'action_process_msg',
+      });
+      refreshGrid();
+    })
+    .catch(() => {
+      hideLoading();
+    });
+}
+
+function onUpgrade(row: FlwProcInstApi.ProcInst) {
+  const hideLoading = message.loading({
+    content: $t('flowable.procinst.action.upgrading', [row.name]),
+    duration: 0,
+    key: 'action_process_msg',
+  });
+  upgradeProcInst(row.id!)
+    .then(() => {
+      message.success({
+        content: $t('flowable.procinst.action.upgradeSuccess', [row.name]),
+        key: 'action_process_msg',
+      });
+      refreshGrid();
+    })
+    .catch(() => {
+      hideLoading();
+    });
+}
+
+function onDelete(row: FlwProcInstApi.ProcInst) {
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
-  deleteModel(row.id)
+  deleteProcInst(row.id!)
     .then(() => {
       message.success({
         content: $t('ui.actionMessage.deleteSuccess', [row.name]),
@@ -88,31 +106,32 @@ function onDelete(row: any) {
     });
 }
 
-/**
- * 表格操作按钮的回调函数
- */
 function onActionClick({
   code,
   row,
 }: {
   code: string;
-  row: FlwModelApi.Model;
+  row: FlwProcInstApi.ProcInst;
 }) {
   switch (code) {
+    case 'activate': {
+      onActivate(row);
+      break;
+    }
     case 'delete': {
       onDelete(row);
       break;
     }
-    case 'deploy': {
-      onDeploy(row);
-      break;
-    }
-    case 'edit': {
-      onEdit(row);
-      break;
-    }
     case 'preview': {
       onPreview(row);
+      break;
+    }
+    case 'suspend': {
+      onSuspend(row);
+      break;
+    }
+    case 'upgrade': {
+      onUpgrade(row);
       break;
     }
   }
@@ -134,7 +153,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     proxyConfig: {
       ajax: {
         query: async ({ page }, formValues) => {
-          return await getModelList({
+          return await getProcInstList({
             pageNumber: page.currentPage,
             pageSize: page.pageSize,
             ...formValues,
@@ -151,27 +170,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
   } as VxeTableGridOptions,
 });
 
-/**
- * 刷新表格
- */
 async function refreshGrid() {
   await gridApi.query();
 }
-onMounted(() => {
-  refreshGrid();
-});
 </script>
 <template>
   <Page auto-content-height>
-   <PreviewModal />
-    <FormModal />
-    <Grid :table-title="$t('flowable.model.title')">
-      <template #toolbar-tools>
-        <Button type="primary" @click="onCreate">
-          <Plus class="size-5" />
-          {{ $t('ui.actionTitle.create', [$t('flowable.model.title')]) }}
-        </Button>
-      </template>
-    </Grid>
+    <PreviewModal />
+    <Grid :table-title="$t('flowable.procinst.title')" />
   </Page>
 </template>
