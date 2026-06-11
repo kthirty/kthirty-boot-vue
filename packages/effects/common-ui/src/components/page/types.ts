@@ -16,4 +16,10 @@ export interface PageProps {
    * @default 0
    */
   heightOffset?: number;
+  /**
+   * Whether the footer is position: fixed.
+   * When true, footer height is excluded from content height calculation.
+   * @default false
+   */
+  footerFixed?: boolean;
 }

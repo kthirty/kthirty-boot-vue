@@ -1,7 +1,7 @@
 import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
 import type { Recordable } from '@vben/types';
 
-import type { ComponentType } from './component';
+import type { ComponentPropsMap, ComponentType } from './component';
 
 import { h } from 'vue';
 
@@ -14,11 +14,9 @@ import {
 import { get, isFunction, isString } from '@vben/utils';
 
 import { objectOmit } from '@vueuse/core';
-import { Button, Image, Popconfirm, Switch, Tag } from 'ant-design-vue';
+import { Button, Image, Popconfirm, Switch, Tag } from 'antdv-next';
 
 import { $t } from '#/locales';
-
-import { useVbenForm } from './form';
 
 setupVbenVxeTable({
   configVxeTable: (vxeUI) => {
@@ -62,9 +60,10 @@ setupVbenVxeTable({
 
     // 表格配置项可以用 cellRender: { name: 'CellImage' },
     vxeUI.renderer.add('CellImage', {
-      renderTableDefault(_renderOpts, params) {
+      renderTableDefault(renderOpts, params) {
+        const { props } = renderOpts;
         const { column, row } = params;
-        return h(Image, { src: row[column.field] });
+        return h(Image, { src: row[column.field], ...props });
       },
     });
 
@@ -134,7 +133,7 @@ setupVbenVxeTable({
     vxeUI.renderer.add('CellOperation', {
       renderTableDefault({ attrs, options, props }, { column, row }) {
         const defaultProps = { size: 'small', type: 'link', ...props };
-        let align = 'end';
+        let align: string;
         switch (column.align) {
           case 'center': {
             align = 'center';
@@ -280,12 +279,11 @@ setupVbenVxeTable({
     // 这里可以自行扩展 vxe-table 的全局配置，比如自定义格式化
     // vxeUI.formats.add
   },
-  useVbenForm,
 });
 
 export const useVbenVxeGrid = <T extends Record<string, any>>(
-  ...rest: Parameters<typeof useGrid<T, ComponentType>>
-) => useGrid<T, ComponentType>(...rest);
+  ...rest: Parameters<typeof useGrid<T, ComponentType, ComponentPropsMap>>
+) => useGrid<T, ComponentType, ComponentPropsMap>(...rest);
 
 export type OnActionClickParams<T = Recordable<any>> = {
   code: string;
