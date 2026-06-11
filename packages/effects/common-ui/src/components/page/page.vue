@@ -12,12 +12,10 @@ defineOptions({
   name: 'Page',
 });
 
-const { autoContentHeight = false, heightOffset = 0 } =
-  defineProps<PageProps>();
+const { autoContentHeight = false, contentClass } = defineProps<PageProps>();
 
 const headerHeight = ref(0);
 const footerHeight = ref(0);
-const shouldAutoHeight = ref(false);
 
 const headerRef = useTemplateRef<HTMLDivElement>('headerRef');
 const footerRef = useTemplateRef<HTMLDivElement>('footerRef');
@@ -25,12 +23,23 @@ const footerRef = useTemplateRef<HTMLDivElement>('footerRef');
 const contentStyle = computed<StyleValue>(() => {
   if (autoContentHeight) {
     return {
-      height: `calc(var(${CSS_VARIABLE_LAYOUT_CONTENT_HEIGHT}) - ${headerHeight.value}px - ${typeof heightOffset === 'number' ? `${heightOffset}px` : heightOffset})`,
-      overflowY: shouldAutoHeight.value ? 'auto' : 'unset',
+      height: `calc(var(${CSS_VARIABLE_LAYOUT_CONTENT_HEIGHT}) - ${headerHeight.value}px - ${footerHeight.value}px)`,
     };
   }
   return {};
 });
+
+const rootClass = computed(() =>
+  cn(autoContentHeight && 'flex h-full min-h-0 flex-col'),
+);
+
+const contentAreaClass = computed(() =>
+  cn(
+    'h-full p-4',
+    autoContentHeight && 'flex min-h-0 flex-1 flex-col overflow-hidden',
+    contentClass,
+  ),
+);
 
 async function calcContentHeight() {
   if (!autoContentHeight) {
@@ -39,9 +48,6 @@ async function calcContentHeight() {
   await nextTick();
   headerHeight.value = headerRef.value?.offsetHeight || 0;
   footerHeight.value = footerRef.value?.offsetHeight || 0;
-  setTimeout(() => {
-    shouldAutoHeight.value = true;
-  }, 30);
 }
 
 onMounted(() => {
@@ -50,7 +56,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="relative">
+  <div :class="cn('relative', rootClass)">
     <div
       v-if="
         description ||
@@ -86,8 +92,11 @@ onMounted(() => {
       </div>
     </div>
 
-    <div :class="cn('h-full p-4', contentClass)" :style="contentStyle">
-      <slot></slot>
+    <div :class="contentAreaClass" :style="contentStyle">
+      <div v-if="autoContentHeight" class="flex min-h-0 flex-1 flex-col">
+        <slot></slot>
+      </div>
+      <slot v-else></slot>
     </div>
 
     <div

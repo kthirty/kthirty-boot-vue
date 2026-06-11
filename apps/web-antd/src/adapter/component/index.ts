@@ -15,6 +15,9 @@ import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
 
+import { OosFile } from './oos-file';
+import { SubTable } from './sub-table';
+
 const AutoComplete = defineAsyncComponent(
   () => import('ant-design-vue/es/auto-complete'),
 );
@@ -110,6 +113,7 @@ export type ComponentType =
   | 'InputNumber'
   | 'InputPassword'
   | 'Mentions'
+  | 'OosFile'
   | 'PrimaryButton'
   | 'Radio'
   | 'RadioGroup'
@@ -117,6 +121,7 @@ export type ComponentType =
   | 'Rate'
   | 'Select'
   | 'Space'
+  | 'SubTable'
   | 'Switch'
   | 'Textarea'
   | 'TimePicker'
@@ -175,6 +180,7 @@ async function initComponentAdapter() {
     InputNumber: withDefaultPlaceholder(InputNumber, 'input'),
     InputPassword: withDefaultPlaceholder(InputPassword, 'input'),
     Mentions: withDefaultPlaceholder(Mentions, 'input'),
+    OosFile,
     // 自定义主要按钮
     PrimaryButton: (props, { attrs, slots }) => {
       return h(Button, { ...props, attrs, type: 'primary' }, slots);
@@ -185,6 +191,7 @@ async function initComponentAdapter() {
     Rate,
     Select: withDefaultPlaceholder(Select, 'select'),
     Space,
+    SubTable,
     Switch,
     Textarea: withDefaultPlaceholder(Textarea, 'input'),
     TimePicker,
@@ -209,3 +216,6 @@ async function initComponentAdapter() {
 }
 
 export { initComponentAdapter };
+export { OosFile } from './oos-file';
+export type { SubTableColumnSchema, SubTableProps } from './sub-table';
+export { SUB_TABLE_DEFAULT_ROW_FLAG } from './sub-table';

@@ -26,6 +26,16 @@
     "input": "Please enter",
     "select": "Please select"
   },
+  "upload": {
+    "success": "Upload succeeded",
+    "failed": "Upload failed",
+    "empty": "No files",
+    "select": "Select file"
+  },
+  "subTable": {
+    "selectedCount": "{0} selected",
+    "batchEditTitle": "Batch edit ({0} items)"
+  },
   "captcha": {
     "title": "Please complete the security verification",
     "sliderSuccessText": "Passed",
