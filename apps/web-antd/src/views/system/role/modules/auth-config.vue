@@ -7,7 +7,7 @@ import type { SystemRoleApi } from '#/api/system/role';
 
 import { ref } from 'vue';
 
-import { useVbenDrawer, VbenTree } from '@vben/common-ui';
+import { useVbenDrawer, Tree } from '@vben/common-ui';
 
 import { Spin } from 'ant-design-vue';
 
@@ -92,7 +92,7 @@ function getNodeClass(node: Recordable<any>) {
     <Form>
       <template #permissions="slotProps">
         <Spin :spinning="loadingPermissions">
-          <VbenTree
+          <Tree
             :tree-data="permissions"
             multiple
             bordered
@@ -107,7 +107,7 @@ function getNodeClass(node: Recordable<any>) {
               <!--  <IconifyIcon v-if="value?.meta?.icon" :icon="value?.meta?.icon" /> -->
               {{ $t(value?.meta?.title ?? '') }}
             </template>
-          </VbenTree>
+          </Tree>
         </Spin>
       </template>
     </Form>

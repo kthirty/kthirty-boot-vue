@@ -66,7 +66,7 @@ export function useSchema(): VbenFormSchema[] {
         valueField: 'id',
         childrenField: 'children',
       },
-      fieldName: 'pid',
+      fieldName: 'parentId',
       label: $t('system.dept.parentDept'),
     },
     {
@@ -79,7 +79,7 @@ export function useSchema(): VbenFormSchema[] {
         ],
         optionType: 'button',
       },
-      defaultValue: '0',
+      defaultValue: '1',
       fieldName: 'status',
       label: $t('system.dept.status'),
     },
