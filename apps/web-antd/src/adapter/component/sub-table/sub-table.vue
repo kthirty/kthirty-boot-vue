@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+
+import type { Key, TableRowSelection } from 'ant-design-vue/es/table/interface';
+
 import type { Recordable } from '@vben/types';
 
 import type { SubTableColumnSchema, SubTableProps } from './types';
@@ -51,7 +54,7 @@ const rowDefaults = ref<Recordable<any>>({});
 
 const modalRef =
   useTemplateRef<InstanceType<typeof SubTableRowModal>>('modalRef');
-const selectedRowKeys = ref<string[]>([]);
+const selectedRowKeys = ref<Key[]>([]);
 /** 弹框确认时写入的行索引（与表格勾选无关） */
 const modalEditingIndexes = ref<number[]>([]);
 
@@ -75,14 +78,13 @@ const tableColumns = computed(() =>
 const canBatchOperate = computed(
   () => !props.disabled && selectedRowKeys.value.length > 0,
 );
-
-const rowSelectionConfig = computed(() => {
+const rowSelectionConfig = computed<TableRowSelection<any> | undefined>(() => {
   if (!props.rowSelection) {
     return undefined;
   }
   return {
     selectedRowKeys: selectedRowKeys.value,
-    onChange: (keys: string[]) => {
+    onChange: (keys: Key[]) => {
       selectedRowKeys.value = keys;
     },
   };

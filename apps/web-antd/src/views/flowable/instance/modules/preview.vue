@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FlwProcInstApi } from '../api';
+import type { FlwInstanceApi } from '../api';
 
 import { ref } from 'vue';
 
@@ -7,7 +7,7 @@ import { useVbenModal } from '@vben/common-ui';
 
 import { getHisDiagram } from '../api';
 
-const previewData = ref<FlwProcInstApi.ProcInst>({});
+const previewData = ref<FlwInstanceApi.Instance>({});
 const diagram = ref('');
 const previewLoading = ref(false);
 

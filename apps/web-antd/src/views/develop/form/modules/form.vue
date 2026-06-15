@@ -110,7 +110,7 @@ function addItem() {
   });
 }
 function deleteItem() {
-  form.value.items = form.value.items.filter(
+  form.value.items = form?.value?.items?.filter(
     (item) => !rowSelection.selectedRowKeys?.includes(item.id!),
   );
 }

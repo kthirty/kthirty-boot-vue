@@ -10,12 +10,11 @@ import { Page } from '@vben/common-ui';
 import { Button, Card, Divider, message, Space, Upload } from 'ant-design-vue';
 
 import { OosFile } from '#/adapter/component/oos-file';
-import { useVbenForm } from '#/adapter/form';
 import {
   createOosUploadProps,
-  downloadOosFile,
   mapOosFileToUploadItem,
-} from '#/adapter/upload';
+} from '#/adapter/component/oos-file/upload';
+import { useVbenForm } from '#/adapter/form';
 import { uploadFilesBatchApi } from '#/api/core/file';
 import { $t } from '#/locales';
 
@@ -29,7 +28,7 @@ const formResult = ref('');
 const singleUploadProps = createOosUploadProps({
   maxCount: 1,
   multiple: false,
-  onUploaded: (file) => {
+  onUploaded: (file: OosFileApi.OosFileVO) => {
     uploadedFiles.value = [
       file,
       ...uploadedFiles.value.filter((item) => item.id !== file.id),

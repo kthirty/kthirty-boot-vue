@@ -72,7 +72,7 @@ const [Grid] = useVbenVxeGrid({
           name: 'CellTreeSelect',
           props: {
             class: 'w-full',
-            getPopupContainer: (_) => {
+            getPopupContainer: (_:any) => {
               return document.value;
             },
             treeData: deptTree,
@@ -92,7 +92,7 @@ const [Grid] = useVbenVxeGrid({
           name: 'CellTreeSelect',
           props: {
             class: 'w-full',
-            getPopupContainer: (_) => {
+            getPopupContainer: (_:any) => {
               return document.value;
             },
             treeData: postOptions,

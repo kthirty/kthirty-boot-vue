@@ -40,7 +40,7 @@ async function updateDept(
   id: string,
   data: Omit<SystemDeptApi.SystemDept, 'children' | 'id'>,
 ) {
-  return requestClient.put(`/sys/dept/update`, data);
+  return requestClient.put(`/sys/dept/update`, {...data,id});
 }
 
 /**

@@ -10,7 +10,7 @@ import { Button, Input, message, Spin } from 'ant-design-vue';
 
 import { $t } from '#/locales';
 
-import { completePre, completeTask } from '../api';
+import { getCompletePre, completeTask } from '../api';
 import { getFormComponent } from '../utils/form-loader';
 
 const emit = defineEmits(['success']);
@@ -36,7 +36,7 @@ const [Modal, modalApi] = useVbenModal({
       if (!taskData.value.id) return;
       loading.value = true;
       try {
-        completePreData.value = await completePre(taskData.value.id);
+        completePreData.value = await getCompletePre(taskData.value.id);
         FormComponent.value = getFormComponent(completePreData.value.formKey);
       } finally {
         loading.value = false;

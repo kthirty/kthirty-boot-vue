@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FlwProcDefApi } from '../../procdef/api';
+import type { FlwProcdefApi } from '../../procdef/api';
 
 import { ref } from 'vue';
 
@@ -10,7 +10,7 @@ import { message } from 'ant-design-vue';
 import { useVbenForm } from '#/adapter/form';
 import { $t } from '#/locales';
 
-import { getProcDefList } from '../../procdef/api';
+import { getProcdefList } from '../../procdef/api';
 import { startProcess } from '../api';
 
 const emit = defineEmits(['success']);
@@ -50,7 +50,7 @@ const [Form, formApi] = useVbenForm({
 async function loadProcDefs() {
   loadingOptions.value = true;
   try {
-    const res = await getProcDefList({
+    const res = await getProcdefList({
       pageNumber: 1,
       pageSize: 500,
       suspended: false,
@@ -59,7 +59,7 @@ async function loadProcDefs() {
     const records = (res?.records ||
       res?.items ||
       res ||
-      []) as FlwProcDefApi.ProcDef[];
+      []) as FlwProcdefApi.Procdef[];
     procDefOptions.value = records.map((item) => ({
       label: `${item.name} (${item.key} v${item.version})`,
       value: item.key!,

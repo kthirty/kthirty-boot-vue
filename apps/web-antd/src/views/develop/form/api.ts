@@ -80,7 +80,7 @@ export namespace DevFormApi {
     tableType?: string;
     listType?: string;
     isDbSync?: string;
-    items: DevFormItemApi.Item[];
+    items?: DevFormItemApi.Item[];
     [key: string]: any;
   }
 }

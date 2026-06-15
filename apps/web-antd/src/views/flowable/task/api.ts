@@ -37,8 +37,15 @@ export namespace FlwTaskApi {
   }
   export interface CompletePre {
     formKey?: string;
-    handleButtons?: string[];
+    handleButtons?: FlowButton[];
     [key: string]: any;
+  }
+  export interface FlowButton {
+    code?: string;
+    name?: string;
+    resultCode?: string;
+    description?: string;
+    commentRequired?: boolean;
   }
 }
 
@@ -57,4 +64,52 @@ export async function getCompletePre(taskId: string) {
 /** 办理任务 */
 export async function completeTask(data: FlwTaskApi.CompleteReq) {
   return requestClient.put('/flw/task/complete', data);
+}
+
+/**
+ * 启动流程实例
+ */
+export async function startProcess(
+  processDefinitionKey: string,
+  businessKey: string,
+) {
+  return requestClient.post('/flw/task/start', null, {
+    params: { processDefinitionKey, businessKey },
+  });
+}
+
+/**
+ * 任务办理前置信息
+ */
+export async function completePre(taskId: string) {
+  return requestClient.get<FlwTaskApi.CompletePre>(
+    `/flw/task/completePre?taskId=${taskId}`,
+  );
+}
+/**
+ * 任务签收
+ */
+export async function claimTask(taskId: string) {
+  return requestClient.put(`/flw/task/claim?taskId=${taskId}`);
+}
+
+/**
+ * 任务退签收
+ */
+export async function unclaimTask(taskId: string) {
+  return requestClient.put(`/flw/task/unclaim?taskId=${taskId}`);
+}
+
+/**
+ * 任务激活
+ */
+export async function activateTask(taskId: string) {
+  return requestClient.put(`/flw/task/activate?taskId=${taskId}`);
+}
+
+/**
+ * 任务挂起
+ */
+export async function suspendTask(taskId: string) {
+  return requestClient.put(`/flw/task/suspend?taskId=${taskId}`);
 }

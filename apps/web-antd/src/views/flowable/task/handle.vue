@@ -1,11 +1,13 @@
 <script lang="ts" setup>
+import type { ButtonType } from 'ant-design-vue/es/button';
+
 import type { ComponentRecordType } from '@vben/types';
 
 import type { FlwTaskApi } from './api';
 
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 
-import { defineAsyncComponent, defineEmits, ref, shallowRef } from 'vue';
+import { defineAsyncComponent, ref, shallowRef } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { normalizeViewPath } from '@vben/utils';
@@ -38,7 +40,7 @@ interface HandleButton {
   name: string;
   resultCode: string;
   descColor?: string;
-  type?: string;
+  type: ButtonType ;
   danger?: boolean;
 }
 async function onHandleButtonClick(btn: HandleButton) {
