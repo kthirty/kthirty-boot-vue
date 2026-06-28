@@ -1,11 +1,15 @@
 
-import type { VxeUIExport} from '#/adapter/vxe-table';
-import {$t, $te} from "@vben/locales";
 import type { Recordable } from '@vben/types';
+
+import type { VxeUIExport} from '#/adapter/vxe-table';
+
 import {h} from "vue";
-import {isFunction, isString} from "@vben/utils";
-import {Button, Popconfirm, Switch} from "ant-design-vue";
+
 import { IconifyIcon } from '@vben/icons';
+import {$t, $te} from "@vben/locales";
+import { get, isFunction, isString } from '@vben/utils';
+
+import {Button, Popconfirm, Switch,Tag} from "ant-design-vue";
 
 function addSwitch(vxeUI:VxeUIExport) {
   vxeUI.renderer.add('CellSwitch', {
@@ -190,6 +194,31 @@ function addCellOperation(vxeUI:VxeUIExport) {
   });
 }
 
+
+function addTag(vxeUI: VxeUIExport) {
+  // 单元格渲染： Tag
+  vxeUI.renderer.add('CellTag', {
+    renderTableDefault({ options, props }, { column, row }) {
+      const value = get(row, column.field);
+      console.log('options',options);
+      const tagOptions = options ?? [
+        { color: 'success', label: $t('common.enabled'), value: 1 },
+        { color: 'error', label: $t('common.disabled'), value: 0 },
+      ];
+      const tagItem = tagOptions.find((item) => item.value === value);
+      return h(
+        Tag,
+        {
+          ...props,
+          // ...objectOmit(tagItem ?? {}, ['label']),
+        },
+        { default: () => tagItem?.label ?? value },
+      );
+    },
+  });
+
+}
+
 export function addRenderer(vxeUI: VxeUIExport){
   /**
    * 解决vxeTable在热更新时可能会出错的问题
@@ -201,6 +230,7 @@ export function addRenderer(vxeUI: VxeUIExport){
   });
   addSwitch(vxeUI);
   addCellOperation(vxeUI);
+  addTag(vxeUI);
 }
 
 

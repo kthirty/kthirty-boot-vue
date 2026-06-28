@@ -1,6 +1,6 @@
 import type { DefaultOptionType } from 'ant-design-vue/es/select';
 
-import { dbTypes, itemPresetTypes } from './api';
+import { getDbTypes, getItemPresetTypes } from './api';
 
 export const formComponentOptions: DefaultOptionType[] = [
   { label: 'Input', value: 'Input' },
@@ -34,10 +34,10 @@ export const fieldAttributeOptions: DefaultOptionType[] = [
 ];
 
 export const useDbTypeOptions = async () => {
-  return await dbTypes();
+  return await getDbTypes();
 };
 export const usePreSetTypeOptions = async () => {
-  const res = await itemPresetTypes();
+  const res = await getItemPresetTypes();
   res.forEach((it: any) => {
     it.value = JSON.stringify(it.value);
   });

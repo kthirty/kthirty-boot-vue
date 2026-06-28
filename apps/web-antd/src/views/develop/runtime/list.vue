@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import type { DevFormRuntimeApi } from './api';
+import type { DevFormRuntimeApi } from '../api';
 
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
@@ -22,13 +22,13 @@ import {
   getDevFormSchema,
   importDevFormData,
   removeDevFormData,
-} from './api';
+} from '../api';
 import {
   buildGridColumns,
   buildSearchSchema,
   isPageList,
   isTreeList,
-} from './composables/useDevFormSchema';
+} from '../composables/useDevFormSchema';
 import DataForm from './modules/form.vue';
 
 const route = useRoute();
@@ -36,6 +36,7 @@ const formId = computed(() => String(route.query.formId || ''));
 const schema = ref<DevFormRuntimeApi.Schema>();
 const dataFormRef = ref<InstanceType<typeof DataForm>>();
 const loading = ref(true);
+const gridReady = ref(false);
 
 function onActionClick({ code, row }: { code: string; row: any }) {
   switch (code) {
@@ -104,19 +105,16 @@ async function setupGrid(currentSchema: DevFormRuntimeApi.Schema) {
       expandAll: true,
     };
   }
-  gridApi.setState({
-    gridOptions: options,
-    formOptions: {
-      showCollapseButton: true,
-      schema: buildSearchSchema(currentSchema),
-      submitOnEnter: true,
-    },
+  await gridApi.setGridOptions(options);
+  await gridApi.formApi.setState({
+    schema: buildSearchSchema(currentSchema),
   });
-  await nextTick();
+  gridReady.value = true;
   await gridApi.query();
 }
 
 async function loadSchema() {
+  gridReady.value = false;
   if (!formId.value) {
     schema.value = undefined;
     loading.value = false;
@@ -125,7 +123,6 @@ async function loadSchema() {
   loading.value = true;
   try {
     schema.value = await getDevFormSchema(formId.value);
-    await nextTick();
     await setupGrid(schema.value);
   } finally {
     loading.value = false;
@@ -194,7 +191,7 @@ async function refreshGrid() {
       @success="refreshGrid"
     />
     <Grid
-      v-if="schema"
+      v-if="schema && gridReady"
       :table-title="schema.title || $t('develop.runtime.title')"
     >
       <template #toolbar-tools>

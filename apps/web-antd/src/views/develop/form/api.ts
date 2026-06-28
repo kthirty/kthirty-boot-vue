@@ -1,14 +1,7 @@
 import { requestClient } from '#/api/request';
 
-export namespace DevFormItemApi {
-  export interface Index {
-    id?: string;
-    formId?: string;
-    indexType?: string;
-    columnNames?: string;
-    indexName?: string;
-  }
-  export interface Item {
+export namespace DevFormApi {
+  export interface DevFormItem {
     id?: string;
     formId?: string;
     columnName?: string;
@@ -33,84 +26,66 @@ export namespace DevFormItemApi {
     isReadonly?: boolean;
     foreignKeyMainTable?: string;
     foreignKeyMainColumn?: string;
+    isDbSync?: boolean;
     [key: string]: any;
   }
-}
 
-/**
- * 分页查询表单字段
- */
-export async function getItemList(params?: any) {
-  return requestClient.get('/dev/form/item/page', { params });
-}
-
-/**
- * 新增表单字段
- */
-export async function saveItem(data: DevFormItemApi.Item) {
-  return requestClient.post('/dev/form/item/save', data);
-}
-
-/**
- * 更新表单字段
- */
-export async function updateItem(data: DevFormItemApi.Item) {
-  return requestClient.put('/dev/form/item/update', data);
-}
-
-/**
- * 删除表单字段
- */
-export async function removeItem(id: string) {
-  return requestClient.delete(`/dev/form/item/remove/${id}`);
-}
-
-/**
- * 获取表单字段详情
- */
-export async function getItemInfo(id: string) {
-  return requestClient.get(`/dev/form/item/getInfo/${id}`);
-}
-
-export namespace DevFormApi {
-  export interface Form {
+  export interface DevForm {
     id?: string;
     tableName?: string;
     remarks?: string;
     tableType?: string;
     listType?: string;
     isDbSync?: string;
-    items?: DevFormItemApi.Item[];
-    [key: string]: any;
+    treeParentField?: string;
+    treeLabelField?: string;
+    treeSortField?: string;
+    treeRootValue?: string;
+    items?: DevFormItem[];
+    indexes?: any[];
   }
 }
 
-/**
- * 分页查询表单
- */
-export async function getFormList(params?: any) {
+
+export async function isTableNameExists(tableName: string, id?: string) {
+  return requestClient.get(`/dev/form/tableNameExists`, {
+    params: { tableName, id },
+  });
+}
+export async function getDevFormPage(params?: Record<string, any>) {
   return requestClient.get('/dev/form/page', { params });
 }
 
 /**
  * 新增表单（带字段）
  */
-export async function saveForm(data: DevFormApi.Form) {
+export async function saveForm(data: DevFormApi.DevForm) {
   return requestClient.post('/dev/form/save', data);
 }
 
 /**
  * 更新表单（带字段）
  */
-export async function updateForm(data: DevFormApi.Form) {
+export async function updateForm(data: DevFormApi.DevForm) {
   return requestClient.put('/dev/form/update', data);
 }
 
-/**
- * 删除表单
- */
-export async function removeForm(id: string) {
+export async function removeDevForm(id: string) {
   return requestClient.delete(`/dev/form/remove/${id}`);
+}
+
+export async function tableNameExists(id: string, tableName: string) {
+  return requestClient.get('/dev/form/tableNameExists', {
+    params: { id, tableName },
+  });
+}
+
+export async function getItemPresetTypes() {
+  return requestClient.get('/dev/form/itemPresetTypes');
+}
+
+export async function getDbTypes() {
+  return requestClient.get('/dev/form/dbTypes');
 }
 
 /**
@@ -119,17 +94,35 @@ export async function removeForm(id: string) {
 export async function getFormInfo(id: string) {
   return requestClient.get(`/dev/form/getInfo/${id}`);
 }
+export async function getDbTables() {
+  return requestClient.get<string[]>('/dev/form/dbTables');
+}
 
-export async function isTableNameExists(tableName: string, id?: string) {
-  return requestClient.get(`/dev/form/tableNameExists`, {
-    params: { tableName, id },
+export async function previewImportTable(tableName: string) {
+  return requestClient.get<DevFormApi.DevForm>('/dev/form/importTable', {
+    params: { tableName },
   });
 }
-// 字段类型预设
-export async function itemPresetTypes() {
-  return requestClient.get(`/dev/form/itemPresetTypes`);
+
+export async function importTableFields(
+  formId: string,
+  tableName: string,
+  overwrite = false,
+) {
+  return requestClient.post<DevFormApi.DevForm>(
+    `/dev/form/importTable/${formId}`,
+    null,
+    { params: { tableName, overwrite } },
+  );
 }
-// 数据库字段类型
-export async function dbTypes() {
-  return requestClient.get(`/dev/form/dbTypes`);
+
+export async function syncDevFormDb(formId: string) {
+  return requestClient.post(`/dev/form/syncDb/${formId}`);
+}
+
+export async function generateDevFormCode(
+  formId: string,
+  params?: Record<string, any>,
+) {
+  return requestClient.download(`/dev/form/generateCode/${formId}`, { params });
 }

@@ -1,7 +1,7 @@
 import type { DefaultOptionType } from 'ant-design-vue/es/select';
 import type { ColumnType } from 'ant-design-vue/es/table';
 
-import type { DevFormItemApi } from './api';
+import type { DevFormApi } from './api';
 
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
@@ -160,7 +160,7 @@ function getInputColumn(name: string) {
     title: $t(`develop.form.fields.${name}`),
     dataIndex: `${name}`,
     key: `${name}`,
-    customRender: (opt: { index: number; record: DevFormItemApi.Item }) => {
+    customRender: (opt: { index: number; record: DevFormApi.DevFormItem }) => {
       return h(
         FormItem,
         { name: `items[${opt.index}].${name}`, required: true },
@@ -180,7 +180,7 @@ function getSwitchColumn(name: string) {
     title: $t(`develop.form.fields.${name}`),
     dataIndex: `${name}`,
     key: `${name}`,
-    customRender: (opt: { record: DevFormItemApi.Item }) => {
+    customRender: (opt: { record: DevFormApi.DevFormItem }) => {
       return h(Switch, {
         disabled: opt.record.disabled,
         checked: opt.record[name],
@@ -196,7 +196,7 @@ function getSelectColumn(name: string, options: DefaultOptionType[]) {
     title: $t(`develop.form.fields.${name}`),
     dataIndex: `${name}`,
     key: `${name}`,
-    customRender: (opt: { record: DevFormItemApi.Item }) => {
+    customRender: (opt: { record: DevFormApi.DevFormItem }) => {
       return h(Select, {
         disabled: opt.record.disabled,
         value: opt.record[name],
@@ -212,7 +212,7 @@ function getSelectColumn(name: string, options: DefaultOptionType[]) {
 const itemTypeOptions: DefaultOptionType[] = await usePreSetTypeOptions();
 const dbTypeOptions: DefaultOptionType[] = await useDbTypeOptions();
 // 根据数据库字段类型，推断实体类型与界面显示组件
-export function inferFieldTypeAndComponent(record: DevFormItemApi.Item) {
+export function inferFieldTypeAndComponent(record: DevFormApi.DevFormItem) {
   const dbType = (record.columnType || '').toLowerCase();
   if (!record.fieldType || record.fieldType === '') {
     record.fieldType = dbTypeToFieldType[dbType] || 'String';
@@ -225,13 +225,13 @@ export function inferFieldTypeAndComponent(record: DevFormItemApi.Item) {
   }
 }
 
-export function useDatabaseColumns(): ColumnType<DevFormItemApi.Item>[] {
+export function useDatabaseColumns(): ColumnType<DevFormApi.DevFormItem>[] {
   return [
     {
       title: $t('develop.form.fields.type'),
       dataIndex: 'type',
       key: 'type',
-      customRender: (opt: { record: DevFormItemApi.Item }) => {
+      customRender: (opt: { record: DevFormApi.DevFormItem }) => {
         const key = JSON.stringify({
           type: opt.record.columnType,
           length: +(opt.record.columnLength || -1),
@@ -268,14 +268,14 @@ export function useDatabaseColumns(): ColumnType<DevFormItemApi.Item>[] {
     getInputColumn('columnRemarks'),
   ];
 }
-export function useEntityColumns(): ColumnType<DevFormItemApi.Item>[] {
+export function useEntityColumns(): ColumnType<DevFormApi.DevFormItem>[] {
   return [
     getSelectColumn('fieldType', fieldTypeOptions),
     getSelectColumn('fieldAttribute', fieldAttributeOptions),
     getInputColumn('dictCode'),
   ];
 }
-export function usePageColumns(): ColumnType<DevFormItemApi.Item>[] {
+export function usePageColumns(): ColumnType<DevFormApi.DevFormItem>[] {
   return [
     getSelectColumn('formComponent', formComponentOptions),
     getInputColumn('weight'),
@@ -287,26 +287,26 @@ export function usePageColumns(): ColumnType<DevFormItemApi.Item>[] {
     getSwitchColumn('isAllowSort'),
   ];
 }
-export function useExtraColumns(): ColumnType<DevFormItemApi.Item>[] {
+export function useExtraColumns(): ColumnType<DevFormApi.DevFormItem>[] {
   return [
     getSwitchColumn('columnNullable'),
     getInputColumn('formRegexp'),
     getSwitchColumn('isReadonly'),
   ];
 }
-export function useForeignKeyColumns(): ColumnType<DevFormItemApi.Item>[] {
+export function useForeignKeyColumns(): ColumnType<DevFormApi.DevFormItem>[] {
   return [
     getInputColumn('foreignKeyMainTable'),
     getInputColumn('foreignKeyMainColumn'),
   ];
 }
-export function useIndexColumns(): ColumnType<DevFormItemApi.Item>[] {
+export function useIndexColumns(): ColumnType<DevFormApi.DevFormItem>[] {
   return [];
 }
 
-export function useInitItems(): DevFormItemApi.Item[] {
+export function useInitItems(): DevFormApi.DevFormItem[] {
   const id = Date.now().toString();
-  const res: DevFormItemApi.Item[] = [
+  const res: DevFormApi.DevFormItem[] = [
     {
       id: `${id}_id`,
       columnName: 'id',
@@ -362,4 +362,71 @@ export function useInitItems(): DevFormItemApi.Item[] {
     inferFieldTypeAndComponent(item);
   });
   return res;
+}
+
+
+export function useColumns(
+  onActionClick: OnActionClickFn<DevFormApi.DevForm>,
+): VxeTableGridOptions['columns'] {
+  return [
+    {
+      field: 'tableName',
+      title: $t('develop.form.tableName'),
+      minWidth: 140,
+    },
+    {
+      field: 'remarks',
+      title: $t('develop.form.remarks'),
+      minWidth: 160,
+    },
+    {
+      cellRender: {
+        name: 'CellTag',
+        options: dictStore.getDict('dev_table_type'),
+      },
+      field: 'tableType',
+      title: $t('develop.form.tableType'),
+      width: 100,
+    },
+    {
+      cellRender: {
+        name: 'CellTag',
+        options: dictStore.getDict('dev_list_type'),
+      },
+      field: 'listType',
+      title: $t('develop.form.listType'),
+      width: 110,
+    },
+    {
+      cellRender: { name: 'CellTag', options: dictStore.getDict('whether') },
+      field: 'isDbSync',
+      title: $t('develop.form.isDbSync'),
+      width: 110,
+    },
+    {
+      align: 'center',
+      cellRender: {
+        attrs: {
+          nameField: 'tableName',
+          nameTitle: $t('develop.form.title'),
+          onClick: onActionClick,
+        },
+        options: [
+          { code: 'data', text: $t('develop.form.button.data') },
+          { code: 'syncDb', text: $t('develop.form.button.syncDb') },
+          {
+            code: 'generateCode',
+            text: $t('develop.form.button.generateCode'),
+          },
+          'edit',
+          'delete',
+        ],
+        name: 'CellOperation',
+      },
+      field: 'operation',
+      fixed: 'right',
+      title: $t('develop.form.operation'),
+      width: 350,
+    },
+  ];
 }

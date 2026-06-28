@@ -3,37 +3,111 @@ import type { DevFormApi } from './api';
 
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 
-import { Page, useVbenModal } from '@vben/common-ui';
+import { useRouter } from 'vue-router';
+
+import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 
-import { Button, message } from 'ant-design-vue';
+import { Button, message, Modal } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { $t } from '#/locales';
 
-import { getFormList } from './api';
-import { useFormColumns, useSearchSchema } from './data';
+import {
+  generateDevFormCode,
+  getDevFormPage,
+  removeDevForm,
+  syncDevFormDb,
+} from './api';
+import { useColumns, useSearchSchema } from './data';
 import Form from './modules/form.vue';
+import ImportTable from './modules/import-table.vue';
 
-const [EditModalComp, editModalApi] = useVbenModal({
-  destroyOnClose: true,
-  fullscreen: true,
+const router = useRouter();
+
+const [FormDrawer, formDrawerApi] = useVbenDrawer({
   connectedComponent: Form,
+  destroyOnClose: true,
 });
 
-function onEdit(row: DevFormApi.Form) {
-  editModalApi.setData(row).open();
-}
-function onSyncDb(_: DevFormApi.Form) {}
+const [ImportModal, importModalApi] = useVbenModal({
+  connectedComponent: ImportTable,
+  destroyOnClose: true,
+});
 
-function onActionClick({ code, row }: { code: string; row: DevFormApi.Form }) {
+function onCreate() {
+  formDrawerApi.setData({}).open();
+}
+
+function onEdit(row: DevFormApi.DevForm) {
+  formDrawerApi.setData(row).open();
+}
+
+function onData(row: DevFormApi.DevForm) {
+  router.push({
+    path: '/dev/runtime',
+    query: { formId: row.id },
+  });
+}
+
+function onSyncDb(row: DevFormApi.DevForm) {
+  Modal.confirm({
+    title: $t('develop.form.syncDbConfirmTitle'),
+    content: $t('develop.form.syncDbConfirmContent', [row.tableName]),
+    onOk: async () => {
+      const result = await syncDevFormDb(row.id!);
+      message.success(
+        result.messages?.join('；') || $t('develop.form.syncDbSuccess'),
+      );
+      refreshGrid();
+    },
+  });
+}
+
+async function onGenerateCode(row: DevFormApi.DevForm) {
+  await generateDevFormCode(row.id!);
+  message.success($t('develop.form.generateCodeSuccess'));
+}
+
+function onDelete(row: DevFormApi.DevForm) {
+  const hideLoading = message.loading({
+    content: $t('ui.actionMessage.deleting', [row.tableName]),
+    duration: 0,
+    key: 'action_process_msg',
+  });
+  removeDevForm(row.id!)
+    .then(() => {
+      message.success({
+        content: $t('ui.actionMessage.deleteSuccess', [row.tableName]),
+        key: 'action_process_msg',
+      });
+      refreshGrid();
+    })
+    .finally(() => hideLoading());
+}
+
+function onActionClick({
+  code,
+  row,
+}: {
+  code: string;
+  row: DevFormApi.DevForm;
+}) {
   switch (code) {
+    case 'data': {
+      onData(row);
+      break;
+    }
     case 'delete': {
-      handleDelete(row);
+      onDelete(row);
       break;
     }
     case 'edit': {
       onEdit(row);
+      break;
+    }
+    case 'generateCode': {
+      onGenerateCode(row);
       break;
     }
     case 'syncDb': {
@@ -46,18 +120,17 @@ function onActionClick({ code, row }: { code: string; row: DevFormApi.Form }) {
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
     showCollapseButton: false,
-    submitOnEnter: true,
     schema: useSearchSchema(),
+    submitOnEnter: true,
   },
   gridOptions: {
-    columns: useFormColumns(onActionClick),
+    columns: useColumns(onActionClick),
     height: 'auto',
     keepSource: true,
-    pagerConfig: { enabled: true },
     proxyConfig: {
       ajax: {
         query: async ({ page }, formValues) => {
-          return await getFormList({
+          return await getDevFormPage({
             pageNumber: page.currentPage,
             pageSize: page.pageSize,
             ...formValues,
@@ -74,34 +147,28 @@ const [Grid, gridApi] = useVbenVxeGrid({
   } as VxeTableGridOptions,
 });
 
-async function handleDelete(row: DevFormApi.Form) {
-  const hideLoading = message.loading({
-    content: $t('ui.actionMessage.deleting', [row.tableName]),
-    duration: 0,
-    key: 'action_process_msg',
-  });
-  try {
-    await import('./api').then((m) => m.removeForm(row.id!));
-    message.success({
-      content: $t('ui.actionMessage.deleteSuccess', [row.tableName]),
-      key: 'action_process_msg',
-    });
-    refreshGrid();
-  } finally {
-    hideLoading();
-  }
-}
-
 async function refreshGrid() {
   await gridApi.query();
 }
+
+function onImportFromDb() {
+  importModalApi.setData({ formId: '' }).open();
+}
 </script>
+
 <template>
   <Page auto-content-height>
-    <EditModalComp @success="refreshGrid" />
+    <FormDrawer @success="refreshGrid" />
+    <ImportModal
+      @preview="(data) => formDrawerApi.setData(data).open()"
+      @success="refreshGrid"
+    />
     <Grid :table-title="$t('develop.form.title')">
       <template #toolbar-tools>
-        <Button type="primary" @click="onEdit({})">
+        <Button @click="onImportFromDb">
+          {{ $t('develop.form.importFromDb') }}
+        </Button>
+        <Button type="primary" @click="onCreate">
           <Plus class="size-5" />
           {{ $t('ui.actionTitle.create', [$t('develop.form.title')]) }}
         </Button>

@@ -38,6 +38,11 @@
     },
     "addItem": "新增字段",
     "deleteItem": "删除字段",
+    "button": {
+      "data": "数据管理",
+      "syncDb": "同步数据库",
+      "generateCode": "生成代码"
+    },
     "fields": {
       "columnName": "字段名",
       "columnType": "字段类型",
@@ -62,6 +67,33 @@
       "foreignKeyMainTable": "外键主表名",
       "foreignKeyMainColumn": "外键主表字段",
       "type": "类型"
-    }
+    },
+    "operation": "操作",
+    "items": "字段配置",
+    "columnName": "字段名",
+    "columnRemarks": "字段备注",
+    "columnType": "字段类型",
+    "fieldAttribute": "字段属性",
+    "formComponent": "表单组件",
+    "dictCode": "字典Code",
+    "formRequired": "必填",
+    "isShowList": "列表显示",
+    "isShowForm": "表单显示",
+    "isShowQuery": "查询显示",
+    "weight": "排序",
+    "treeParentField": "树形父级字段",
+    "treeLabelField": "树形显示字段",
+    "treeSortField": "树形排序字段",
+    "treeRootValue": "根节点值",
+    "importFromDb": "从数据库导入",
+    "importTableTitle": "导入表结构",
+    "importTableName": "选择数据表",
+    "importTableOverwrite": "覆盖同名字段",
+    "importTableRequired": "请选择数据表",
+    "importTableSuccess": "导入成功",
+    "syncDbConfirmTitle": "同步确认",
+    "syncDbConfirmContent": "确认将表单配置同步到数据库表 {0} 吗？",
+    "syncDbSuccess": "同步成功",
+    "generateCodeSuccess": "代码已生成并开始下载"
   }
 }
