@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { DevFormRuntimeApi } from '../api';
+import type { DevFormRuntimeApi } from './api';
 
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 
@@ -22,13 +22,13 @@ import {
   getDevFormSchema,
   importDevFormData,
   removeDevFormData,
-} from '../api';
+} from './api';
 import {
   buildGridColumns,
   buildSearchSchema,
   isPageList,
   isTreeList,
-} from '../composables/useDevFormSchema';
+} from './composables/useDevFormSchema';
 import DataForm from './modules/form.vue';
 
 const route = useRoute();
@@ -106,8 +106,13 @@ async function setupGrid(currentSchema: DevFormRuntimeApi.Schema) {
     };
   }
   await gridApi.setGridOptions(options);
-  await gridApi.formApi.setState({
-    schema: buildSearchSchema(currentSchema),
+  // 使用 gridApi.setState 更新 formOptions，这样会自动触发 formApi 的响应式更新
+  gridApi.setState({
+    formOptions: {
+      schema: buildSearchSchema(currentSchema),
+      showCollapseButton: true,
+      submitOnEnter: true,
+    },
   });
   gridReady.value = true;
   await gridApi.query();

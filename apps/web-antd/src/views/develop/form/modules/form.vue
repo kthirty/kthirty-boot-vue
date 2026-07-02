@@ -3,7 +3,7 @@ import type { TableRowSelection } from 'ant-design-vue/es/table/interface';
 
 import type { DevFormApi } from '../api';
 
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 
@@ -21,6 +21,7 @@ import { useVbenForm } from '#/adapter/form';
 import { $t } from '#/locales';
 
 import { getFormInfo, saveForm, updateForm } from '../api';
+import { useDbTypeOptions, usePreSetTypeOptions } from '../options';
 import {
   useDatabaseColumns,
   useEntityColumns,
@@ -33,6 +34,9 @@ import {
 } from '../data';
 
 const emit = defineEmits(['success']);
+
+const itemTypeOptions = ref<any[]>([]);
+const dbTypeOptions = ref<any[]>([]);
 
 const [Modal, modalApi] = useVbenModal({
   async onConfirm() {
@@ -47,7 +51,7 @@ const [Modal, modalApi] = useVbenModal({
         ...values,
         items: form.value.items,
         indexes: form.value.indexes,
-      } as DevFormApi.Form;
+      } as DevFormApi.DevForm;
       if (submitData.id) {
         await updateForm(submitData);
         message.success('更新成功');
@@ -65,7 +69,7 @@ const [Modal, modalApi] = useVbenModal({
     if (isOpen) {
       loading.value = true;
       try {
-        const data = modalApi.getData<DevFormApi.Form>();
+        const data = modalApi.getData<DevFormApi.DevForm>();
         formApi.resetForm();
         if (data && data.id) {
           const formInfo = await getFormInfo(data.id);
@@ -81,9 +85,10 @@ const [Modal, modalApi] = useVbenModal({
     }
   },
 });
+
 const loading = ref(false);
 const id = ref<string>();
-const form = ref<DevFormApi.Form>({ items: [] });
+const form = ref<DevFormApi.DevForm>({ items: [] });
 
 const [MainForm, formApi] = useVbenForm({
   schema: useFormSchema(id),
@@ -94,6 +99,12 @@ const [MainForm, formApi] = useVbenForm({
       class: 'w-full',
     },
   },
+});
+
+// 加载选项数据
+onMounted(async () => {
+  itemTypeOptions.value = await usePreSetTypeOptions();
+  dbTypeOptions.value = await useDbTypeOptions();
 });
 
 function addItem() {
@@ -142,7 +153,7 @@ const rowSelection = reactive({
               :data-source="form.items"
               :row-selection="rowSelection"
               :pagination="false"
-              :columns="useDatabaseColumns()"
+              :columns="useDatabaseColumns(itemTypeOptions, dbTypeOptions)"
               bordered
               :row-key="(record) => record.id"
               size="middle"

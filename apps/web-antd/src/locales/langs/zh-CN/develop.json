@@ -95,5 +95,13 @@
     "syncDbConfirmContent": "确认将表单配置同步到数据库表 {0} 吗？",
     "syncDbSuccess": "同步成功",
     "generateCodeSuccess": "代码已生成并开始下载"
+  },
+  "runtime": {
+    "title": "数据管理",
+    "export": "导出",
+    "importTemplate": "下载模板",
+    "import": "导入",
+    "importResult": "导入成功：{0} 条，失败：{1} 条",
+    "noFormId": "请先选择一个表单"
   }
 }

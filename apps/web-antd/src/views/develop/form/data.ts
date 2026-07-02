@@ -21,8 +21,6 @@ import {
   fieldAttributeOptions,
   fieldTypeOptions,
   formComponentOptions,
-  useDbTypeOptions,
-  usePreSetTypeOptions,
 } from './options';
 
 export function useSearchSchema(): VbenFormSchema[] {
@@ -209,8 +207,6 @@ function getSelectColumn(name: string, options: DefaultOptionType[]) {
     },
   };
 }
-const itemTypeOptions: DefaultOptionType[] = await usePreSetTypeOptions();
-const dbTypeOptions: DefaultOptionType[] = await useDbTypeOptions();
 // 根据数据库字段类型，推断实体类型与界面显示组件
 export function inferFieldTypeAndComponent(record: DevFormApi.DevFormItem) {
   const dbType = (record.columnType || '').toLowerCase();
@@ -225,7 +221,7 @@ export function inferFieldTypeAndComponent(record: DevFormApi.DevFormItem) {
   }
 }
 
-export function useDatabaseColumns(): ColumnType<DevFormApi.DevFormItem>[] {
+export function useDatabaseColumns(itemTypeOptions: DefaultOptionType[], dbTypeOptions: DefaultOptionType[]): ColumnType<DevFormApi.DevFormItem>[] {
   return [
     {
       title: $t('develop.form.fields.type'),

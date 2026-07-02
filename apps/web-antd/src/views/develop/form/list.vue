@@ -5,7 +5,7 @@ import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { useRouter } from 'vue-router';
 
-import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
+import { Page, useVbenModal } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 
 import { Button, message, Modal } from 'ant-design-vue';
@@ -25,7 +25,7 @@ import ImportTable from './modules/import-table.vue';
 
 const router = useRouter();
 
-const [FormDrawer, formDrawerApi] = useVbenDrawer({
+const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
   destroyOnClose: true,
 });
@@ -36,11 +36,11 @@ const [ImportModal, importModalApi] = useVbenModal({
 });
 
 function onCreate() {
-  formDrawerApi.setData({}).open();
+  formModalApi.setData({}).open();
 }
 
 function onEdit(row: DevFormApi.DevForm) {
-  formDrawerApi.setData(row).open();
+  formModalApi.setData(row).open();
 }
 
 function onData(row: DevFormApi.DevForm) {
@@ -158,11 +158,11 @@ function onImportFromDb() {
 
 <template>
   <Page auto-content-height>
-    <FormDrawer @success="refreshGrid" />
-    <ImportModal
-      @preview="(data) => formDrawerApi.setData(data).open()"
-      @success="refreshGrid"
-    />
+    <FormModal @success="refreshGrid" />
+      <ImportModal
+        @preview="(data) => formModalApi.setData(data).open()"
+        @success="refreshGrid"
+      />
     <Grid :table-title="$t('develop.form.title')">
       <template #toolbar-tools>
         <Button @click="onImportFromDb">
