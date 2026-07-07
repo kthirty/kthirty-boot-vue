@@ -99,9 +99,9 @@ export function useFormColumns(
     },
   ];
 }
-const dictStore = useDictStore();
 
 export function useFormSchema(id: any): VbenFormSchema[] {
+  const dictStore = useDictStore();
   return [
     {
       fieldName: 'tableName',
@@ -221,7 +221,10 @@ export function inferFieldTypeAndComponent(record: DevFormApi.DevFormItem) {
   }
 }
 
-export function useDatabaseColumns(itemTypeOptions: DefaultOptionType[], dbTypeOptions: DefaultOptionType[]): ColumnType<DevFormApi.DevFormItem>[] {
+export function useDatabaseColumns(
+  itemTypeOptions: DefaultOptionType[],
+  dbTypeOptions: DefaultOptionType[],
+): ColumnType<DevFormApi.DevFormItem>[] {
   return [
     {
       title: $t('develop.form.fields.type'),
@@ -360,10 +363,10 @@ export function useInitItems(): DevFormApi.DevFormItem[] {
   return res;
 }
 
-
 export function useColumns(
   onActionClick: OnActionClickFn<DevFormApi.DevForm>,
 ): VxeTableGridOptions['columns'] {
+  const dictStore = useDictStore();
   return [
     {
       field: 'tableName',

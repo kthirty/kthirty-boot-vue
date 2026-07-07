@@ -12,8 +12,9 @@ import {
 
 import { Button, Image } from 'ant-design-vue';
 
+import { addRenderer } from '#/adapter/renderer';
+
 import { useVbenForm } from './form';
-import {addRenderer} from "#/adapter/renderer";
 
 setupVbenVxeTable({
   configVxeTable: (vxeUI) => {

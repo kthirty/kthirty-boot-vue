@@ -32,7 +32,9 @@ const [Grid] = useVbenVxeGrid({
     proxyConfig: {
       ajax: {
         query: async () => {
-          return await getHisTaskList(previewData.value.id!);
+          const id = previewData.value.id;
+          if (!id) return [];
+          return await getHisTaskList(id);
         },
       },
     },

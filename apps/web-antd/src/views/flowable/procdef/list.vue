@@ -25,12 +25,14 @@ function onPreview(row: FlwProcdefApi.Procdef) {
 }
 
 function onSuspend(row: FlwProcdefApi.Procdef) {
+  const { id } = row;
+  if (!id) return;
   const hideLoading = message.loading({
     content: $t('flowable.procdef.action.suspending', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
-  suspendProcdef(row.id!)
+  suspendProcdef(id)
     .then(() => {
       message.success({
         content: $t('flowable.procdef.action.suspendSuccess', [row.name]),
@@ -44,12 +46,14 @@ function onSuspend(row: FlwProcdefApi.Procdef) {
 }
 
 function onActivate(row: FlwProcdefApi.Procdef) {
+  const { id } = row;
+  if (!id) return;
   const hideLoading = message.loading({
     content: $t('flowable.procdef.action.activating', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
-  activateProcdef(row.id!)
+  activateProcdef(id)
     .then(() => {
       message.success({
         content: $t('flowable.procdef.action.activateSuccess', [row.name]),

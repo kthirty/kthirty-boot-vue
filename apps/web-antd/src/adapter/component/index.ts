@@ -68,6 +68,9 @@ import { isEmpty } from '@vben/utils';
 
 import { message, Modal, notification } from 'ant-design-vue';
 
+import { OosFile } from './oos-file';
+import { SubTable } from './sub-table';
+
 type AdapterUploadProps = UploadProps & {
   aspectRatio?: string;
   crop?: boolean;
@@ -77,9 +80,6 @@ type AdapterUploadProps = UploadProps & {
   onDragSort?: (oldIndex: number, newIndex: number) => void;
   onHandleChange?: (event: UploadChangeParam) => void;
 };
-
-import { OosFile } from './oos-file';
-import { SubTable } from './sub-table';
 
 const AutoComplete = defineAsyncComponent(
   () => import('ant-design-vue/es/auto-complete'),

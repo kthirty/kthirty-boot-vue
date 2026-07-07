@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-
 import type { Key, TableRowSelection } from 'ant-design-vue/es/table/interface';
 
 import type { Recordable } from '@vben/types';
@@ -202,9 +201,13 @@ function handleBatchEdit() {
   if (indexes.length === 0) {
     return;
   }
-  const firstIndex = indexes[0]!;
+  const firstIndex = indexes[0];
+  if (firstIndex === undefined) return;
   modalEditingIndexes.value = indexes;
-  modalRef.value?.open(modelValue.value![firstIndex]!, indexes);
+  const row = modelValue.value?.[firstIndex];
+  if (row) {
+    modalRef.value?.open(row, indexes);
+  }
 }
 
 function onCellChange(index: number, field: string, value: any) {

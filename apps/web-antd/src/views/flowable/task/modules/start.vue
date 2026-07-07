@@ -60,10 +60,14 @@ async function loadProcDefs() {
       res?.items ||
       res ||
       []) as FlwProcdefApi.Procdef[];
-    procDefOptions.value = records.map((item) => ({
-      label: `${item.name} (${item.key} v${item.version})`,
-      value: item.key!,
-    }));
+    procDefOptions.value = records
+      .filter(
+        (item): item is FlwProcdefApi.Procdef & { key: string } => !!item.key,
+      )
+      .map((item) => ({
+        label: `${item.name} (${item.key} v${item.version})`,
+        value: item.key,
+      }));
     formApi.updateSchema([
       {
         fieldName: 'processDefinitionKey',

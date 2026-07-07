@@ -21,7 +21,6 @@ import { useVbenForm } from '#/adapter/form';
 import { $t } from '#/locales';
 
 import { getFormInfo, saveForm, updateForm } from '../api';
-import { useDbTypeOptions, usePreSetTypeOptions } from '../options';
 import {
   useDatabaseColumns,
   useEntityColumns,
@@ -32,6 +31,7 @@ import {
   useInitItems,
   usePageColumns,
 } from '../data';
+import { useDbTypeOptions, usePreSetTypeOptions } from '../options';
 
 const emit = defineEmits(['success']);
 
@@ -108,7 +108,10 @@ onMounted(async () => {
 });
 
 function addItem() {
-  form.value.items!.push({
+  if (!form.value.items) {
+    form.value.items = [];
+  }
+  form.value.items.push({
     id: Date.now().toString(),
     columnNullable: true,
     formRequired: false,
@@ -122,7 +125,7 @@ function addItem() {
 }
 function deleteItem() {
   form.value.items = form?.value?.items?.filter(
-    (item) => !rowSelection.selectedRowKeys?.includes(item.id!),
+    (item) => item.id && !rowSelection.selectedRowKeys?.includes(item.id),
   );
 }
 

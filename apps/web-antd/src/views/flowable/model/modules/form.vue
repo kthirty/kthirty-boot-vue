@@ -6,7 +6,7 @@ import { ref } from 'vue';
 import { useVbenModal } from '@vben/common-ui';
 
 import { message } from 'ant-design-vue';
-// @ts-ignore
+// @ts-expect-error kthirty-bpmn-vue3 has no type declarations
 import { BpmnDesigner } from 'kthirty-bpmn-vue3';
 
 import { getModel, saveModel } from '../api';

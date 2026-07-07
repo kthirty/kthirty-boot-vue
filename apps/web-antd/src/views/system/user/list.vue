@@ -96,12 +96,14 @@ async function onEdit(row: SystemUserApi.SystemUser) {
   formDrawerApi.setData(row).open();
 }
 async function onDelete(row: SystemUserApi.SystemUser) {
+  const { id } = row;
+  if (!id) return;
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
-  deleteUser(row.id!)
+  deleteUser(id)
     .then(() => {
       message.success({
         content: $t('ui.actionMessage.deleteSuccess', [row.realName]),

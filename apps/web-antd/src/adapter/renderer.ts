@@ -1,19 +1,18 @@
-
 import type { Recordable } from '@vben/types';
 
-import type { VxeUIExport} from '#/adapter/vxe-table';
+import type { VxeUIExport } from '#/adapter/vxe-table';
 
-import {h} from "vue";
+import { h } from 'vue';
 
 import { IconifyIcon } from '@vben/icons';
-import {$t, $te} from "@vben/locales";
+import { $t, $te } from '@vben/locales';
 import { get, isFunction, isString } from '@vben/utils';
 
-import {Button, Popconfirm, Switch,Tag} from "ant-design-vue";
+import { Button, Popconfirm, Switch, Tag } from 'ant-design-vue';
 
-function addSwitch(vxeUI:VxeUIExport) {
+function addSwitch(vxeUI: VxeUIExport) {
   vxeUI.renderer.add('CellSwitch', {
-    renderTableDefault({attrs, props}, {column, row}) {
+    renderTableDefault({ attrs, props }, { column, row }) {
       const loadingKey = `__loading_${column.field}`;
       const finallyProps = {
         checkedChildren: $t('common.enabled'),
@@ -43,13 +42,13 @@ function addSwitch(vxeUI:VxeUIExport) {
   });
 }
 
-function addCellOperation(vxeUI:VxeUIExport) {
+function addCellOperation(vxeUI: VxeUIExport) {
   /**
    * 注册表格的操作按钮渲染器
    */
   vxeUI.renderer.add('CellOperation', {
-    renderTableDefault({attrs, options, props}, {column, row}) {
-      const defaultProps = {size: 'small', type: 'link', ...props};
+    renderTableDefault({ attrs, options, props }, { column, row }) {
+      const defaultProps = { size: 'small', type: 'link', ...props };
       let align: string;
       switch (column.align) {
         case 'center': {
@@ -74,20 +73,18 @@ function addCellOperation(vxeUI:VxeUIExport) {
           text: $t('common.edit'),
         },
       };
-      const operations: Array<Recordable<any>> = (
-        options || ['edit', 'delete']
-      )
+      const operations: Array<Recordable<any>> = (options || ['edit', 'delete'])
         .map((opt) => {
           if (isString(opt)) {
             return presets[opt]
-              ? {code: opt, ...presets[opt], ...defaultProps}
+              ? { code: opt, ...presets[opt], ...defaultProps }
               : {
-                code: opt,
-                text: $te(`common.${opt}`) ? $t(`common.${opt}`) : opt,
-                ...defaultProps,
-              };
+                  code: opt,
+                  text: $te(`common.${opt}`) ? $t(`common.${opt}`) : opt,
+                  ...defaultProps,
+                };
           } else {
-            return {...defaultProps, ...presets[opt.code], ...opt};
+            return { ...defaultProps, ...presets[opt.code], ...opt };
           }
         })
         .map((opt) => {
@@ -108,10 +105,10 @@ function addCellOperation(vxeUI:VxeUIExport) {
             icon: undefined,
             onClick: listen
               ? () =>
-                attrs?.onClick?.({
-                  code: opt.code,
-                  row,
-                })
+                  attrs?.onClick?.({
+                    code: opt.code,
+                    row,
+                  })
               : undefined,
           },
           {
@@ -119,7 +116,7 @@ function addCellOperation(vxeUI:VxeUIExport) {
               const content = [];
               if (opt.icon) {
                 content.push(
-                  h(IconifyIcon, {class: 'size-5', icon: opt.icon}),
+                  h(IconifyIcon, { class: 'size-5', icon: opt.icon }),
                 );
               }
               content.push(opt.text);
@@ -166,11 +163,11 @@ function addCellOperation(vxeUI:VxeUIExport) {
             },
           },
           {
-            default: () => renderBtn({...opt}, false),
+            default: () => renderBtn({ ...opt }, false),
             description: () =>
               h(
                 'div',
-                {class: 'truncate'},
+                { class: 'truncate' },
                 $t('ui.actionMessage.deleteConfirm', [
                   row[attrs?.nameField || 'name'],
                 ]),
@@ -186,7 +183,7 @@ function addCellOperation(vxeUI:VxeUIExport) {
         'div',
         {
           class: 'flex table-operations',
-          style: {justifyContent: align},
+          style: { justifyContent: align },
         },
         btns,
       );
@@ -194,13 +191,11 @@ function addCellOperation(vxeUI:VxeUIExport) {
   });
 }
 
-
 function addTag(vxeUI: VxeUIExport) {
   // 单元格渲染： Tag
   vxeUI.renderer.add('CellTag', {
     renderTableDefault({ options, props }, { column, row }) {
       const value = get(row, column.field);
-      console.log('options',options);
       const tagOptions = options ?? [
         { color: 'success', label: $t('common.enabled'), value: 1 },
         { color: 'error', label: $t('common.disabled'), value: 0 },
@@ -216,10 +211,9 @@ function addTag(vxeUI: VxeUIExport) {
       );
     },
   });
-
 }
 
-export function addRenderer(vxeUI: VxeUIExport){
+export function addRenderer(vxeUI: VxeUIExport) {
   /**
    * 解决vxeTable在热更新时可能会出错的问题
    */
@@ -232,5 +226,3 @@ export function addRenderer(vxeUI: VxeUIExport){
   addCellOperation(vxeUI);
   addTag(vxeUI);
 }
-
-

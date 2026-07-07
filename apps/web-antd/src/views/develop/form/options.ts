@@ -21,6 +21,8 @@ export const fieldTypeOptions: DefaultOptionType[] = [
   { label: 'String', value: 'String' },
   { label: 'Integer', value: 'Integer' },
   { label: 'Long', value: 'Long' },
+  { label: 'Float', value: 'Float' },
+  { label: 'Double', value: 'Double' },
   { label: 'BigDecimal', value: 'BigDecimal' },
   { label: 'Boolean', value: 'Boolean' },
   { label: 'Date', value: 'Date' },

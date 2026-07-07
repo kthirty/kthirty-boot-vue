@@ -55,7 +55,6 @@ function onDelete(row: SystemDeptApi.SystemDept) {
     duration: 0,
     key: 'action_process_msg',
   });
-  // @ts-ignore
   deleteDept(row.id || '')
     .then(() => {
       message.success({

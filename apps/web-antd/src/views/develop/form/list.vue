@@ -51,11 +51,13 @@ function onData(row: DevFormApi.DevForm) {
 }
 
 function onSyncDb(row: DevFormApi.DevForm) {
+  const { id } = row;
+  if (!id) return;
   Modal.confirm({
     title: $t('develop.form.syncDbConfirmTitle'),
     content: $t('develop.form.syncDbConfirmContent', [row.tableName]),
     onOk: async () => {
-      const result = await syncDevFormDb(row.id!);
+      const result = await syncDevFormDb(id);
       message.success(
         result.messages?.join('；') || $t('develop.form.syncDbSuccess'),
       );
@@ -65,17 +67,21 @@ function onSyncDb(row: DevFormApi.DevForm) {
 }
 
 async function onGenerateCode(row: DevFormApi.DevForm) {
-  await generateDevFormCode(row.id!);
+  const { id } = row;
+  if (!id) return;
+  await generateDevFormCode(id);
   message.success($t('develop.form.generateCodeSuccess'));
 }
 
 function onDelete(row: DevFormApi.DevForm) {
+  const { id } = row;
+  if (!id) return;
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.tableName]),
     duration: 0,
     key: 'action_process_msg',
   });
-  removeDevForm(row.id!)
+  removeDevForm(id)
     .then(() => {
       message.success({
         content: $t('ui.actionMessage.deleteSuccess', [row.tableName]),
@@ -159,10 +165,10 @@ function onImportFromDb() {
 <template>
   <Page auto-content-height>
     <FormModal @success="refreshGrid" />
-      <ImportModal
-        @preview="(data) => formModalApi.setData(data).open()"
-        @success="refreshGrid"
-      />
+    <ImportModal
+      @preview="(data: any) => formModalApi.setData(data).open()"
+      @success="refreshGrid"
+    />
     <Grid :table-title="$t('develop.form.title')">
       <template #toolbar-tools>
         <Button @click="onImportFromDb">

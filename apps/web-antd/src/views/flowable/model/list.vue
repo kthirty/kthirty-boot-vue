@@ -53,12 +53,14 @@ function onPreview(row: any) {
   previewModalApi.setData(row).open();
 }
 function onDeploy(row: FlwModelApi.Model) {
+  const { id } = row;
+  if (!id) return;
   const hideLoading = message.loading({
     content: $t('flowable.model.action.deploying', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
-  deployModel(row.id!)
+  deployModel(id)
     .then(() => {
       message.success({
         content: $t('flowable.model.action.deploySuccess', [row.name]),

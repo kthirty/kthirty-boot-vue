@@ -40,6 +40,7 @@ onMounted(() => {
   loadRoleOptions();
 });
 // 加载授权配置
+// oxlint-disable-next-line no-empty-function
 async function loadAuthConfig() {}
 
 const [Drawer, drawerApi] = useVbenDrawer({
@@ -72,7 +73,7 @@ const [Grid] = useVbenVxeGrid({
           name: 'CellTreeSelect',
           props: {
             class: 'w-full',
-            getPopupContainer: (_:any) => {
+            getPopupContainer: (_: any) => {
               return document.value;
             },
             treeData: deptTree,
@@ -92,7 +93,7 @@ const [Grid] = useVbenVxeGrid({
           name: 'CellTreeSelect',
           props: {
             class: 'w-full',
-            getPopupContainer: (_:any) => {
+            getPopupContainer: (_: any) => {
               return document.value;
             },
             treeData: postOptions,

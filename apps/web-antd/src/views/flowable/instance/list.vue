@@ -36,12 +36,14 @@ function onHistory(row: FlwInstanceApi.Instance) {
 }
 
 function onSuspend(row: FlwInstanceApi.Instance) {
+  const { id } = row;
+  if (!id) return;
   const hideLoading = message.loading({
     content: $t('flowable.instance.action.suspending', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
-  suspendInstance(row.id!)
+  suspendInstance(id)
     .then(() => {
       message.success({
         content: $t('flowable.instance.action.suspendSuccess', [row.name]),
@@ -54,12 +56,14 @@ function onSuspend(row: FlwInstanceApi.Instance) {
     });
 }
 function onActivate(row: FlwInstanceApi.Instance) {
+  const { id } = row;
+  if (!id) return;
   const hideLoading = message.loading({
     content: $t('flowable.instance.action.activating', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
-  activateInstance(row.id!)
+  activateInstance(id)
     .then(() => {
       message.success({
         content: $t('flowable.instance.action.activateSuccess', [row.name]),
@@ -78,13 +82,15 @@ function onDelete(row: FlwInstanceApi.Instance) {
 }
 async function handleDeleteConfirm() {
   if (!deleteRow.value) return;
+  const { id } = deleteRow.value;
+  if (!id) return;
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [deleteRow.value.name]),
     duration: 0,
     key: 'action_process_msg',
   });
   try {
-    await deleteInstance(deleteRow.value.id!, deleteReason.value);
+    await deleteInstance(id, deleteReason.value);
     message.success({
       content: $t('ui.actionMessage.deleteSuccess', [deleteRow.value.name]),
       key: 'action_process_msg',

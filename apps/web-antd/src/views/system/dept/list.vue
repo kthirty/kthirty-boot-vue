@@ -50,12 +50,14 @@ function onCreate() {
  * @param row
  */
 function onDelete(row: SystemDeptApi.SystemDept) {
+  const { id } = row;
+  if (!id) return;
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
-  deleteDept(row.id!)
+  deleteDept(id)
     .then(() => {
       message.success({
         content: $t('ui.actionMessage.deleteSuccess', [row.name]),

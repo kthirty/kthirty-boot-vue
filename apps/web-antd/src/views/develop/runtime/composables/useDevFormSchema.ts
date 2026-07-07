@@ -5,8 +5,6 @@ import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { useDictStore } from '#/store/dict';
 
-const dictStore = useDictStore();
-
 const QUERY_COMPONENT_MAP: Record<string, string> = {
   Input: 'Input',
   Select: 'Select',
@@ -28,6 +26,7 @@ const FORM_COMPONENT_MAP: Record<string, string> = {
 };
 
 function buildComponentProps(column: DevFormRuntimeApi.ColumnSchema) {
+  const dictStore = useDictStore();
   const props: Record<string, any> = {
     allowClear: true,
     class: 'w-full',

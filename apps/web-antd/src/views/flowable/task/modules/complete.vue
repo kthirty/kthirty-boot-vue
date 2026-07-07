@@ -10,7 +10,7 @@ import { Button, Input, message, Spin } from 'ant-design-vue';
 
 import { $t } from '#/locales';
 
-import { getCompletePre, completeTask } from '../api';
+import { completeTask, getCompletePre } from '../api';
 import { getFormComponent } from '../utils/form-loader';
 
 const emit = defineEmits(['success']);
@@ -56,9 +56,12 @@ async function onHandle(button: FlwTaskApi.FlowButton) {
   }
   submitting.value = true;
   try {
+    const taskId = taskData.value.id;
+    const result = button.resultCode;
+    if (!taskId || !result) return;
     await completeTask({
-      taskId: taskData.value.id!,
-      result: button.resultCode!,
+      taskId,
+      result,
       comment: comment.value,
       extraParams: formRef.value?.getExtraParams?.(),
     });

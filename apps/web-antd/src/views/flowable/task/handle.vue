@@ -40,7 +40,7 @@ interface HandleButton {
   name: string;
   resultCode: string;
   descColor?: string;
-  type: ButtonType ;
+  type: ButtonType;
   danger?: boolean;
 }
 async function onHandleButtonClick(btn: HandleButton) {
@@ -56,8 +56,10 @@ async function onHandleButtonClick(btn: HandleButton) {
       if (!pass) return;
     }
     // 组装提交信息
+    const taskId = taskData.value.id;
+    if (!taskId) return;
     const submitInfo: FlwTaskApi.CompleteReq = {
-      taskId: taskData.value.id!,
+      taskId,
       comment: comment.value,
       result: btn.resultCode,
       extraParams: {},
@@ -111,7 +113,9 @@ const [TaskHisGrid] = useVbenVxeGrid({
     proxyConfig: {
       ajax: {
         query: async () => {
-          return await getHisTaskList(taskData.value.processInstanceId!);
+          const processInstanceId = taskData.value.processInstanceId;
+          if (!processInstanceId) return { records: [], total: 0 };
+          return await getHisTaskList(processInstanceId);
         },
       },
     },
@@ -134,14 +138,16 @@ const [Modal, modalApi] = useVbenModal({
       try {
         if (isHandle()) {
           // 获取按钮和界面信息
-          const res = await getCompletePre(data.id!);
+          if (!data.id) return;
+          const res = await getCompletePre(data.id);
           pathToComponent(res.formKey);
           handleButtons.value = res.handleButtons || [];
         }
         // 获取流程历史处理图
-        thumbnail.value = await getHisDiagram(
-          taskData.value.processInstanceId!,
-        );
+        const processInstanceId = taskData.value.processInstanceId;
+        if (processInstanceId) {
+          thumbnail.value = await getHisDiagram(processInstanceId);
+        }
       } finally {
         loading.value = false;
       }

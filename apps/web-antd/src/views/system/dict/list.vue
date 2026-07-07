@@ -53,12 +53,14 @@ const onActionClick = (params: OnActionClickParams<SystemDictApi.DictType>) => {
   }
 };
 function onDelete(row: SystemDictApi.DictType) {
+  const { id } = row;
+  if (!id) return;
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
-  deleteDictType(row.id!).then(() => {
+  deleteDictType(id).then(() => {
     message.success({
       content: $t('ui.actionMessage.deleteSuccess', [row.name]),
       key: 'action_process_msg',
@@ -132,12 +134,14 @@ const onSubActionClick = (
   }
 };
 function onItemDelete(row: SystemDictApi.DictItem) {
+  const { id } = row;
+  if (!id) return;
   const hideLoading = message.loading({
     content: $t('ui.actionMessage.deleting', [row.label]),
     duration: 0,
     key: 'action_process_msg',
   });
-  deleteDictItem(row.id!).then(() => {
+  deleteDictItem(id).then(() => {
     message.success({
       content: $t('ui.actionMessage.deleteSuccess', [row.label]),
       key: 'action_process_msg',
@@ -181,7 +185,9 @@ const [SubGrid, subGridApi] = useVbenVxeGrid({
   } as VxeTableGridOptions<SystemDictApi.DictItem>,
 });
 function onSubCreate() {
-  subFormDrawerApi.setData({ code: currentDictType.value!.code }).open();
+  const code = currentDictType.value?.code;
+  if (!code) return;
+  subFormDrawerApi.setData({ code }).open();
 }
 </script>
 

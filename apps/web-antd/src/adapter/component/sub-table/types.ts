@@ -2,11 +2,10 @@ import type { Recordable } from '@vben/types';
 
 import type { VbenFormSchema } from '#/adapter/form';
 
-export interface SubTableColumnSchema
-  extends Omit<
-    VbenFormSchema,
-    'componentProps' | 'defaultValue' | 'modelPropName'
-  > {
+export interface SubTableColumnSchema extends Omit<
+  VbenFormSchema,
+  'componentProps' | 'defaultValue' | 'modelPropName'
+> {
   /** 组件参数；函数参数使用子表行上下文 */
   componentProps?:
     | ((row: Recordable<any>, index: number) => Recordable<any>)

@@ -27,7 +27,7 @@ const [Form, formApi] = useVbenForm({
       class: 'w-full',
     },
   },
-  schema: formSchema.value,
+  schema: formSchema.value as any,
   showDefaultActions: false,
   wrapperClass: 'grid-cols-2',
 });
@@ -55,14 +55,14 @@ const [Drawer, drawerApi] = useVbenDrawer({
       if (data?.id) {
         recordId.value = data.id;
         formSchema.value = buildFormSchema(props.schema, true);
-        formApi.setState({ schema: formSchema.value });
+        formApi.setState({ schema: formSchema.value as any });
         getDevFormDataInfo(props.formId, data.id).then((res) => {
           formApi.setValues(res);
         });
       } else {
         recordId.value = undefined;
         formSchema.value = buildFormSchema(props.schema, false);
-        formApi.setState({ schema: formSchema.value });
+        formApi.setState({ schema: formSchema.value as any });
         if (data) {
           formApi.setValues(data);
         }

@@ -46,7 +46,6 @@ export namespace DevFormApi {
   }
 }
 
-
 export async function isTableNameExists(tableName: string, id?: string) {
   return requestClient.get(`/dev/form/tableNameExists`, {
     params: { tableName, id },
