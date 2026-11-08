@@ -31,6 +31,7 @@ const [Modal, modalApi] = useVbenModal({
         emits('success');
       } else {
         const imported = await previewImportTable(tableName.value);
+        console.log('imported', imported);
         emits('preview', imported);
         message.success($t('develop.form.importTableSuccess'));
       }

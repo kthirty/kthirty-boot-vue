@@ -70,15 +70,23 @@ const [Modal, modalApi] = useVbenModal({
       loading.value = true;
       try {
         const data = modalApi.getData<DevFormApi.DevForm>();
+        console.log('data', data);
         formApi.resetForm();
-        if (data && data.id) {
-          const formInfo = await getFormInfo(data.id);
-          formApi.setValues(formInfo);
-          id.value = data.id;
-          form.value = formInfo;
+        if (data) {
+          if (data.id) {
+            const formInfo = await getFormInfo(data.id);
+            formApi.setValues(formInfo);
+            id.value = data.id;
+            form.value = formInfo;
+          } else {
+            formApi.setValues(data);
+            form.value = data;
+          }
         } else {
           form.value.items = useInitItems();
         }
+      } catch (error) {
+        console.error(error);
       } finally {
         loading.value = false;
       }

@@ -161,18 +161,25 @@ function getInputColumn(name: string) {
     customRender: (opt: { index: number; record: DevFormApi.DevFormItem }) => {
       return h(
         FormItem,
-        { name: `items[${opt.index}].${name}`, required: true },
-        h(Input, {
-          disabled: opt.record.disabled,
-          value: opt.record[name],
-          onChange: (e: any) => {
-            opt.record[name] = e.target.value;
-          },
-        }),
+        {
+          name: `items[${opt.index}].${name}`,
+          required: true,
+        },
+        {
+          default: () =>
+            h(Input, {
+              disabled: opt.record.disabled,
+              value: opt.record[name],
+              onChange: (e: any) => {
+                opt.record[name] = e.target.value;
+              },
+            }),
+        },
       );
     },
   };
 }
+
 function getSwitchColumn(name: string) {
   return {
     title: $t(`develop.form.fields.${name}`),
@@ -199,8 +206,8 @@ function getSelectColumn(name: string, options: DefaultOptionType[]) {
         disabled: opt.record.disabled,
         value: opt.record[name],
         class: 'w-full',
-        onChange: (e: any) => {
-          opt.record[name] = e;
+        onChange: (value: any) => {
+          opt.record[name] = value;
         },
         options,
       });

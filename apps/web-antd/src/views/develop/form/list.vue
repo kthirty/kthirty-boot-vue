@@ -28,6 +28,7 @@ const router = useRouter();
 const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
   destroyOnClose: true,
+  fullscreen: true,
 });
 
 const [ImportModal, importModalApi] = useVbenModal({
@@ -160,15 +161,15 @@ async function refreshGrid() {
 function onImportFromDb() {
   importModalApi.setData({ formId: '' }).open();
 }
+function onPreviewImport(data: any) {
+  formModalApi.setData(data).open();
+}
 </script>
 
 <template>
   <Page auto-content-height>
     <FormModal @success="refreshGrid" />
-    <ImportModal
-      @preview="(data: any) => formModalApi.setData(data).open()"
-      @success="refreshGrid"
-    />
+    <ImportModal @preview="onPreviewImport" @success="refreshGrid" />
     <Grid :table-title="$t('develop.form.title')">
       <template #toolbar-tools>
         <Button @click="onImportFromDb">
