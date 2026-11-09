@@ -205,7 +205,7 @@ function getSelectColumn(name: string, options: DefaultOptionType[]) {
       return h(Select, {
         disabled: opt.record.disabled,
         value: opt.record[name],
-        class: 'w-full',
+        class: 'w-full min-w-[120px]',
         onChange: (value: any) => {
           opt.record[name] = value;
         },
@@ -246,7 +246,7 @@ export function useDatabaseColumns(
 
         return h(Select, {
           value: itemTypeOptions.some((it) => it.value === key) ? key : '',
-          class: 'w-full',
+          class: 'w-full min-w-[120px]',
           showSearch: true,
           filterOption: (input, option) => {
             return (

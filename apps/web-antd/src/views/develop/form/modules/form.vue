@@ -148,9 +148,9 @@ const rowSelection = reactive({
 <template>
   <Modal :title="$t('develop.form.editTitle')" :loading="loading">
     <MainForm class="mx-4" />
-    <div class="flex w-full flex-col gap-4 pl-4">
+    <div class="w-full min-w-0">
       <Form :model="form" layout="inline" autocomplete="off">
-        <Tabs>
+        <Tabs class="w-full min-w-0">
           <TabPane key="database" :tab="$t('develop.form.tabs.database')">
             <Space class="mb-4">
               <Button type="primary" @click="addItem">
@@ -211,14 +211,17 @@ const rowSelection = reactive({
             />
           </TabPane>
           <TabPane key="index" :tab="$t('develop.form.tabs.index')">
-            <Table
-              :data-source="form.indexes"
-              :pagination="false"
-              :columns="useIndexColumns()"
-              bordered
-              :row-key="(record) => record.id"
-              size="middle"
-            />
+            <div class="w-full min-w-0">
+              <Table
+                :data-source="form.indexes"
+                class="min-w-[640px] w-full"
+                :pagination="false"
+                :columns="useIndexColumns()"
+                bordered
+                :row-key="(record) => record.id"
+                size="middle"
+              />
+            </div>
           </TabPane>
         </Tabs>
       </Form>
