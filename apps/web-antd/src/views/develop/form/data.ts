@@ -153,25 +153,26 @@ export function useFormSchema(id: any): VbenFormSchema[] {
   ];
 }
 
-function getInputColumn(name: string) {
+function getInputColumn(name: string, collection = 'items') {
   return {
     title: $t(`develop.form.fields.${name}`),
     dataIndex: `${name}`,
     key: `${name}`,
-    customRender: (opt: { index: number; record: DevFormApi.DevFormItem }) => {
+    customRender: (opt: { index: number; record: any }) => {
       return h(
         FormItem,
         {
-          name: `items[${opt.index}].${name}`,
-          required: true,
+          name: [collection, opt.index, name],
+          rules: [{ required: true, message: '请输入' }],
+          validateTrigger: 'change',
         },
         {
           default: () =>
             h(Input, {
               disabled: opt.record.disabled,
               value: opt.record[name],
-              onChange: (e: any) => {
-                opt.record[name] = e.target.value;
+              'onUpdate:value': (value: any) => {
+                opt.record[name] = value;
               },
             }),
         },
@@ -185,7 +186,7 @@ function getSwitchColumn(name: string) {
     title: $t(`develop.form.fields.${name}`),
     dataIndex: `${name}`,
     key: `${name}`,
-    customRender: (opt: { record: DevFormApi.DevFormItem }) => {
+    customRender: (opt: { record: any }) => {
       return h(Switch, {
         disabled: opt.record.disabled,
         checked: opt.record[name],
@@ -196,18 +197,27 @@ function getSwitchColumn(name: string) {
     },
   };
 }
-function getSelectColumn(name: string, options: DefaultOptionType[]) {
+function getSelectColumn(
+  name: string,
+  options: DefaultOptionType[],
+  config: { mode?: 'multiple' } = {},
+) {
   return {
     title: $t(`develop.form.fields.${name}`),
     dataIndex: `${name}`,
     key: `${name}`,
-    customRender: (opt: { record: DevFormApi.DevFormItem }) => {
+    customRender: (opt: { index: number; record: any }) => {
       return h(Select, {
         disabled: opt.record.disabled,
-        value: opt.record[name],
+        mode: config.mode,
+        value:
+          config.mode === 'multiple'
+            ? (opt.record[name]?.split(',') ?? [])
+            : opt.record[name],
         class: 'w-full min-w-[120px]',
         onChange: (value: any) => {
-          opt.record[name] = value;
+          opt.record[name] =
+            config.mode === 'multiple' ? value.join(',') : value;
         },
         options,
       });
@@ -306,8 +316,20 @@ export function useForeignKeyColumns(): ColumnType<DevFormApi.DevFormItem>[] {
     getInputColumn('foreignKeyMainColumn'),
   ];
 }
-export function useIndexColumns(): ColumnType<DevFormApi.DevFormItem>[] {
-  return [];
+export function useIndexColumns(
+  items: DevFormApi.DevFormItem[] = [],
+): ColumnType<DevFormApi.DevFormIndex>[] {
+  const itemOptions = items
+    .filter((item) => item.columnName)
+    .map((item) => ({ label: item.columnName!, value: item.columnName! }));
+  return [
+    getSelectColumn('indexType', [
+      { label: 'UNIQUE', value: 'UNIQUE' },
+      { label: 'NORMAL', value: 'NORMAL' },
+    ]),
+    getInputColumn('indexName', 'indexes'),
+    getSelectColumn('columnNames', itemOptions, { mode: 'multiple' }),
+  ];
 }
 
 export function useInitItems(): DevFormApi.DevFormItem[] {

@@ -20,7 +20,7 @@ import {
 import { useVbenForm } from '#/adapter/form';
 import { $t } from '#/locales';
 
-import { getFormInfo, saveForm, updateForm } from '../api';
+import { getFormInfo,saveForm,updateForm } from '../api';
 import {
   useDatabaseColumns,
   useEntityColumns,
@@ -70,7 +70,6 @@ const [Modal, modalApi] = useVbenModal({
       loading.value = true;
       try {
         const data = modalApi.getData<DevFormApi.DevForm>();
-        console.log('data', data);
         formApi.resetForm();
         if (data) {
           if (data.id) {
@@ -216,7 +215,7 @@ const rowSelection = reactive({
                 :data-source="form.indexes"
                 class="min-w-[640px] w-full"
                 :pagination="false"
-                :columns="useIndexColumns()"
+                :columns="useIndexColumns(form.items)"
                 bordered
                 :row-key="(record) => record.id"
                 size="middle"

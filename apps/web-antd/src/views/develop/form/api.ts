@@ -1,6 +1,14 @@
 import { requestClient } from '#/api/request';
 
 export namespace DevFormApi {
+  export interface DevFormIndex {
+    id?: string;
+    indexType?: string;
+    indexName?: string;
+    columnNames?: string;
+    isDbSync?: string[];
+    formId?: string[];
+  }
   export interface DevFormItem {
     id?: string;
     formId?: string;
@@ -42,7 +50,7 @@ export namespace DevFormApi {
     treeSortField?: string;
     treeRootValue?: string;
     items?: DevFormItem[];
-    indexes?: any[];
+    indexes?: DevFormIndex[];
   }
 }
 
