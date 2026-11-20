@@ -750,4 +750,4 @@ async function initComponentAdapter() {
 export { initComponentAdapter };
 export { OosFile } from './oos-file';
 export type { SubTableColumnSchema, SubTableProps } from './sub-table';
-export { SUB_TABLE_DEFAULT_ROW_FLAG } from './sub-table';
+export { SUB_TABLE_DEFAULT_ROW_FLAG, SubTable } from './sub-table';

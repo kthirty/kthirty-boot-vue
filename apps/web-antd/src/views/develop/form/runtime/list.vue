@@ -8,8 +8,9 @@ import { useRoute } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
+import { downloadFileFromBlob } from '@vben/utils';
 
-import { Button, message, Upload } from 'ant-design-vue';
+import { Button, message, Modal, Space, Upload } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { $t } from '#/locales';
@@ -17,11 +18,13 @@ import { $t } from '#/locales';
 import {
   downloadDevFormImportTemplate,
   exportDevFormData,
+  getDevFormDataList,
   getDevFormDataPage,
   getDevFormDataTree,
   getDevFormSchema,
   importDevFormData,
   removeDevFormData,
+  removeDevFormDataBatch,
 } from './api';
 import {
   buildGridColumns,
@@ -63,24 +66,40 @@ const [Grid, gridApi] = useVbenVxeGrid({
     keepSource: true,
     pagerConfig: { enabled: true },
     proxyConfig: {
+      sort: true,
       ajax: {
-        query: async ({ page }, formValues) => {
+        query: async ({ page, sort }, formValues) => {
           if (!schema.value || !formId.value) {
             return { records: [], totalRow: 0 };
           }
+          const params: Record<string, any> = { ...formValues };
+          Object.keys(params).forEach((key) => {
+            if (Array.isArray(params[key])) {
+              params[key] = params[key].filter((item) => item != null && item !== '').join(',');
+            }
+          });
+          if (sort?.field) {
+            params.sortField = sort.field;
+            params.sortOrder = sort.order || 'asc';
+          }
           if (isTreeList(schema.value)) {
-            const records = await getDevFormDataTree(formId.value, formValues);
+            const records = await getDevFormDataTree(formId.value, params);
+            return { records, totalRow: records.length };
+          }
+          if (!isPageList(schema.value)) {
+            const records = await getDevFormDataList(formId.value, params);
             return { records, totalRow: records.length };
           }
           return await getDevFormDataPage(formId.value, {
             pageNumber: page.currentPage,
             pageSize: page.pageSize,
-            ...formValues,
+            ...params,
           });
         },
       },
     },
     rowConfig: { keyField: 'id' },
+    sortConfig: { remote: true, trigger: 'default' },
     toolbarConfig: {
       custom: true,
       export: false,
@@ -95,6 +114,7 @@ async function setupGrid(currentSchema: DevFormRuntimeApi.Schema) {
     columns: buildGridColumns(currentSchema, onActionClick),
     pagerConfig: { enabled: isPageList(currentSchema) },
     rowConfig: { keyField: currentSchema.primaryKeyField || 'id' },
+    sortConfig: { remote: !isTreeList(currentSchema), trigger: 'default' },
   };
   if (isTreeList(currentSchema)) {
     options.treeConfig = {
@@ -162,11 +182,39 @@ function onDelete(row: Record<string, any>) {
 
 async function onExport() {
   const formValues = await gridApi.formApi.getValues();
-  await exportDevFormData(formId.value, formValues);
+  const blob = await exportDevFormData(formId.value, formValues);
+  downloadFileFromBlob({
+    fileName: `${schema.value?.title || 'form'}.xlsx`,
+    source: blob,
+  });
+}
+
+function onBatchDelete() {
+  const pk = schema.value?.primaryKeyField || 'id';
+  const ids = gridApi.grid
+    ?.getCheckboxRecords?.()
+    ?.map((row: Record<string, any>) => row[pk])
+    .filter(Boolean);
+  if (!ids?.length) {
+    message.warning($t('develop.runtime.noSelection'));
+    return;
+  }
+  Modal.confirm({
+    title: $t('develop.runtime.batchDelete'),
+    onOk: async () => {
+      await removeDevFormDataBatch(formId.value, ids);
+      message.success($t('ui.actionMessage.deleteSuccess', [ids.length]));
+      refreshGrid();
+    },
+  });
 }
 
 async function onDownloadTemplate() {
-  await downloadDevFormImportTemplate(formId.value);
+  const blob = await downloadDevFormImportTemplate(formId.value);
+  downloadFileFromBlob({
+    fileName: `${schema.value?.tableName || schema.value?.title || 'form'}_import_template.xlsx`,
+    source: blob,
+  });
 }
 
 async function onImport(file: File) {
@@ -200,28 +248,37 @@ async function refreshGrid() {
       :table-title="schema.title || $t('develop.runtime.title')"
     >
       <template #toolbar-tools>
-        <Button
-          v-if="schema.features.enableAdd"
-          type="primary"
-          @click="onCreate"
-        >
-          <Plus class="size-5" />
-          {{ $t('ui.actionTitle.create', [schema.title]) }}
-        </Button>
-        <Button v-if="schema.features.enableExport" @click="onExport">
-          {{ $t('develop.runtime.export') }}
-        </Button>
-        <Button v-if="schema.features.enableImport" @click="onDownloadTemplate">
-          {{ $t('develop.runtime.importTemplate') }}
-        </Button>
-        <Upload
-          v-if="schema.features.enableImport"
-          :before-upload="onImport"
-          :show-upload-list="false"
-          accept=".xlsx,.xls"
-        >
-          <Button>{{ $t('develop.runtime.import') }}</Button>
-        </Upload>
+        <Space wrap>
+          <Button
+            v-if="schema.features.enableAdd"
+            type="primary"
+            @click="onCreate"
+          >
+            <Plus class="size-5" />
+            {{ $t('ui.actionTitle.create', [schema.title]) }}
+          </Button>
+          <Button
+            v-if="schema.features.enableBatchDelete && !isTreeList(schema)"
+            danger
+            @click="onBatchDelete"
+          >
+            {{ $t('develop.runtime.batchDelete') }}
+          </Button>
+          <Button v-if="schema.features.enableExport" @click="onExport">
+            {{ $t('develop.runtime.export') }}
+          </Button>
+          <Button v-if="schema.features.enableImport" @click="onDownloadTemplate">
+            {{ $t('develop.runtime.importTemplate') }}
+          </Button>
+          <Upload
+            v-if="schema.features.enableImport"
+            :before-upload="onImport"
+            :show-upload-list="false"
+            accept=".xlsx,.xls"
+          >
+            <Button>{{ $t('develop.runtime.import') }}</Button>
+          </Upload>
+        </Space>
       </template>
     </Grid>
     <div v-else-if="!loading" class="p-8 text-center text-gray-500">

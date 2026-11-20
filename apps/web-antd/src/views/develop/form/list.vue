@@ -46,7 +46,7 @@ function onEdit(row: DevFormApi.DevForm) {
 
 function onData(row: DevFormApi.DevForm) {
   router.push({
-    path: '/dev/runtime',
+    path: '/dev/form/runtime',
     query: { formId: row.id },
   });
 }
@@ -172,7 +172,8 @@ function onPreviewImport(data: any) {
     <ImportModal @preview="onPreviewImport" @success="refreshGrid" />
     <Grid :table-title="$t('develop.form.title')">
       <template #toolbar-tools>
-        <Button @click="onImportFromDb">
+        <Button type="primary" @click="onImportFromDb" class="mr-2">
+          <Plus class="size-5" />
           {{ $t('develop.form.importFromDb') }}
         </Button>
         <Button type="primary" @click="onCreate">

@@ -18,6 +18,9 @@ export namespace DevFormRuntimeApi {
     regexp?: string;
     defaultValue?: string;
     dictCode?: string;
+    columnType?: string;
+    foreignKeyMainTable?: string;
+    foreignKeyMainColumn?: string;
     nullable?: boolean;
     maxLength?: number;
     pointLength?: number;
@@ -54,6 +57,7 @@ export namespace DevFormRuntimeApi {
     treeConfig?: TreeConfig;
     columns: ColumnSchema[];
     features: Features;
+    subTables?: Schema[];
   }
 
   export interface ImportResult {

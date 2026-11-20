@@ -153,6 +153,29 @@ export function useFormSchema(id: any): VbenFormSchema[] {
   ];
 }
 
+/** 各 Tab 首列：只读展示数据库 Tab 中的字段名与备注 */
+function getFieldIdentityColumn(): ColumnType<DevFormApi.DevFormItem> {
+  return {
+    fixed: 'left',
+    key: 'fieldIdentity',
+    title: $t('develop.form.fieldIdentity'),
+    width: 180,
+    customRender: ({ record }) =>
+      h('div', { class: 'leading-snug py-1' }, [
+        h(
+          'div',
+          { class: 'font-medium text-foreground' },
+          record.columnName || '—',
+        ),
+        h(
+          'div',
+          { class: 'text-muted-foreground truncate text-xs' },
+          record.columnRemarks || '—',
+        ),
+      ]),
+  };
+}
+
 function getInputColumn(name: string, collection = 'items') {
   return {
     title: $t(`develop.form.fields.${name}`),
@@ -243,6 +266,7 @@ export function useDatabaseColumns(
   dbTypeOptions: DefaultOptionType[],
 ): ColumnType<DevFormApi.DevFormItem>[] {
   return [
+    getFieldIdentityColumn(),
     {
       title: $t('develop.form.fields.type'),
       dataIndex: 'type',
@@ -286,6 +310,7 @@ export function useDatabaseColumns(
 }
 export function useEntityColumns(): ColumnType<DevFormApi.DevFormItem>[] {
   return [
+    getFieldIdentityColumn(),
     getSelectColumn('fieldType', fieldTypeOptions),
     getSelectColumn('fieldAttribute', fieldAttributeOptions),
     getInputColumn('dictCode'),
@@ -293,6 +318,7 @@ export function useEntityColumns(): ColumnType<DevFormApi.DevFormItem>[] {
 }
 export function usePageColumns(): ColumnType<DevFormApi.DevFormItem>[] {
   return [
+    getFieldIdentityColumn(),
     getSelectColumn('formComponent', formComponentOptions),
     getInputColumn('weight'),
     getSelectColumn('queryComponent', formComponentOptions),
@@ -305,13 +331,16 @@ export function usePageColumns(): ColumnType<DevFormApi.DevFormItem>[] {
 }
 export function useExtraColumns(): ColumnType<DevFormApi.DevFormItem>[] {
   return [
+    getFieldIdentityColumn(),
     getSwitchColumn('columnNullable'),
     getInputColumn('formRegexp'),
     getSwitchColumn('isReadonly'),
+    getSwitchColumn('isDbSync'),
   ];
 }
 export function useForeignKeyColumns(): ColumnType<DevFormApi.DevFormItem>[] {
   return [
+    getFieldIdentityColumn(),
     getInputColumn('foreignKeyMainTable'),
     getInputColumn('foreignKeyMainColumn'),
   ];
