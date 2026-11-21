@@ -1,0 +1,21 @@
+{
+  "file": {
+    "title": "Object Storage",
+    "originalFileName": "File Name",
+    "fileExt": "Extension",
+    "fileSize": "Size",
+    "contentType": "Content Type",
+    "storageType": "Storage",
+    "bucket": "Bucket",
+    "objectKey": "Object Key",
+    "md5": "MD5",
+    "createDate": "Uploaded At",
+    "upload": "Upload",
+    "download": "Download",
+    "storage": {
+      "local": "Local",
+      "minio": "MinIO",
+      "seaweedfs": "SeaweedFS"
+    }
+  }
+}

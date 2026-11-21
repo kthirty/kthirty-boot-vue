@@ -13,6 +13,12 @@ export default defineConfig(async () => {
             target: 'http://localhost:9001/',
             ws: true,
           },
+          // UReport 页面内资源使用 /ureport 绝对路径
+          '/ureport': {
+            changeOrigin: true,
+            target: 'http://localhost:9001/',
+            ws: true,
+          },
         },
       },
     },

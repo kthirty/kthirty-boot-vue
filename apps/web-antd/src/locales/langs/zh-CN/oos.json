@@ -1,0 +1,21 @@
+{
+  "file": {
+    "title": "文件存储",
+    "originalFileName": "文件名",
+    "fileExt": "扩展名",
+    "fileSize": "大小",
+    "contentType": "类型",
+    "storageType": "存储类型",
+    "bucket": "存储桶",
+    "objectKey": "对象键",
+    "md5": "MD5",
+    "createDate": "上传时间",
+    "upload": "上传文件",
+    "download": "下载",
+    "storage": {
+      "local": "本地",
+      "minio": "MinIO",
+      "seaweedfs": "SeaweedFS"
+    }
+  }
+}

@@ -10,6 +10,35 @@ export namespace OosFileApi {
     fileSize?: number;
     createDate?: string;
   }
+
+  /** 文件元数据 */
+  export interface OosFile {
+    id?: string;
+    originalFileName?: string;
+    objectKey?: string;
+    fileExt?: string;
+    fileSize?: number;
+    contentType?: string;
+    storageType?: string;
+    bucket?: string;
+    md5?: string;
+    createBy?: string;
+    createDate?: string;
+    updateBy?: string;
+    updateDate?: string;
+  }
+
+  export interface OosFilePage {
+    records: OosFile[];
+    totalRow: number;
+  }
+}
+
+/** 分页查询文件 */
+export async function getOosFilePage(params?: Record<string, any>) {
+  return requestClient.get<OosFileApi.OosFilePage>('/oos/file/page', {
+    params,
+  });
 }
 
 /** 上传单个文件 */
