@@ -204,9 +204,7 @@ export function useSearchSchema(): VbenFormSchema[] {
   ];
 }
 
-export function useHisTaskColumns<T = FlwInstanceApi.Instance>(
-  _onActionClick: OnActionClickFn<T>,
-): VxeTableGridOptions['columns'] {
+export function useHisTaskColumns(): VxeTableGridOptions['columns'] {
   return [
     {
       type: 'seq',
@@ -259,10 +257,13 @@ export function useHisTaskColumns<T = FlwInstanceApi.Instance>(
       align: 'left',
       slots: {
         default: ({ row }) => {
+          const comments = Array.isArray(row.comments) ? row.comments : [];
           return h(
             'span',
             {},
-            row.comments.map((item: any) => item.fullMessage).join(''),
+            comments
+              .map((item: { fullMessage?: string }) => item.fullMessage || '')
+              .join(''),
           );
           /* return h(Timeline, {}, () =>
             row.comments.map((item: any, idx: number) =>

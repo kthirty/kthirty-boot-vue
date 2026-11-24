@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import type { FlowTaskFormExpose, FlowTaskFormProps } from '../types';
 
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { Input } from 'ant-design-vue';
 
 const props = defineProps<FlowTaskFormProps>();
 
 const remark = ref('');
+const readonly = computed(() => !!props.readonly);
 
 defineExpose<FlowTaskFormExpose>({
   getExtraParams() {
@@ -28,6 +29,10 @@ defineExpose<FlowTaskFormExpose>({
       <span>{{ task.name }}</span>
     </div>
     <div class="mb-1">业务备注</div>
-    <Input v-model:value="remark" placeholder="请输入业务备注" />
+    <Input
+      v-model:value="remark"
+      :disabled="readonly"
+      placeholder="请输入业务备注"
+    />
   </div>
 </template>

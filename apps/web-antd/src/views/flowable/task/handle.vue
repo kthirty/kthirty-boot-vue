@@ -1,27 +1,23 @@
 <script lang="ts" setup>
-import type { ButtonType } from 'ant-design-vue/es/button';
-
-import type { ComponentRecordType } from '@vben/types';
-
-import type { FlwTaskApi } from './api';
+import type { Component } from 'vue';
 
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 
-import { defineAsyncComponent, ref, shallowRef } from 'vue';
+import type { FlwTaskApi } from './api';
+
+import { computed, ref, shallowRef } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
-import { normalizeViewPath } from '@vben/utils';
+import { useUserStore } from '@vben/stores';
 
 import {
   Button,
-  Card,
   Empty,
   Image,
+  Input,
   message,
   TabPane,
   Tabs,
-  Textarea,
-  Tooltip,
 } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
@@ -29,81 +25,53 @@ import { $t } from '#/locales';
 
 import { getHisDiagram, getHisTaskList } from '../instance/api';
 import { useHisTaskColumns } from '../instance/data';
-import { completeTask, getCompletePre } from './api';
+import {
+  claimTask,
+  completeTask,
+  getCompletePre,
+  unclaimTask,
+} from './api';
+import { getFormComponent } from './utils/form-loader';
 
-const emit = defineEmits(['success', 'close']);
+const emit = defineEmits(['success']);
 
-interface HandleButton {
-  code: string;
-  commentRequired: boolean;
-  description: string;
-  name: string;
-  resultCode: string;
-  descColor?: string;
-  type: ButtonType;
-  danger?: boolean;
-}
-async function onHandleButtonClick(btn: HandleButton) {
-  loading.value = true;
-  try {
-    if (btn.commentRequired && !comment.value) {
-      message.error($t('flowable.task.handle.commentRequired'));
-      return;
-    }
-    // 子form中验证
-    if (typeof formRef.value?.beforeSubmit === 'function') {
-      const pass = formRef.value?.beforeSubmit(btn);
-      if (!pass) return;
-    }
-    // 组装提交信息
-    const taskId = taskData.value.id;
-    if (!taskId) return;
-    const submitInfo: FlwTaskApi.CompleteReq = {
-      taskId,
-      comment: comment.value,
-      result: btn.resultCode,
-      extraParams: {},
-    };
-    if (typeof formRef.value?.extraArgs === 'function') {
-      const args = formRef.value?.extraArgs(btn);
-      submitInfo.extraParams = args;
-    }
-    await completeTask(submitInfo);
-    message.success($t('flowable.task.handle.success'));
-    modalApi.close();
-    emit('success');
-  } finally {
-    loading.value = false;
-  }
-}
-const pageMap: ComponentRecordType = import.meta.glob('../views/**/*.vue');
-function pathToComponent(component: string = '') {
-  if (component) {
-    const normalizePath = normalizeViewPath(component);
-    const pageKey = normalizePath.endsWith('.vue')
-      ? normalizePath
-      : `${normalizePath}.vue`;
-    if (pageMap[pageKey]) {
-      return defineAsyncComponent(pageMap[pageKey]);
-    }
-    console.warn(`component is invalid: ${component}`);
-  }
-  return null;
-}
-const formComponent = shallowRef(null);
-const formRef = ref();
-const loading = ref(false);
+const userStore = useUserStore();
+const username = computed(() => userStore.userInfo?.username || '');
+
 const taskData = ref<FlwTaskApi.Task>({});
 const comment = ref('');
-const handleButtons = ref<HandleButton[]>([]);
-
-// 流程历史
+const formKey = ref('');
+const handleButtons = ref<FlwTaskApi.FlowButton[]>([]);
 const thumbnail = ref('');
+const loading = ref(false);
+const submitting = ref(false);
+const formRef = ref<{
+  getExtraParams?: () => Record<string, any>;
+  validate?: () => Promise<boolean>;
+}>();
+const FormComponent = shallowRef<Component | null>(null);
+
+const handling = computed(() => Boolean(taskData.value._handle));
+const assignee = computed(() => taskData.value.assignee || '');
+const claimedBy = computed(() => taskData.value.claimedBy || '');
+const claimedByOther = computed(() => {
+  if (claimedBy.value && claimedBy.value !== username.value) return true;
+  return !!assignee.value && assignee.value !== username.value;
+});
+const needClaim = computed(
+  () => handling.value && !claimedBy.value && !assignee.value,
+);
+const canComplete = computed(
+  () => handling.value && !claimedByOther.value && !needClaim.value,
+);
+const showUnclaim = computed(
+  () => handling.value && claimedBy.value === username.value,
+);
 
 const [TaskHisGrid] = useVbenVxeGrid({
   gridOptions: {
     border: 'none',
-    columns: useHisTaskColumns(() => {}),
+    columns: useHisTaskColumns(),
     height: 'auto',
     keepSource: false,
     stripe: false,
@@ -114,116 +82,222 @@ const [TaskHisGrid] = useVbenVxeGrid({
       ajax: {
         query: async () => {
           const processInstanceId = taskData.value.processInstanceId;
-          if (!processInstanceId) return { records: [], total: 0 };
+          if (!processInstanceId) return [];
           return await getHisTaskList(processInstanceId);
         },
       },
     },
   } as VxeTableGridOptions,
 });
-function isHandle() {
-  return taskData.value._handle;
+
+function applyForm(key?: string) {
+  formKey.value = key || '';
+  FormComponent.value = getFormComponent(formKey.value);
+}
+
+async function reloadContext() {
+  const data = taskData.value;
+  handleButtons.value = [];
+  thumbnail.value = '';
+  applyForm('');
+  if (!data.id && !data.processInstanceId) return;
+  loading.value = true;
+  try {
+    if (handling.value && data.id) {
+      const res = await getCompletePre(data.id);
+      handleButtons.value = res.handleButtons || [];
+      applyForm(res.formKey || data.formKey);
+    } else {
+      applyForm(data.formKey);
+    }
+    if (data.processInstanceId) {
+      thumbnail.value = await getHisDiagram(data.processInstanceId);
+    }
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function onClaim() {
+  const taskId = taskData.value.id;
+  if (!taskId) return;
+  submitting.value = true;
+  try {
+    await claimTask(taskId);
+    taskData.value = {
+      ...taskData.value,
+      assignee: username.value,
+      claimedBy: username.value,
+    };
+    message.success($t('flowable.task.handle.claimSuccess'));
+    emit('success');
+  } finally {
+    submitting.value = false;
+  }
+}
+
+async function onUnclaim() {
+  const taskId = taskData.value.id;
+  if (!taskId) return;
+  submitting.value = true;
+  try {
+    await unclaimTask(taskId);
+    taskData.value = {
+      ...taskData.value,
+      assignee: '',
+      claimedBy: '',
+    };
+    message.success($t('flowable.task.handle.unclaimSuccess'));
+    emit('success');
+  } finally {
+    submitting.value = false;
+  }
+}
+
+async function onHandle(button: FlwTaskApi.FlowButton) {
+  if (!canComplete.value) return;
+  if (button.commentRequired && !comment.value.trim()) {
+    message.warning($t('flowable.task.handle.commentRequired'));
+    return;
+  }
+  if (formRef.value?.validate) {
+    const valid = await formRef.value.validate();
+    if (!valid) return;
+  }
+  const taskId = taskData.value.id;
+  const result = button.resultCode;
+  if (!taskId || !result) return;
+  submitting.value = true;
+  try {
+    await completeTask({
+      taskId,
+      result,
+      comment: comment.value,
+      extraParams: formRef.value?.getExtraParams?.(),
+    });
+    message.success($t('flowable.task.handle.success'));
+    modalApi.close();
+    emit('success');
+  } finally {
+    submitting.value = false;
+  }
 }
 
 const [Modal, modalApi] = useVbenModal({
-  onCancel() {
-    emit('close');
-    modalApi.close();
-  },
   async onOpenChange(isOpen) {
-    if (isOpen) {
-      loading.value = true;
-      const data = modalApi.getData<FlwTaskApi.Task>();
-      taskData.value = data;
-      try {
-        if (isHandle()) {
-          // 获取按钮和界面信息
-          if (!data.id) return;
-          const res = await getCompletePre(data.id);
-          pathToComponent(res.formKey);
-          handleButtons.value = res.handleButtons || [];
-        }
-        // 获取流程历史处理图
-        const processInstanceId = taskData.value.processInstanceId;
-        if (processInstanceId) {
-          thumbnail.value = await getHisDiagram(processInstanceId);
-        }
-      } finally {
-        loading.value = false;
-      }
-    }
+    if (!isOpen) return;
+    comment.value = '';
+    taskData.value = modalApi.getData<FlwTaskApi.Task>() || {};
+    await reloadContext();
   },
 });
 </script>
+
 <template>
-  <Modal :title="$t('flowable.task.handle.title')" :loading="loading">
-    <div class="flex h-full flex-col">
-      <div class="h-2/3">
-        <Tabs class="flex-1">
-          <TabPane key="form" :tab="$t('flowable.task.handle.tab.form')">
-            <!-- 业务表单内容区域 -->
-            <div class="h-full p-4">
-              <component
-                :is="formComponent"
-                ref="formRef"
-                :is-handle="isHandle()"
-                v-if="formComponent"
-              />
-              <Empty v-else :description="$t('flowable.task.handle.noForm')" />
-            </div>
-          </TabPane>
-          <TabPane key="history" :tab="$t('flowable.task.handle.tab.history')">
-            <div class="h-full p-4">
-              <TaskHisGrid />
-            </div>
-          </TabPane>
-          <TabPane key="diagram" :tab="$t('flowable.task.handle.tab.diagram')">
-            <div class="h-full p-4">
-              <Image
-                :preview="false"
-                :src="thumbnail"
-                style="max-width: 100%; max-height: 90vh"
-              />
-            </div>
-          </TabPane>
-        </Tabs>
+  <Modal
+    :title="
+      handling
+        ? $t('flowable.task.handle.title')
+        : $t('flowable.task.handle.viewTitle')
+    "
+    :loading="loading"
+    :show-cancel-button="false"
+    :show-confirm-button="false"
+  >
+    <div class="flex h-[calc(100vh-140px)] flex-col gap-3 px-4">
+      <div class="text-sm text-gray-500">
+        <span class="mr-4">
+          {{ $t('flowable.task.table.processInstanceName') }}：{{
+            taskData.processInstanceName || '-'
+          }}
+        </span>
+        <span class="mr-4">
+          {{ $t('flowable.task.table.processDefinitionName') }}：{{
+            taskData.processDefinitionName || '-'
+          }}
+        </span>
+        <span class="mr-4">
+          {{ $t('flowable.task.table.name') }}：{{ taskData.name || '-' }}
+        </span>
+        <span>
+          {{ $t('flowable.task.table.processInstanceStartedBy') }}：{{
+            taskData.processInstanceStartedBy || '-'
+          }}
+        </span>
       </div>
-      <div class="w-full" v-if="isHandle()">
-        <Card :title="$t('flowable.task.handle.title')" :bordered="false">
-          <Textarea
-            v-model:value="comment"
-            :rows="3"
-            class="ml-20 w-3/4"
-            :placeholder="$t('flowable.task.handle.commentPlaceholder')"
-          />
-          <div class="ml-20">
-            <template v-for="(btn, _) in handleButtons" :key="_">
-              <div class="ml-4 mt-4 inline-block">
-                <Tooltip
-                  v-if="btn.description"
-                  :title="btn.description"
-                  :color="btn.descColor ?? 'cyan'"
-                >
-                  <Button
-                    @click="onHandleButtonClick(btn)"
-                    :type="btn.type ?? 'primary'"
-                    :danger="btn.danger ?? false"
-                  >
-                    {{ btn.name }}
-                  </Button>
-                </Tooltip>
-                <Button
-                  v-else
-                  @click="onHandleButtonClick(btn)"
-                  type="primary"
-                  :disable="!isHandle()"
-                >
-                  {{ btn.name }}
-                </Button>
-              </div>
-            </template>
+
+      <Tabs class="min-h-0 flex-1">
+        <TabPane key="form" :tab="$t('flowable.task.handle.tab.form')">
+          <div class="h-[calc(100vh-320px)] overflow-auto p-2">
+            <component
+              :is="FormComponent"
+              v-if="FormComponent"
+              ref="formRef"
+              :readonly="!handling"
+              :task="taskData"
+            />
+            <Empty
+              v-else-if="formKey"
+              :description="$t('flowable.task.handle.formNotFound', [formKey])"
+            />
+            <Empty
+              v-else
+              :description="$t('flowable.task.handle.noFormKey')"
+            />
           </div>
-        </Card>
+        </TabPane>
+        <TabPane key="history" :tab="$t('flowable.task.handle.tab.history')">
+          <div class="h-[calc(100vh-320px)]">
+            <TaskHisGrid />
+          </div>
+        </TabPane>
+        <TabPane key="diagram" :tab="$t('flowable.task.handle.tab.diagram')">
+          <div class="flex h-[calc(100vh-320px)] items-center justify-center overflow-auto p-2">
+            <Image
+              v-if="thumbnail"
+              :src="thumbnail"
+              style="max-width: 100%; max-height: 100%"
+            />
+            <Empty v-else :description="$t('flowable.task.handle.diagramPlaceholder')" />
+          </div>
+        </TabPane>
+      </Tabs>
+
+      <div v-if="handling" class="border-t pt-3">
+        <div class="mb-2">{{ $t('flowable.task.handle.comment') }}</div>
+        <Input.TextArea
+          v-model:value="comment"
+          :rows="3"
+          :placeholder="$t('flowable.task.handle.commentPlaceholder')"
+        />
+        <div class="mt-3 flex flex-wrap items-center gap-2">
+          <Button v-if="needClaim" :loading="submitting" type="primary" @click="onClaim">
+            {{ $t('flowable.task.handle.claim') }}
+          </Button>
+          <Button v-if="showUnclaim" :loading="submitting" @click="onUnclaim">
+            {{ $t('flowable.task.handle.unclaim') }}
+          </Button>
+          <Button
+            v-for="button in handleButtons"
+            :key="button.code || button.resultCode"
+            :disabled="!canComplete"
+            :loading="submitting"
+            type="primary"
+            @click="onHandle(button)"
+          >
+            {{ button.name }}
+          </Button>
+          <span v-if="needClaim" class="text-sm text-gray-500">
+            {{ $t('flowable.task.handle.claimFirst') }}
+          </span>
+          <span v-else-if="claimedByOther" class="text-sm text-gray-500">
+            {{
+              $t('flowable.task.handle.claimedByOther', [
+                claimedBy || assignee,
+              ])
+            }}
+          </span>
+        </div>
       </div>
     </div>
   </Modal>

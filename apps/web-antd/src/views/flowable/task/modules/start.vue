@@ -16,7 +16,11 @@ import { startProcess } from '../api';
 const emit = defineEmits(['success']);
 
 const procDefOptions = ref<Array<{ label: string; value: string }>>([]);
-const loadingOptions = ref(false);
+const presetKey = ref('');
+
+function filterOption(input: string, option?: { label?: string }) {
+  return (option?.label || '').toLowerCase().includes(input.toLowerCase());
+}
 
 const [Form, formApi] = useVbenForm({
   layout: 'vertical',
@@ -24,15 +28,13 @@ const [Form, formApi] = useVbenForm({
     {
       component: 'Select',
       fieldName: 'processDefinitionKey',
-      label: $t('flowable.task.processDefinitionName'),
+      label: $t('flowable.task.processDefinition'),
       rules: 'required',
-      componentProps: () => ({
-        options: procDefOptions.value,
-        loading: loadingOptions.value,
+      componentProps: {
+        options: [],
         showSearch: true,
-        filterOption: (input: string, option: any) =>
-          option.label.toLowerCase().includes(input.toLowerCase()),
-      }),
+        filterOption,
+      },
     },
     {
       component: 'Input',
@@ -47,40 +49,48 @@ const [Form, formApi] = useVbenForm({
   showDefaultActions: false,
 });
 
-async function loadProcDefs() {
-  loadingOptions.value = true;
-  try {
-    const res = await getProcdefList({
-      pageNumber: 1,
-      pageSize: 500,
-      suspended: false,
-      showHistory: false,
-    });
-    const records = (res?.records ||
-      res?.items ||
-      res ||
-      []) as FlwProcdefApi.Procdef[];
-    procDefOptions.value = records
-      .filter(
-        (item): item is FlwProcdefApi.Procdef & { key: string } => !!item.key,
-      )
-      .map((item) => ({
-        label: `${item.name} (${item.key} v${item.version})`,
-        value: item.key,
-      }));
-    formApi.updateSchema([
-      {
-        fieldName: 'processDefinitionKey',
-        componentProps: {
-          options: procDefOptions.value,
-          showSearch: true,
-          filterOption: (input: string, option: any) =>
-            option.label.toLowerCase().includes(input.toLowerCase()),
-        },
+function syncProcessField() {
+  formApi.updateSchema([
+    {
+      fieldName: 'processDefinitionKey',
+      componentProps: {
+        options: procDefOptions.value,
+        disabled: !!presetKey.value,
+        showSearch: true,
+        filterOption,
       },
-    ]);
-  } finally {
-    loadingOptions.value = false;
+    },
+  ]);
+}
+
+async function loadProcDefs() {
+  const res = await getProcdefList({
+    pageNumber: 1,
+    pageSize: 500,
+    suspended: false,
+    showHistory: false,
+  });
+  const records = (res?.records || []) as FlwProcdefApi.Procdef[];
+  procDefOptions.value = records
+    .filter(
+      (item): item is FlwProcdefApi.Procdef & { key: string } => !!item.key,
+    )
+    .map((item) => ({
+      label: `${item.name} (${item.key} v${item.version})`,
+      value: item.key,
+    }));
+  if (
+    presetKey.value &&
+    !procDefOptions.value.some((item) => item.value === presetKey.value)
+  ) {
+    procDefOptions.value.unshift({
+      label: presetKey.value,
+      value: presetKey.value,
+    });
+  }
+  syncProcessField();
+  if (presetKey.value) {
+    await formApi.setValues({ processDefinitionKey: presetKey.value });
   }
 }
 
@@ -89,9 +99,11 @@ const [Modal, modalApi] = useVbenModal({
     const { valid } = await formApi.validate();
     if (!valid) return;
     const values = await formApi.getValues();
+    const processDefinitionKey =
+      presetKey.value || values.processDefinitionKey;
     modalApi.lock();
     try {
-      await startProcess(values.processDefinitionKey, values.businessKey);
+      await startProcess(processDefinitionKey, values.businessKey);
       message.success($t('flowable.task.startSuccess'));
       modalApi.close();
       emit('success');
@@ -99,11 +111,13 @@ const [Modal, modalApi] = useVbenModal({
       modalApi.lock(false);
     }
   },
-  onOpenChange(isOpen) {
-    if (isOpen) {
-      formApi.resetForm();
-      loadProcDefs();
-    }
+  async onOpenChange(isOpen) {
+    if (!isOpen) return;
+    const data = modalApi.getData<{ processDefinitionKey?: string }>() || {};
+    presetKey.value = data.processDefinitionKey || '';
+    await formApi.resetForm();
+    syncProcessField();
+    await loadProcDefs();
   },
 });
 </script>

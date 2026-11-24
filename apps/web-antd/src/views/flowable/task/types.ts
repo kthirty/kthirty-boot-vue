@@ -6,5 +6,6 @@ export interface FlowTaskFormExpose {
 }
 
 export interface FlowTaskFormProps {
+  readonly?: boolean;
   task: FlwTaskApi.Task;
 }

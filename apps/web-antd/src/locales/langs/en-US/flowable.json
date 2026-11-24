@@ -77,6 +77,7 @@
       "activate": "Activate",
       "activateConfirmTitle": "Are you sure you want to activate this process definition?",
       "preview": "Preview",
+      "start": "Start",
       "suspend": "Suspend",
       "suspendConfirmTitle": "Are you sure you want to suspend this process definition?"
     },
@@ -94,6 +95,59 @@
     "suspended": "Suspended",
     "title": "Process Definition",
     "version": "Version"
+  },
+  "task": {
+    "title": "Task Center",
+    "tab": {
+      "todo": "To Do",
+      "done": "Done"
+    },
+    "table": {
+      "seq": "No.",
+      "name": "Task Name",
+      "assignee": "Assignee",
+      "owner": "Owner",
+      "processInstanceName": "Process Instance",
+      "processDefinitionName": "Process Definition",
+      "createTime": "Created At",
+      "endTime": "Completed At",
+      "state": "Status",
+      "processInstanceStartedBy": "Started By",
+      "processInstanceStartTime": "Started At",
+      "action": "Action"
+    },
+    "button": {
+      "handle": "Handle",
+      "start": "Start Process",
+      "view": "View"
+    },
+    "processDefinition": "Process Definition",
+    "businessKey": "Business Key",
+    "businessKeyPlaceholder": "Enter a business key. A running process cannot reuse it",
+    "startTitle": "Start Process",
+    "startSuccess": "Process started",
+    "handle": {
+      "claim": "Claim",
+      "claimFirst": "Claim this candidate task before handling it",
+      "claimSuccess": "Task claimed",
+      "claimedByOther": "Task already claimed by {0}",
+      "comment": "Comment",
+      "commentPlaceholder": "Enter a comment",
+      "commentRequired": "Please enter a comment",
+      "diagramPlaceholder": "No diagram available",
+      "formNotFound": "Form not found: {0}",
+      "noFormKey": "This node has no formKey",
+      "success": "Handled successfully",
+      "tab": {
+        "form": "Business Form",
+        "history": "History",
+        "diagram": "Diagram"
+      },
+      "title": "Handle Task",
+      "unclaim": "Unclaim",
+      "unclaimSuccess": "Task unclaimed",
+      "viewTitle": "View Task"
+    }
   },
   "handle": {
     "title": "Task Handling",

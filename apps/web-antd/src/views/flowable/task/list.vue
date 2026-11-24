@@ -4,10 +4,12 @@ import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import { ref } from 'vue';
 
 import { Page, useVbenModal } from '@vben/common-ui';
+import { Plus } from '@vben/icons';
 
-import { TabPane, Tabs } from 'ant-design-vue';
+import { Button, TabPane, Tabs } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { $t } from '#/locales';
 
 import { getDoneList, getTodoList } from './api';
 import {
@@ -16,6 +18,7 @@ import {
   useTodoTaskColumns,
 } from './data';
 import Handle from './handle.vue';
+import Start from './modules/start.vue';
 
 const [HandleModal, handleModalApi] = useVbenModal({
   connectedComponent: Handle,
@@ -24,6 +27,15 @@ const [HandleModal, handleModalApi] = useVbenModal({
   showCancelButton: false,
   showConfirmButton: false,
 });
+
+const [StartModal, startModalApi] = useVbenModal({
+  connectedComponent: Start,
+  destroyOnClose: true,
+});
+
+function onStart() {
+  startModalApi.setData({}).open();
+}
 
 function onActionClick({ code, row }: { code: string; row: any }) {
   if (code === 'handle') {
@@ -112,12 +124,20 @@ async function onHandleSuccess() {
     <div class="flex h-full flex-col">
       <Tabs default-active-key="todo" class="flex-1">
         <TabPane :tab="$t('flowable.task.tab.todo')" key="todo">
-          <TodoGrid />
+          <TodoGrid>
+            <template #toolbar-tools>
+              <Button type="primary" @click="onStart">
+                <Plus class="size-5" />
+                {{ $t('flowable.task.button.start') }}
+              </Button>
+            </template>
+          </TodoGrid>
         </TabPane>
         <TabPane :tab="$t('flowable.task.tab.done')" key="done">
           <DoneGrid ref="doneGrid" />
         </TabPane>
       </Tabs>
+      <StartModal @success="refreshTodo" />
       <HandleModal @success="onHandleSuccess" />
     </div>
   </Page>

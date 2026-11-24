@@ -62,6 +62,11 @@ export function useColumns<T = FlwProcdefApi.Procdef>(
         },
         options: [
           {
+            code: 'start',
+            text: $t('flowable.procdef.button.start'),
+            show: (row: FlwProcdefApi.Procdef) => !row.suspended && !!row.key,
+          },
+          {
             code: 'preview',
             text: $t('flowable.procdef.button.preview'),
           },
@@ -83,7 +88,7 @@ export function useColumns<T = FlwProcdefApi.Procdef>(
       field: 'operation',
       fixed: 'right',
       title: $t('flowable.procdef.operation'),
-      width: 200,
+      width: 260,
     },
   ];
 }

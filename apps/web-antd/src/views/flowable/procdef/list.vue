@@ -10,6 +10,7 @@ import { message } from 'ant-design-vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { $t } from '#/locales';
 
+import Start from '../task/modules/start.vue';
 import { activateProcdef, getProcdefList, suspendProcdef } from './api';
 import { useColumns, useSearchSchema } from './data';
 import Preview from './modules/preview.vue';
@@ -18,6 +19,11 @@ const [PreviewModal, previewModalApi] = useVbenModal({
   connectedComponent: Preview,
   destroyOnClose: true,
   fullscreen: true,
+});
+
+const [StartModal, startModalApi] = useVbenModal({
+  connectedComponent: Start,
+  destroyOnClose: true,
 });
 
 function onPreview(row: FlwProcdefApi.Procdef) {
@@ -82,6 +88,11 @@ function onActionClick({
       onPreview(row);
       break;
     }
+    case 'start': {
+      if (!row.key) return;
+      startModalApi.setData({ processDefinitionKey: row.key }).open();
+      break;
+    }
     case 'suspend': {
       onSuspend(row);
       break;
@@ -129,6 +140,7 @@ async function refreshGrid() {
 <template>
   <Page auto-content-height>
     <PreviewModal />
+    <StartModal />
     <Grid :table-title="$t('flowable.procdef.title')" />
   </Page>
 </template>

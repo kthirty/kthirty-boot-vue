@@ -17,12 +17,10 @@ import { useHisTaskColumns } from '../data';
 const previewData = ref<FlwInstanceApi.Instance>({});
 const previewLoading = ref(false);
 
-function onActionClick() {}
-
 const [Grid] = useVbenVxeGrid({
   gridOptions: {
     border: 'none',
-    columns: useHisTaskColumns(onActionClick),
+    columns: useHisTaskColumns(),
     height: 'auto',
     keepSource: false,
     stripe: false,

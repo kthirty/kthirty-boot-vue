@@ -83,6 +83,7 @@
       "activate": "激活",
       "activateConfirmTitle": "确认激活该流程定义吗？",
       "preview": "预览",
+      "start": "发起",
       "suspend": "挂起",
       "suspendConfirmTitle": "确认挂起该流程定义吗？"
     },
@@ -104,7 +105,7 @@
   "task": {
     "title": "任务中心",
     "tab": {
-      "todo": "代办任务",
+      "todo": "待办任务",
       "done": "已办任务"
     },
     "table": {
@@ -123,11 +124,27 @@
     },
     "button": {
       "handle": "办理",
+      "start": "发起流程",
       "view": "查看"
     },
+    "processDefinition": "流程定义",
+    "businessKey": "业务主键",
+    "businessKeyPlaceholder": "请输入业务主键，运行中的流程不能重复",
+    "startTitle": "发起流程",
+    "startSuccess": "流程已发起",
     "handle": {
+      "claim": "签收",
+      "claimFirst": "候选人任务需要先签收，再办理",
+      "claimSuccess": "签收成功",
+      "claimedByOther": "任务已由 {0} 签收",
+      "comment": "办理意见",
       "commentRequired": "请输入办理意见",
+      "formNotFound": "未找到表单：{0}",
+      "noFormKey": "当前节点未配置 formKey",
       "title": "任务办理",
+      "unclaim": "退签",
+      "unclaimSuccess": "已退签",
+      "viewTitle": "查看任务",
       "submit": "提交",
       "cancel": "取消",
       "success": "办理成功",
